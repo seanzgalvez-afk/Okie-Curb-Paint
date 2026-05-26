@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - claude/kalshi-bot-setup-4xG92
-    paths:
-      - 'scripts/snapshot.py'
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
