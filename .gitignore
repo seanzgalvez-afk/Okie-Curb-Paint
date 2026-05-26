@@ -1,0 +1,25 @@
+# Credentials — never commit these
+.env
+*.pem
+*_private_key*
+*_rsa_key*
+
+# Data files
+data/
+*.db
+*.sqlite
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+
+# OS
+.DS_Store
+Thumbs.db
