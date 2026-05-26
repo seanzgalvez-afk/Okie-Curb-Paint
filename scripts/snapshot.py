@@ -854,6 +854,408 @@ def fetch_predictit_markets():
         log(f"PredictIt error: {e}")
         return []
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# WEATHER — NWS + Open-Meteo for temperature market edge detection
+# ═══════════════════════════════════════════════════════════════════════════════
+# Free, no key required. Runs every 30 min.
+
+WEATHER_CITIES = {
+    "ATX": {"name": "Austin",       "lat": 30.27,  "lon": -97.74},
+    "LAX": {"name": "Los Angeles",  "lat": 34.05,  "lon": -118.24},
+    "SFO": {"name": "San Francisco","lat": 37.77,  "lon": -122.42},
+    "HOU": {"name": "Houston",      "lat": 29.76,  "lon": -95.37},
+    "NYC": {"name": "New York",     "lat": 40.71,  "lon": -74.01},
+    "CHI": {"name": "Chicago",      "lat": 41.88,  "lon": -87.63},
+    "MIA": {"name": "Miami",        "lat": 25.77,  "lon": -80.19},
+    "DEN": {"name": "Denver",       "lat": 39.74,  "lon": -104.98},
+    "SEA": {"name": "Seattle",      "lat": 47.61,  "lon": -122.33},
+    "PHX": {"name": "Phoenix",      "lat": 33.45,  "lon": -112.07},
+}
+
+def fetch_weather_forecasts():
+    """Fetch tomorrow's high temp forecast from Open-Meteo for each city.
+    Open-Meteo is free, no key needed, and uses ECMWF/GFS ensemble models.
+    Runs every 30 min."""
+    if not _on_interval(30):
+        log("Weather: skipping")
+        return {}
+    results = {}
+    for city_code, info in WEATHER_CITIES.items():
+        try:
+            r = httpx.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude":  info["lat"],
+                    "longitude": info["lon"],
+                    "daily":     "temperature_2m_max",
+                    "temperature_unit": "fahrenheit",
+                    "forecast_days": 3,
+                    "timezone":  "auto",
+                },
+                timeout=10,
+            )
+            if r.status_code != 200:
+                log(f"Weather {city_code} -> {r.status_code}")
+                continue
+            data = r.json()
+            daily = data.get("daily", {})
+            dates  = daily.get("time", [])
+            highs  = daily.get("temperature_2m_max", [])
+            city_forecasts = []
+            for date, high in zip(dates, highs):
+                if high is not None:
+                    city_forecasts.append({"date": date, "high_f": round(float(high), 1)})
+            results[city_code] = {
+                "name":      info["name"],
+                "forecasts": city_forecasts,  # [{"date": "2026-05-27", "high_f": 87.3}, ...]
+            }
+            log(f"Weather {city_code}: {city_forecasts[:2]}")
+        except Exception as e:
+            log(f"Weather {city_code} error: {e}")
+    return results
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# STRATEGY ENGINE — Combines all signals into actionable recommendations
+# ═══════════════════════════════════════════════════════════════════════════════
+
+KALSHI_TAKER_FEE_RATE = 0.07   # 7% × c × (1-c)
+KALSHI_MAKER_FEE_RATE = 0.0175 # 1.75% × c × (1-c)
+
+def kalshi_fee(price_cents, maker=False):
+    """Kalshi fee per contract in cents."""
+    c = price_cents / 100.0
+    rate = KALSHI_MAKER_FEE_RATE if maker else KALSHI_TAKER_FEE_RATE
+    return round(rate * c * (1 - c) * 100, 4)
+
+def kelly_size(prob_pct, price_cents, maker=False, fraction=0.25):
+    """
+    Kelly criterion for Kalshi binary market.
+    prob_pct: your probability estimate (0-100)
+    price_cents: current contract price (0-100)
+    fraction: Kelly multiplier (default quarter-Kelly = 0.25)
+    Returns: fraction of bankroll to risk (0.0-1.0), or 0 if no edge.
+    """
+    p  = prob_pct / 100.0
+    c  = price_cents / 100.0
+    fee = kalshi_fee(price_cents, maker) / 100.0
+
+    # Betting YES
+    net_edge_yes = (p - c) - fee
+    if net_edge_yes > 0 and (1 - c - fee) > 0:
+        kelly_yes = net_edge_yes / (1 - c - fee)
+        return round(kelly_yes * fraction, 4)
+
+    # Betting NO
+    net_edge_no = ((1 - p) - (1 - c)) - fee
+    if net_edge_no > 0 and (c - fee) > 0:
+        kelly_no = net_edge_no / (c - fee)
+        return round(kelly_no * fraction, 4)
+
+    return 0.0
+
+def analyze_longshot_bias(markets):
+    """
+    Favorite-longshot bias: contracts below 10¢ lose 60%+ historically.
+    Flag cheap longshots as SELL NO opportunities, expensive favorites as BUY YES.
+    """
+    signals = []
+    for m in markets:
+        yes = m.get("_yes_price")
+        if yes is None: continue
+        ticker = m.get("ticker", "")
+        title  = m.get("title", "")[:60]
+        vol    = m.get("volume", 0) or 0
+
+        if yes < 8:
+            # Classic longshot overpricing — sell the longshot (buy NO)
+            signals.append({
+                "type":        "longshot_bias",
+                "direction":   "BUY NO",
+                "ticker":      ticker,
+                "title":       title,
+                "price":       yes,
+                "rationale":   f"Longshot bias: {yes}¢ YES contracts lose 60%+ historically. Buy NO.",
+                "confidence":  "medium",
+                "kelly_frac":  kelly_size(5, yes),  # assume true prob ~5%
+                "fee_cents":   kalshi_fee(yes),
+                "priority":    3,
+            })
+        elif yes > 85:
+            # Expensive favorite — underpriced certainty
+            signals.append({
+                "type":        "longshot_bias",
+                "direction":   "BUY YES",
+                "ticker":      ticker,
+                "title":       title,
+                "price":       yes,
+                "rationale":   f"Favorite value: {yes}¢ — market underprices certainty. Buy YES.",
+                "confidence":  "low",
+                "kelly_frac":  kelly_size(90, yes),
+                "fee_cents":   kalshi_fee(yes),
+                "priority":    2,
+            })
+    return signals
+
+def analyze_bundle_arb(markets):
+    """
+    Bundle arbitrage: if YES + NO prices sum to less than 100 - fees,
+    buying both locks in risk-free profit.
+    Scans multi-outcome ladder markets where sum of buckets < 100.
+    """
+    signals = []
+    # Group by series (everything before the last hyphen segment)
+    from collections import defaultdict
+    series_groups = defaultdict(list)
+    for m in markets:
+        ticker = m.get("ticker", "")
+        # Extract series prefix (e.g., KXBTCD-26MAY2618 from KXBTCD-26MAY2618-T75999.99)
+        parts = ticker.rsplit("-", 1)
+        if len(parts) == 2:
+            series_groups[parts[0]].append(m)
+
+    # Check each multi-outcome series
+    for series, contracts in series_groups.items():
+        if len(contracts) < 2: continue
+        yes_prices = []
+        valid = True
+        for c in contracts:
+            yp = c.get("_yes_price")
+            if yp is None: valid = False; break
+            yes_prices.append(yp)
+        if not valid: continue
+
+        total = sum(yes_prices)
+        # In a mutually exclusive exhaustive set, prices should sum to ~100
+        # If sum < 95 (after accounting for fees), bundle arb exists
+        total_fee = sum(kalshi_fee(yp) for yp in yes_prices)
+        net_profit = 100 - total - total_fee
+
+        if net_profit > 2.0:  # at least 2¢ net profit
+            signals.append({
+                "type":       "bundle_arb",
+                "direction":  "BUY ALL",
+                "ticker":     series,
+                "title":      f"Bundle arb: {len(contracts)} contracts sum to {total:.1f}¢",
+                "price":      total,
+                "rationale":  f"Sum of {len(contracts)} mutually exclusive contracts = {total:.1f}¢ (pays 100¢). Net after fees: +{net_profit:.1f}¢",
+                "confidence": "high",
+                "kelly_frac": 0.05,  # conservative fixed size for arb
+                "fee_cents":  total_fee,
+                "priority":   1,
+                "contracts":  [c.get("ticker") for c in contracts],
+            })
+    return signals
+
+def analyze_vegas_divergence(edges):
+    """
+    Convert existing Vegas edge analysis into strategy signals with Kelly sizing.
+    """
+    signals = []
+    for e in edges:
+        gap = e.get("gap", 0)
+        kp  = e.get("kalshi_price", 50)
+        vp  = e.get("vegas_prob", 50)
+        if abs(gap) < 5: continue
+
+        # Use Vegas as the "true" probability estimate
+        kelly = kelly_size(vp, kp, maker=True, fraction=0.25)
+
+        signals.append({
+            "type":       "vegas_divergence",
+            "direction":  e.get("direction", ""),
+            "ticker":     e.get("ticker", ""),
+            "title":      e.get("title", "")[:60],
+            "price":      kp,
+            "rationale":  f"Vegas implies {vp:.1f}¢, Kalshi at {kp}¢. Gap: {gap:+.1f}¢. Use LIMIT order.",
+            "confidence": "high" if abs(gap) >= 10 else "medium",
+            "kelly_frac": kelly,
+            "fee_cents":  kalshi_fee(kp, maker=True),
+            "priority":   1 if abs(gap) >= 10 else 2,
+            "game":       e.get("game", ""),
+            "books":      e.get("books", []),
+        })
+    return signals
+
+def analyze_cross_platform_arb(cross_arb):
+    """
+    Convert cross-market arb into strategy signals with fee-adjusted profitability.
+    Minimum viable spread: ~3¢ after fees for Kalshi-PolyMarket,
+                           ~17¢ for anything involving PredictIt.
+    """
+    signals = []
+    for a in cross_arb:
+        gap = abs(a.get("gap", 0))
+        source = a.get("source", "")
+        kalshi_p = a.get("kalshi_price", 50)
+        other_p  = a.get("other_price", 50)
+
+        # Fee thresholds
+        kalshi_fee_val = kalshi_fee(kalshi_p, maker=True)
+        if source == "predictit":
+            min_viable = 17.0  # PredictIt 15% effective fee kills most arb
+            other_fee  = 15.0
+        else:  # polymarket
+            min_viable = 3.0
+            other_fee  = 0.02
+
+        net_profit = gap - kalshi_fee_val - other_fee
+        if net_profit < 1.0: continue  # not profitable after fees
+
+        signals.append({
+            "type":       "cross_platform_arb",
+            "direction":  a.get("direction", ""),
+            "ticker":     a.get("kalshi_ticker", ""),
+            "title":      a.get("kalshi_title", "")[:60],
+            "price":      kalshi_p,
+            "rationale":  f"{source.title()}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
+            "confidence": "medium",
+            "kelly_frac": 0.03,  # small fixed size — settlement risk
+            "fee_cents":  kalshi_fee_val,
+            "net_profit": round(net_profit, 2),
+            "priority":   1 if net_profit >= 5 else 2,
+            "warning":    "Verify settlement language matches before entering both legs.",
+        })
+    return signals
+
+def analyze_weather_edge(markets, weather_data):
+    """
+    Compare NWS/Open-Meteo model forecast to Kalshi weather market prices.
+    Market-implied uncertainty exceeds realized uncertainty by 1.27x historically.
+    Targets KXHIGH* markets.
+    """
+    if not weather_data:
+        return []
+    signals = []
+
+    # Map city codes to Kalshi ticker fragments
+    CITY_MAP = {
+        "ATX": ["KXHIGHAUS", "KXHIGHTSATX"],
+        "SFO": ["KXHIGHTSFO"],
+        "LAX": ["KXHIGHLAX"],
+        "HOU": ["KXHIGHOUSTON", "KXHIGHHOU"],
+        "NYC": ["KXHIGHNYC", "KXHIGHTSNYE"],
+        "CHI": ["KXHIGHCHI"],
+        "MIA": ["KXHIGHMIA"],
+        "DEN": ["KXHIGHDEN"],
+        "SEA": ["KXHIGHSEA"],
+        "PHX": ["KXHIGHPHX"],
+    }
+
+    for m in markets:
+        ticker = m.get("ticker", "")
+        yes_p  = m.get("_yes_price")
+        title  = m.get("title", "")
+        if yes_p is None: continue
+        if "KXHIGH" not in ticker.upper(): continue
+
+        # Find matching city
+        matched_city = None
+        matched_forecast = None
+        for city_code, prefixes in CITY_MAP.items():
+            for prefix in prefixes:
+                if ticker.upper().startswith(prefix):
+                    matched_city = city_code
+                    break
+            if matched_city: break
+
+        if not matched_city or matched_city not in weather_data:
+            continue
+
+        forecasts = weather_data[matched_city].get("forecasts", [])
+        if not forecasts:
+            continue
+
+        # Get tomorrow's forecast high
+        tomorrow_forecast = forecasts[1] if len(forecasts) > 1 else forecasts[0]
+        model_high = tomorrow_forecast.get("high_f")
+        if model_high is None:
+            continue
+
+        # Try to extract the threshold from the title
+        # e.g. "Will the high temp in Austin be 87-88°"
+        import re
+        temp_match = re.search(r'(\d+)[\-–](\d+)', title)
+        if not temp_match:
+            temp_match = re.search(r'(\d{2,3})', title)
+        if not temp_match:
+            continue
+
+        try:
+            low_temp = float(temp_match.group(1))
+            high_temp = float(temp_match.group(2)) if temp_match.lastindex >= 2 else low_temp + 1
+        except (ValueError, AttributeError):
+            continue
+
+        mid_temp = (low_temp + high_temp) / 2
+        diff = model_high - mid_temp
+
+        if abs(diff) >= 3:
+            direction = "BUY YES" if diff >= 0 else "BUY NO"
+            city_name = weather_data[matched_city].get("name", matched_city)
+            signals.append({
+                "type":       "weather_edge",
+                "direction":  direction,
+                "ticker":     ticker,
+                "title":      title[:60],
+                "price":      yes_p,
+                "rationale":  f"Model forecasts {model_high}°F high for {city_name}. Market bucket: {low_temp:.0f}-{high_temp:.0f}°F. Diff: {diff:+.1f}°. Use LIMIT order.",
+                "confidence": "high" if abs(diff) >= 5 else "medium",
+                "kelly_frac": kelly_size(85 if abs(diff) >= 5 else 70, yes_p, maker=True, fraction=0.25),
+                "fee_cents":  kalshi_fee(yes_p, maker=True),
+                "priority":   1 if abs(diff) >= 5 else 2,
+                "model_high": model_high,
+            })
+    return signals
+
+def run_strategy_engine(markets, edges, cross_arb, weather_data):
+    """
+    Run all strategy modules and return unified ranked signal list.
+    """
+    all_signals = []
+
+    # 1. Favorite-longshot bias (always runs)
+    try:
+        all_signals += analyze_longshot_bias(markets)
+    except Exception as e:
+        log(f"Strategy longshot error: {e}")
+
+    # 2. Bundle arbitrage scanner
+    try:
+        all_signals += analyze_bundle_arb(markets)
+    except Exception as e:
+        log(f"Strategy bundle arb error: {e}")
+
+    # 3. Vegas divergence (if edges available)
+    try:
+        if edges:
+            all_signals += analyze_vegas_divergence(edges)
+    except Exception as e:
+        log(f"Strategy vegas error: {e}")
+
+    # 4. Cross-platform arb (fee-adjusted)
+    try:
+        if cross_arb:
+            all_signals += analyze_cross_platform_arb(cross_arb)
+    except Exception as e:
+        log(f"Strategy cross-arb error: {e}")
+
+    # 5. Weather edge
+    try:
+        if weather_data:
+            all_signals += analyze_weather_edge(markets, weather_data)
+    except Exception as e:
+        log(f"Strategy weather error: {e}")
+
+    # Sort by priority (1=highest), then by kelly_frac descending
+    all_signals.sort(key=lambda x: (x.get("priority", 9), -x.get("kelly_frac", 0)))
+
+    # Add rank
+    for i, s in enumerate(all_signals):
+        s["rank"] = i + 1
+
+    log(f"Strategy engine: {len(all_signals)} signals ({sum(1 for s in all_signals if s['priority']==1)} high priority)")
+    return all_signals[:20]  # top 20
+
 def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
     """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt."""
     arb = []
@@ -1211,6 +1613,14 @@ try:
 except Exception as e:
     log(f"Cross-market arb error: {e}")
 
+# ── Weather forecasts ─────────────────────────────────────────────────────────
+weather_data = {}
+try:
+    weather_data = fetch_weather_forecasts()
+    log(f"Weather: {len(weather_data)} cities")
+except Exception as e:
+    log(f"Weather error: {e}")
+
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
 vegas_games_count = 0
@@ -1232,6 +1642,15 @@ except Exception as e:
     log(f"Odds comparison error: {e}")
     traceback.print_exc(file=sys.stderr)
 
+# ── Strategy engine ───────────────────────────────────────────────────────────
+strategy_signals = []
+try:
+    strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data)
+    log(f"Strategy signals: {len(strategy_signals)}")
+except Exception as e:
+    log(f"Strategy engine error: {e}")
+    traceback.print_exc(file=sys.stderr)
+
 # ── Write JSON for dashboard ──────────────────────────────────────────────────
 
 # Build health check dict for diagnostics
@@ -1248,6 +1667,7 @@ health = {
     "metaculus":    f"ok_{len(metaculus_qs)}" if metaculus_qs else "empty_or_error",
     "vegas_games":  vegas_games_count,
     "espn":         "ok" if espn_games else "empty",
+    "weather":     f"ok_{len(weather_data)}" if weather_data else ("skipped_interval" if not _on_interval(30) else "error"),
 }
 docs_dir = Path(__file__).parent.parent / "docs"
 docs_dir.mkdir(exist_ok=True)
@@ -1275,6 +1695,8 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "polymarket":     poly_markets,
     "predictit":      pi_markets,
     "cross_arb":      cross_market_arb,
+    "weather":          weather_data,
+    "strategy_signals": strategy_signals,
     "health":         health,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")

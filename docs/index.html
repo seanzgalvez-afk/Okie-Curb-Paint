@@ -195,6 +195,17 @@
       </div>
     </div>
 
+    <!-- ── Strategy Signals ── -->
+    <section class="mb-10" id="signals-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span style="color:#f59e0b;">⚡</span> Strategy Signals
+        <span class="text-xs font-normal text-slate-500 ml-1">— ranked by priority &amp; Kelly size</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-4">Research-backed signals: favorite-longshot bias, bundle arb, Vegas divergence, cross-platform arb, weather model edge. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper.</p>
+      <div id="signals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <p id="signals-empty" class="hidden text-slate-500 text-sm mt-2">No signals right now — check back after markets update.</p>
+    </section>
+
     <!-- ── Best Picks ── -->
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -401,6 +412,7 @@ async function fetchData() {
 }
 
 function render(data) {
+  renderSignals(data.strategy_signals || []);
   renderHeader(data);
   renderBestPicks(data.best_picks || []);
   renderEdges(data.edges || []);
@@ -682,6 +694,72 @@ function renderCrossArb(arb) {
           </a>
         </div>
       </div>`;
+  }).join('');
+}
+
+// ── Strategy Signals ──────────────────────────────────────────────────────────
+function renderSignals(signals) {
+  const grid  = document.getElementById('signals-grid');
+  const empty = document.getElementById('signals-empty');
+  if (!signals || !signals.length) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const typeColors = {
+    bundle_arb:        '#10b981',  // green
+    vegas_divergence:  '#22d3ee',  // cyan
+    weather_edge:      '#a78bfa',  // purple
+    cross_platform_arb:'#f59e0b',  // amber
+    longshot_bias:     '#f87171',  // red
+  };
+  const typeLabels = {
+    bundle_arb:        '🔒 Bundle Arb',
+    vegas_divergence:  '🎰 Vegas Edge',
+    weather_edge:      '🌤 Weather Model',
+    cross_platform_arb:'🔄 Cross-Platform',
+    longshot_bias:     '📊 Bias Edge',
+  };
+  const confBadge = {
+    high:   'bg-green-900 text-green-300',
+    medium: 'bg-yellow-900 text-yellow-300',
+    low:    'bg-slate-700 text-slate-400',
+  };
+
+  grid.innerHTML = signals.map(s => {
+    const color  = typeColors[s.type]  || '#94a3b8';
+    const label  = typeLabels[s.type]  || s.type;
+    const conf   = confBadge[s.confidence] || confBadge.low;
+    const dirColor = s.direction && s.direction.includes('YES') ? '#4ade80' : '#f87171';
+    const kellyPct = s.kelly_frac ? (s.kelly_frac * 100).toFixed(1) : '0';
+    const feeCents = s.fee_cents  ? s.fee_cents.toFixed(2) : '?';
+
+    return `
+    <div class="rounded-xl p-4 border" style="background:#1e293b;border-color:${color}44;">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold px-2 py-0.5 rounded" style="background:${color}22;color:${color};">${label}</span>
+        <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'}</span>
+      </div>
+      <p class="text-sm font-semibold text-white mb-1 leading-snug">${s.title || s.ticker}</p>
+      <p class="text-xs text-slate-400 mb-3 leading-relaxed">${s.rationale}</p>
+      <div class="flex items-center justify-between text-xs mb-3">
+        <span class="font-bold text-base" style="color:${dirColor};">${s.direction}</span>
+        <span class="text-slate-400">${s.price}¢ current</span>
+      </div>
+      <div class="flex gap-3 text-xs text-slate-400 mb-3">
+        <span>📐 Kelly: <strong class="text-white">${kellyPct}%</strong></span>
+        <span>💸 Fee: <strong class="text-slate-300">${feeCents}¢</strong></span>
+        ${s.net_profit ? `<span>💰 Net: <strong class="text-green-400">+${s.net_profit}¢</strong></span>` : ''}
+      </div>
+      ${s.warning ? `<p class="text-xs text-amber-400 mt-1">⚠️ ${s.warning}</p>` : ''}
+      <a href="https://kalshi.com/markets/${s.ticker}" target="_blank"
+         class="block text-center mt-2 py-1.5 rounded text-xs font-semibold"
+         style="background:${color}22;color:${color};">
+        Trade on Kalshi →
+      </a>
+    </div>`;
   }).join('');
 }
 
