@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 20:49 UTC
+# Generated: 2026-05-26 20:51 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261700-00                     74c  25c      33  2026-05-26  BTC price up in next 15 mins?
-  KXACBGAME-26MAY261515VALZAR-VAL             98c   1c      12  2026-06-09  Valencia Basket vs Basket Zaragoza 2002 
-  KXMAYORLA-26-KBAS                           68c  31c      12  2027-06-02  Who will win Los Angeles Mayoral Electio
-  KXITFWMATCH-26MAY26CAYIYE-IYE                3c  96c      10  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
-  KXBTCD-26MAY2617-T75999.99                  57c  42c       9  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBRENTD-26MAY2617-T96.50                   75c  24c       7  2026-05-26  Will the brent crude oil close price be 
-  KXATPMATCH-26MAY25AUGALT-AUG                57c  42c       6  2026-06-08  Will Felix Auger-Aliassime win the Auger
-  KXATPMATCH-26MAY25AUGALT-ALT                42c  57c       6  2026-06-08  Will Daniel Altmaier win the Auger-Alias
-  KXVALORANTGAME-26MAY261600ADGNBG-ADG        73c  24c       6  2026-06-09  Will Azure Dragon Gaming win the Azure D
-  KXETH15M-26MAY261700-00                     76c  21c       5  2026-05-26  ETH price up in next 15 mins?
-  KXNBAGAME-26MAY26SASOKC-SAS                 40c  59c       5  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXITFWMATCH-26MAY26GAREWI-EWI               15c  84c       4  2026-06-09  Will Salma Ewing win the Garcia vs Ewing
-  KXNBASPREAD-26MAY26SASOKC-OKC4              47c  52c       4  2026-06-10  Oklahoma City wins by over 4.5 points?
-  KXBTCD-26MAY2617-T76249.99                   1c  99c       3  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXIIHFGAME-26MAY261420FINSUI-SUI            99c    ?       2  2026-06-09  Finland at Switzerland Winner?
-  KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI      22c  76c       2  2026-06-09  Will Braden Shick win the Monday vs Shic
-  KXTRUMPENDORSEMENTS-26MAY30-A3              88c   9c       2  2026-05-31  Will Trump endorse at least 3 people on 
-  KXITFWMATCH-26MAY26GAREWI-GAR               85c  14c       2  2026-06-09  Will Julia Garcia win the Garcia vs Ewin
-  KXITFWMATCH-26MAY26RAPSHO-SHO               24c  73c       2  2026-06-09  Will Maria Sholokhova win the Rapolu vs 
-  KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY      40c  57c       2  2026-06-09  Will Aidan Mayo win the Mayo vs Butvilas
+  KXBTC15M-26MAY261700-00                     50c  48c      57  2026-05-26  BTC price up in next 15 mins?
+  KXATPMATCH-26MAY25AUGALT-AUG                54c  43c      25  2026-06-08  Will Felix Auger-Aliassime win the Auger
+  KXACBGAME-26MAY261515VALZAR-ZAR              4c  94c      21  2026-06-09  Valencia Basket vs Basket Zaragoza 2002 
+  KXATPMATCH-26MAY25AUGALT-ALT                41c  52c      19  2026-06-08  Will Daniel Altmaier win the Auger-Alias
+  KXBTCD-26MAY2617-T75999.99                  36c  63c      10  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXACBGAME-26MAY261515VALZAR-VAL             97c   1c       9  2026-06-09  Valencia Basket vs Basket Zaragoza 2002 
+  KXBTC-26MAY2617-B75875                      66c  26c       7  2026-05-26  Bitcoin price range  on May 26, 2026?
+  KXITFWMATCH-26MAY26CAYIYE-IYE                4c  95c       5  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
+  KXMLBGAME-26MAY262145AZSF-SF                50c  49c       4  2026-05-30  Arizona vs San Francisco Winner?
+  KXNBAGAME-26MAY26SASOKC-SAS                 40c  59c       3  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXMAYORLA-26-SPRA                           26c  73c       2  2027-06-02  Who will win Los Angeles Mayoral Electio
+  KXITFWMATCH-26MAY26CAYIYE-CAY               94c   5c       2  2026-06-09  Will Eryn Cayetano win the Cayetano vs I
+  KXMLBTEAMTOTAL-26MAY261810WSHCLE-WSH4       49c  49c       2  2026-05-29  Will Washington score over 3.5 runs?
+  KXCONMEBOLSUDGAME-26MAY26PALRIE-PAL         33c  66c       1  2026-06-09  Palestino vs Riestra Winner?
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026569DF521   9c  90c       1  2026-05-29  yes Cleveland,yes Pittsburgh,yes Detroit
+  KXMLBGAME-26MAY271940MINCWS-CWS             57c  42c       1  2026-05-30  Minnesota vs Chicago WS Winner?
+  KXBRENTD-26MAY2617-T96.50                   77c  15c       1  2026-05-26  Will the brent crude oil close price be 
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026EDBF1C34    ? 100c       1  2026-05-29  yes Cleveland,yes Tampa Bay,yes Detroit,
+  KXTRUMPADMINLEAVE-26DEC31-KPAT              66c  33c       1  2027-01-01  Will Kash Patel leaves Director of the F
+  KXMVESPORTSMULTIGAMEEXTENDED-S20267B052331    ?  99c       1  2026-05-29  yes Jonathan Aranda: 1+,yes Jarren Duran
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.', 'Holders of federal and statewide public office.', 'Paid campaign staffers on Senate campaigns.', 'Anyone working in a vote-tallying capacity, or who has the potential ability to observe official vote counts before they are public.', 'Thi
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Health', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/DRUGADS.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/DRUGADS.pdf', 
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -79,20 +79,23 @@
   KXATPCHALLENGERMATCH
   KXATPMATCH
   KXBRENTD
+  KXBTC
   KXBTC15M
   KXBTCD
-  KXETH15M
-  KXHIGHCHI
-  KXIIHFGAME
-  KXITFMATCH
+  KXCONMEBOLSUDGAME
+  KXGTAPRICE
   KXITFWMATCH
   KXMAYORLA
   KXMLBGAME
-  KXMLBTOTAL
+  KXMLBHRR
+  KXMLBRFI
+  KXMLBTEAMTOTAL
+  KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
   KXNBAGAME
+  KXNBAPTS
   KXNBASPREAD
-  KXREDISTRICTING
-  KXSILVERD
-  KXTRUMPENDORSEMENTS
+  KXNHL
+  KXPRESNOMD
+  KXTRUMPADMINLEAVE
   KXVALORANTGAME

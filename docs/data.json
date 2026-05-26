@@ -1,16 +1,64 @@
 {
-  "generated": "2026-05-26 20:49 UTC",
+  "generated": "2026-05-26 20:51 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
       "ticker": "KXBTC15M-26MAY261700-00",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 74,
-      "no_bid": 25,
-      "yes_ask": 75,
-      "no_ask": 26,
-      "last_price": 74,
+      "yes_bid": 50,
+      "no_bid": 48,
+      "yes_ask": 52,
+      "no_ask": 50,
+      "last_price": 51,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
+      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "yes_bid": 54,
+      "no_bid": 43,
+      "yes_ask": 57,
+      "no_ask": 46,
+      "last_price": 58,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXACBGAME-26MAY261515VALZAR-ZAR",
+      "title": "Valencia Basket vs Basket Zaragoza 2002 Winner?",
+      "yes_bid": 4,
+      "no_bid": 94,
+      "yes_ask": 6,
+      "no_ask": 96,
+      "last_price": 6,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
+      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "yes_bid": 41,
+      "no_bid": 52,
+      "yes_ask": 48,
+      "no_ask": 59,
+      "last_price": 49,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 36,
+      "no_bid": 63,
+      "yes_ask": 37,
+      "no_ask": 64,
+      "last_price": 36,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
@@ -18,110 +66,50 @@
     {
       "ticker": "KXACBGAME-26MAY261515VALZAR-VAL",
       "title": "Valencia Basket vs Basket Zaragoza 2002 Winner?",
-      "yes_bid": 98,
+      "yes_bid": 97,
       "no_bid": 1,
       "yes_ask": 99,
-      "no_ask": 2,
-      "last_price": 99,
+      "no_ask": 3,
+      "last_price": 96,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Sports"
     },
     {
-      "ticker": "KXMAYORLA-26-KBAS",
-      "title": "Who will win Los Angeles Mayoral Election?",
-      "yes_bid": 68,
-      "no_bid": 31,
-      "yes_ask": 69,
-      "no_ask": 32,
+      "ticker": "KXBTC-26MAY2617-B75875",
+      "title": "Bitcoin price range  on May 26, 2026?",
+      "yes_bid": 66,
+      "no_bid": 26,
+      "yes_ask": 74,
+      "no_ask": 34,
       "last_price": 69,
       "volume": 0,
-      "close_time": "2027-06-02",
-      "category": "Other"
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     },
     {
       "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
       "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 3,
-      "no_bid": 96,
-      "yes_ask": 4,
-      "no_ask": 97,
-      "last_price": 5,
+      "yes_bid": 4,
+      "no_bid": 95,
+      "yes_ask": 5,
+      "no_ask": 96,
+      "last_price": 6,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 57,
-      "no_bid": 42,
-      "yes_ask": 58,
-      "no_ask": 43,
-      "last_price": 57,
+      "ticker": "KXMLBGAME-26MAY262145AZSF-SF",
+      "title": "Arizona vs San Francisco Winner?",
+      "yes_bid": 50,
+      "no_bid": 49,
+      "yes_ask": 51,
+      "no_ask": 50,
+      "last_price": 51,
       "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXBRENTD-26MAY2617-T96.50",
-      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
-      "yes_bid": 75,
-      "no_bid": 24,
-      "yes_ask": 76,
-      "no_ask": 25,
-      "last_price": 76,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
-      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 57,
-      "no_bid": 42,
-      "yes_ask": 58,
-      "no_ask": 43,
-      "last_price": 58,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 42,
-      "no_bid": 57,
-      "yes_ask": 43,
-      "no_ask": 58,
-      "last_price": 43,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXVALORANTGAME-26MAY261600ADGNBG-ADG",
-      "title": "Will Azure Dragon Gaming win the Azure Dragon Gaming vs. Nightblood Gaming Valorant match?",
-      "yes_bid": 73,
-      "no_bid": 24,
-      "yes_ask": 76,
-      "no_ask": 27,
-      "last_price": 74,
-      "volume": 0,
-      "close_time": "2026-06-09",
+      "close_time": "2026-05-30",
       "category": "Sports"
-    },
-    {
-      "ticker": "KXETH15M-26MAY261700-00",
-      "title": "ETH price up in next 15 mins?",
-      "yes_bid": 76,
-      "no_bid": 21,
-      "yes_ask": 79,
-      "no_ask": 24,
-      "last_price": 74,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
     },
     {
       "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
@@ -136,126 +124,146 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26GAREWI-EWI",
-      "title": "Will Salma Ewing win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 15,
-      "no_bid": 84,
-      "yes_ask": 16,
-      "no_ask": 85,
-      "last_price": 16,
+      "ticker": "KXMAYORLA-26-SPRA",
+      "title": "Who will win Los Angeles Mayoral Election?",
+      "yes_bid": 26,
+      "no_bid": 73,
+      "yes_ask": 27,
+      "no_ask": 74,
+      "last_price": 26,
+      "volume": 0,
+      "close_time": "2027-06-02",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-CAY",
+      "title": "Will Eryn Cayetano win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 94,
+      "no_bid": 5,
+      "yes_ask": 95,
+      "no_ask": 6,
+      "last_price": 95,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXNBASPREAD-26MAY26SASOKC-OKC4",
-      "title": "Oklahoma City wins by over 4.5 points?",
-      "yes_bid": 47,
-      "no_bid": 52,
-      "yes_ask": 48,
-      "no_ask": 53,
-      "last_price": 47,
+      "ticker": "KXMLBTEAMTOTAL-26MAY261810WSHCLE-WSH4",
+      "title": "Will Washington score over 3.5 runs?",
+      "yes_bid": 49,
+      "no_bid": 49,
+      "yes_ask": 51,
+      "no_ask": 51,
+      "last_price": 51,
       "volume": 0,
-      "close_time": "2026-06-10",
+      "close_time": "2026-05-29",
       "category": "Sports"
     },
     {
-      "ticker": "KXBTCD-26MAY2617-T76249.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 1,
+      "ticker": "KXCONMEBOLSUDGAME-26MAY26PALRIE-PAL",
+      "title": "Palestino vs Riestra Winner?",
+      "yes_bid": 33,
+      "no_bid": 66,
+      "yes_ask": 34,
+      "no_ask": 67,
+      "last_price": 34,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026569DF52150E-6A4FCD2EC08",
+      "title": "yes Cleveland,yes Pittsburgh,yes Detroit,yes Toronto",
+      "yes_bid": 9,
+      "no_bid": 90,
+      "yes_ask": 10,
+      "no_ask": 91,
+      "last_price": 10,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBGAME-26MAY271940MINCWS-CWS",
+      "title": "Minnesota vs Chicago WS Winner?",
+      "yes_bid": 57,
+      "no_bid": 42,
+      "yes_ask": 58,
+      "no_ask": 43,
+      "last_price": 56,
+      "volume": 0,
+      "close_time": "2026-05-30",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBRENTD-26MAY2617-T96.50",
+      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
+      "yes_bid": 77,
+      "no_bid": 15,
+      "yes_ask": 85,
+      "no_ask": 23,
+      "last_price": 85,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026EDBF1C34C3A-06CC341A878",
+      "title": "yes Cleveland,yes Tampa Bay,yes Detroit,yes Atlanta,yes Toronto,yes Cincinnati,yes Minnesota,yes New York Y,yes Milwaukee,yes Texas,yes Los Angeles D,no Pittsburgh wins by over 1.5 runs",
+      "yes_bid": 0,
+      "no_bid": 100,
+      "yes_ask": 0,
+      "no_ask": 100,
+      "last_price": 0,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXTRUMPADMINLEAVE-26DEC31-KPAT",
+      "title": "Will Kash Patel leaves Director of the FBI in before 2027?",
+      "yes_bid": 66,
+      "no_bid": 33,
+      "yes_ask": 67,
+      "no_ask": 34,
+      "last_price": 65,
+      "volume": 0,
+      "close_time": "2027-01-01",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20267B052331A7B-32F8A4215D2",
+      "title": "yes Jonathan Aranda: 1+,yes Jarren Duran: 1+,yes Freddie Freeman: 1+",
+      "yes_bid": 0,
       "no_bid": 99,
       "yes_ask": 1,
       "no_ask": 100,
-      "last_price": 1,
+      "last_price": 0,
       "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXIIHFGAME-26MAY261420FINSUI-SUI",
-      "title": "Finland at Switzerland Winner?",
-      "yes_bid": 99,
-      "no_bid": 0,
-      "yes_ask": 100,
-      "no_ask": 1,
-      "last_price": 99,
-      "volume": 0,
-      "close_time": "2026-06-09",
+      "close_time": "2026-05-29",
       "category": "Sports"
-    },
-    {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
-      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
-      "yes_bid": 22,
-      "no_bid": 76,
-      "yes_ask": 24,
-      "no_ask": 78,
-      "last_price": 22,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXTRUMPENDORSEMENTS-26MAY30-A3",
-      "title": "Will Trump endorse at least 3 people on Truth Social this week?",
-      "yes_bid": 88,
-      "no_bid": 9,
-      "yes_ask": 91,
-      "no_ask": 12,
-      "last_price": 90,
-      "volume": 0,
-      "close_time": "2026-05-31",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26GAREWI-GAR",
-      "title": "Will Julia Garcia win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 85,
-      "no_bid": 14,
-      "yes_ask": 86,
-      "no_ask": 15,
-      "last_price": 86,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
-      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 24,
-      "no_bid": 73,
-      "yes_ask": 27,
-      "no_ask": 76,
-      "last_price": 28,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY",
-      "title": "Will Aidan Mayo win the Mayo vs Butvilas: Round Of 32 match?",
-      "yes_bid": 40,
-      "no_bid": 57,
-      "yes_ask": 43,
-      "no_ask": 60,
-      "last_price": 41,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXBTC15M-26MAY261700-00",
-      "title": "BTC price up in next 15 mins?",
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "side": "YES",
+      "price": 36,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
+    },
+    {
+      "ticker": "KXBTC-26MAY2617-B75875",
+      "title": "Bitcoin price range  on May 26, 2026?",
       "side": "NO",
-      "price": 26,
+      "price": 34,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     },
     {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
+      "ticker": "KXMLBGAME-26MAY271940MINCWS-CWS",
+      "title": "Minnesota vs Chicago WS Winner?",
       "side": "NO",
       "price": 43,
       "reason": "Strong favorite zone + Expiring soon",
@@ -265,15 +273,7 @@
       "ticker": "KXBRENTD-26MAY2617-T96.50",
       "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
       "side": "NO",
-      "price": 25,
-      "reason": "Strong favorite zone + Expiring soon",
-      "edge_score": 4.5
-    },
-    {
-      "ticker": "KXETH15M-26MAY261700-00",
-      "title": "ETH price up in next 15 mins?",
-      "side": "NO",
-      "price": 24,
+      "price": 23,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     },
@@ -281,7 +281,7 @@
       "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
       "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
       "side": "YES",
-      "price": 42,
+      "price": 41,
       "reason": "Underdog value zone + Expiring within 2 weeks",
       "edge_score": 4.0
     }
@@ -304,7 +304,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "OKC -3.5",
           "home_fav": true,
           "home_moneyline": -162,
@@ -332,7 +332,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "SEA -3.5",
           "home_fav": true,
           "home_moneyline": -205,
@@ -360,7 +360,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LAR -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -388,7 +388,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "CIN -3.5",
           "home_fav": true,
           "home_moneyline": -198,
@@ -416,7 +416,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "DET -7",
           "home_fav": true,
           "home_moneyline": -325,
@@ -444,7 +444,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "TEN -3",
           "home_fav": true,
           "home_moneyline": -166,
@@ -472,7 +472,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "BAL -3.5",
           "home_fav": false,
           "home_moneyline": 160,
@@ -500,7 +500,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "PIT -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -528,7 +528,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "CHI -2.5",
           "home_fav": false,
           "home_moneyline": 114,
@@ -556,7 +556,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "JAX -7",
           "home_fav": true,
           "home_moneyline": -298,
@@ -584,7 +584,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "BUF -1.5",
           "home_fav": false,
           "home_moneyline": -108,
@@ -612,7 +612,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LV -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -640,7 +640,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "GB -1.5",
           "home_fav": false,
           "home_moneyline": 105,
@@ -668,7 +668,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "PHI -5.5",
           "home_fav": true,
           "home_moneyline": -238,
@@ -696,7 +696,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LAC -11.5",
           "home_fav": true,
           "home_moneyline": -650,
@@ -724,7 +724,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "DAL -2.5",
           "home_fav": false,
           "home_moneyline": 110,
@@ -752,7 +752,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "KC -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -1200,7 +1200,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "COL -115",
           "home_fav": false,
           "home_moneyline": -105,
@@ -10915,8 +10915,8 @@
       "sport": "baseball",
       "league": "mlb",
       "status": "10-Day-IL",
-      "detail": "Strain",
-      "return_date": "2026-05-26"
+      "detail": "",
+      "return_date": ""
     },
     {
       "player": "Lance McCullers Jr.",
@@ -12382,8 +12382,8 @@
       "sport": "baseball",
       "league": "mlb",
       "status": "Day-To-Day",
-      "detail": "Soreness",
-      "return_date": "2026-05-26"
+      "detail": "",
+      "return_date": ""
     },
     {
       "player": "Corey Seager",
@@ -12782,15 +12782,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Petr Mrazek",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Charlie McAvoy",
       "team": "",
       "sport": "hockey",
@@ -12815,15 +12806,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "Severe",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Dans Locmelis",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -12881,60 +12863,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Joel Hanley",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Samuel Honzek",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonathan Huberdeau",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Cullen Potter",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jake Bean",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Henry Mews",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Andrew Mangiapane",
       "team": "",
       "sport": "hockey",
@@ -12942,33 +12870,6 @@
       "status": "Out",
       "detail": "",
       "return_date": "2026-09-15"
-    },
-    {
-      "player": "Matt Grzelcyk",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Artyom Levshunov",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Ryan Ellis",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-07-01"
     },
     {
       "player": "Shea Weber",
@@ -13070,15 +12971,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Mattias Janmark",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Carter Verhaeghe",
       "team": "",
       "sport": "hockey",
@@ -13133,75 +13025,12 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Evan Rodrigues",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Aaron Ekblad",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonah Gadjovich",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Sam Reinhart",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Niko Mikkola",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Uvis Balinskis",
       "team": "",
       "sport": "hockey",
       "league": "nhl",
       "status": "Out",
       "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Brad Marchand",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Kevin Fiala",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13250,15 +13079,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Patrik Laine",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-06-02"
-    },
-    {
       "player": "Jonas Siegenthaler",
       "team": "",
       "sport": "hockey",
@@ -13292,33 +13112,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Arseny Gritsyuk",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Stefan Noesen",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-10-15"
-    },
-    {
-      "player": "Zack MacEwen",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13368,24 +13161,6 @@
     },
     {
       "player": "Alexander Romanov",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Pierre Engvall",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Matt Rempe",
       "team": "",
       "sport": "hockey",
       "league": "nhl",
@@ -13463,33 +13238,6 @@
       "league": "nhl",
       "status": "Injured Reserve",
       "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Ty Murchison",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Caleb Jones",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Filip Hallander",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
       "return_date": "2026-09-15"
     },
     {
@@ -13619,24 +13367,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Auston Matthews",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Chris Tanev",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Barrett Hayton",
       "team": "",
       "sport": "hockey",
@@ -13661,33 +13391,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Thatcher Demko",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonathan Lekkerimaki",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Filip Chytil",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Fracture",
       "return_date": "2026-09-15"
     },
     {
@@ -13724,15 +13427,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Eriks Mateiko",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13804,7 +13498,7 @@
       "headline": "2026 NBA buzz: Latest news, injuries, league intel, updates",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T20:21:18Z",
+      "published": "2026-05-26T20:18:59Z",
       "is_alert": false,
       "url": "https://www.espn.com/nba/story/_/id/48377855/2026-nba-buzz-latest-live-updates-news-intel-nba-draft-offseason"
     },
@@ -13820,7 +13514,7 @@
       "headline": "Shams: Kenny Atkinson returning as Cavaliers coach next season",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T20:26:06Z",
+      "published": "2026-05-26T19:50:25Z",
       "is_alert": false,
       "url": "https://www.espn.com/video/clip/_/id/48883468/kenny-atkinson-returning-cavaliers-coach-next-season"
     },
@@ -13961,36 +13655,12 @@
       "url": "https://www.espn.com/espn/betting/story/_/id/44686270/2026-nhl-stanley-cup-playoffs-championship-odds"
     },
     {
-      "headline": "2026 World Cup: List of squads, players announced so far",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:40:40Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/soccer/story/_/id/48757621/2026-world-cup-squad-lists-players-announced-all-48-teams"
-    },
-    {
-      "headline": "Pochettino backs 'amazing' Reyna for World Cup success",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:40:29Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/video/clip/_/id/48884069/pochettino-backs-amazing-reyna-world-cup-success"
-    },
-    {
       "headline": "USA's 2026 World Cup roster reveal recap: Pulisic, Reyna headline 26-man squad",
       "sport": "soccer",
       "league": "fifa.world",
-      "published": "2026-05-26T20:24:09Z",
+      "published": "2026-05-26T20:03:11Z",
       "is_alert": false,
       "url": "https://www.espn.com/soccer/story/_/id/48838557/live-updates-united-states-national-team-2026-fifa-world-cup-roster-reveal"
-    },
-    {
-      "headline": "FIFA World Cup squads for African teams - South Africa, Ghana, Ivory Coast, Morocco, and more",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:27:29Z",
-      "is_alert": true,
-      "url": "https://www.espn.com/espn/story/_/id/48806568/fifa-world-cup-squads-african-teams-south-africa-ghana-ivory-coast-morocco-more"
     },
     {
       "headline": "Achraf Hakimi, Brahim Diaz headline Morocco squad for FIFA World Cup; Youssef En-Nesyri out",
@@ -13999,15 +13669,69 @@
       "published": "2026-05-26T20:20:14Z",
       "is_alert": true,
       "url": "https://www.espn.com/espn/story/_/id/48883710/achraf-hakimi-brahim-diaz-headline-morocco-squad-fifa-world-cup-youssef-en-nesyri-out"
+    },
+    {
+      "headline": "USMNT's final World Cup roster has Pochettino taking risks",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T20:19:08Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48882849/usmnt-final-world-cup-roster-pochettino-taking-risks"
+    },
+    {
+      "headline": "USMNT names 2026 World Cup roster after leaks",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T20:14:09Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48882389/usa-2026-world-cup-roster-christian-pulisic-squad-mckennie-adams"
+    },
+    {
+      "headline": "Scotland World Cup starting spots remain up for grabs - Steven Naismith",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T17:44:28Z",
+      "is_alert": true,
+      "url": "https://www.espn.com/soccer/story/_/id/48882493/scotland-starting-spots-remain-grabs-steven-naismith"
     }
   ],
   "crypto": {
-    "btc_usd": 75983,
-    "btc_24h_change": -1.62,
-    "eth_usd": 2074.13,
+    "btc": {
+      "usd": 75996,
+      "change_24h": -1.61,
+      "market_cap": 1522395239725.3032
+    },
+    "eth": {
+      "usd": 2074.34,
+      "change_24h": -1.79,
+      "market_cap": 250341341512.88232
+    },
+    "sol": {
+      "usd": 83.78,
+      "change_24h": -1.82,
+      "market_cap": 48444515375.24437
+    },
+    "sui": {
+      "usd": 1.006,
+      "change_24h": -3.6,
+      "market_cap": 4032092621.1885743
+    },
+    "avax": {
+      "usd": 9.16,
+      "change_24h": -1.93,
+      "market_cap": 3954171600.9068055
+    },
+    "link": {
+      "usd": 9.4,
+      "change_24h": -1.02,
+      "market_cap": 6835429501.226692
+    },
+    "btc_usd": 75996,
+    "btc_24h_change": -1.61,
+    "eth_usd": 2074.34,
     "eth_24h_change": -1.79,
-    "sol_usd": 83.77,
-    "sol_24h_change": -1.85
+    "sol_usd": 83.78,
+    "sol_24h_change": -1.82
   },
   "metaculus": []
 }
