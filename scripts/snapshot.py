@@ -7,7 +7,7 @@ import httpx
 
 EMAIL    = os.environ.get("KALSHI_EMAIL", "")
 PASSWORD = os.environ.get("KALSHI_PASSWORD", "")
-BASE_URL = "https://trading-api.kalshi.com/trade-api/v2"
+BASE_URL = "https://api.elections.kalshi.com/trade-api/v2"
 
 if not EMAIL or not PASSWORD:
     sys.exit("ERROR: KALSHI_EMAIL and KALSHI_PASSWORD must be set")
