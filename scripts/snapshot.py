@@ -1,4 +1,4 @@
-"""Kalshi snapshot — active markets + deep World Cup search (all statuses)."""
+"""Kalshi snapshot — active markets + targeted WC search."""
 import base64, os, sys, time, traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -40,7 +40,7 @@ def get(path, params=None):
     try:
         r = httpx.get(f"{BASE_URL}{path}", headers=auth_headers("GET", path),
                       params=params, timeout=15)
-        print(f"GET {path} -> {r.status_code}", file=sys.stderr)
+        print(f"GET {path} {params} -> {r.status_code}", file=sys.stderr)
         if not r.is_success:
             print(f"  {r.text[:200]}", file=sys.stderr)
             return None
@@ -118,101 +118,85 @@ except Exception as e:
     traceback.print_exc(file=sys.stderr)
 
 # ================================================================
-# SECTION 2: World Cup — try multiple statuses + series scan
+# SECTION 2: World Cup — targeted search based on known categories
 # ================================================================
 lines.append("\n" + "="*70)
 lines.append("## FIFA WORLD CUP 2026")
 lines.append("="*70)
 
 try:
-    WC_KEYWORDS = [
-        "world cup", "fifa", "wc2026", "wc 2026", "soccer", "football",
-        "copa mundial", "copa", "group a", "group b", "group c", "group d",
-        "group e", "group f", "group g", "group h", "group i", "group j",
-        "group k", "group l",
-    ]
+    # Based on app categories: Games, Futures, Awards, Group Winner,
+    # Group Qualifiers, Group Goals, Group Stage Specials, Furthest Stage,
+    # Stage of Elimination, Squad Selection, Tournament Goals,
+    # World Cup Specials, Country Goals, Host Nation
+
+    # Try every plausible series ticker variant
     WC_SERIES = [
-        "KXFIFAWC26", "KXFIFAWC", "KXWC26", "KXWC2026", "KXWC",
-        "KXSOCCER", "KXSOCCER26", "KXFIFA", "KXFIFA26", "KXFOOTBALL",
-        "FIFAWC26", "KXCOPA", "KXWORLDCUP", "KXWORLDCUP26",
-        "KXWC26CHAMP", "KXWC26GROUP", "KXWC26MATCH",
+        # Most likely
+        "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC", "KXWC",
+        # Category-based
+        "KXWC26FUTURES", "KXWC26GAMES", "KXWC26AWARDS",
+        "KXWC26GROUPWIN", "KXWC26GROUP", "KXWC26QUALS",
+        "KXWC26STAGE", "KXWC26GOALS", "KXWC26SPECIAL",
+        "KXWC26HOST", "KXWC26SQUAD", "KXWC26COUNTRY",
+        # Alt formats
+        "KXFIFA", "KXFIFA26", "KXWORLDCUP", "KXWORLDCUP26",
+        "KXSOCCER", "KXSOCCER26", "KXFOOTBALL", "KXFOOTBALL26",
+        "KXWC26WIN", "KXWC26CHAMP", "KXWC26ELIM", "KXWC26FURTHER",
+        # Try with 2026 appended differently
+        "KX2026WC", "KXWC26TOURN", "KXWC26SPEC",
     ]
+    STATUSES = ["open", "active", "closed", ""]  # try all status values
 
     wc_markets = []
-    found_via = None
-    seen_tk = set()
+    found_via  = None
+    seen_tk    = set()
+    hits       = []  # log all hits for diagnostics
 
-    # 1. Try series tickers with NO status filter (catches pre-open markets too)
     for series in WC_SERIES:
-        for status in [None, "open", "active"]:
+        for status in STATUSES:
             params = {"series_ticker": series, "limit": 100}
             if status:
                 params["status"] = status
             resp = get("/markets", params)
             batch = (resp or {}).get("markets", []) or []
-            for m in batch:
+            if batch:
+                hits.append(f"{series}/{status}: {len(batch)} markets")
+                for m in batch:
+                    tk = m.get("ticker", "")
+                    if tk and tk not in seen_tk:
+                        seen_tk.add(tk); wc_markets.append(m)
+                if not found_via:
+                    found_via = f"{series} (status={status or 'any'})"
+
+    # Also try fetching specific likely event tickers directly
+    WC_EVENTS = [
+        "KXWC26FUTURES", "KXWC2026FUTURES", "KXFIFAWC26FUTURES",
+        "KXWC26WINNER", "KXWC26CHAMP", "KXWC2026WINNER",
+        "KXWC26GROUPAWINNER", "KXWC26GROUPBWINNER",
+        "KXWC2026", "KXFIFAWC2026",
+    ]
+    for et in WC_EVENTS:
+        resp = get(f"/events/{et}")
+        if resp:
+            event = (resp or {}).get("event", {})
+            ms = (event.get("markets") or []) if isinstance(event, dict) else []
+            for m in ms:
                 tk = m.get("ticker", "")
                 if tk and tk not in seen_tk:
                     seen_tk.add(tk); wc_markets.append(m)
-            if batch:
-                found_via = f"series={series} status={status}"
-                print(f"  HIT: {found_via} -> {len(batch)} markets", file=sys.stderr)
-                break
-        if wc_markets:
-            break
+            if ms:
+                hits.append(f"event/{et}: {len(ms)} markets")
+                if not found_via: found_via = f"event/{et}"
 
-    # 2. Scan events with no status filter (gets ALL events)
-    if not wc_markets:
-        print("  Scanning events with no status filter...", file=sys.stderr)
-        all_series = set()
-        wc_event_tickers = []
-        cursor = None
-        pages = 0
-        while pages < 20:
-            params = {"limit": 100}
-            if cursor:
-                params["cursor"] = cursor
-            resp = get("/events", params)
-            if not resp: break
-            events = (resp or {}).get("events", []) or []
-            for e in events:
-                t = (e.get("title") or "").lower()
-                s = (e.get("series_ticker") or "")
-                all_series.add(s)
-                if any(kw in t or kw in s.lower() for kw in WC_KEYWORDS):
-                    et = e.get("event_ticker", "")
-                    if et:
-                        wc_event_tickers.append(et)
-                        print(f"  WC event: [{s}] {e.get('title','')}", file=sys.stderr)
-            cursor = resp.get("cursor")
-            pages += 1
-            if not cursor or not events: break
-
-        print(f"  Pages={pages}, WC events={len(wc_event_tickers)}, unique series={len(all_series)}", file=sys.stderr)
-
-        for et in wc_event_tickers[:50]:
-            try:
-                resp = get(f"/events/{et}")
-                event = (resp or {}).get("event", {})
-                if isinstance(event, dict):
-                    for m in (event.get("markets") or []):
-                        tk = m.get("ticker", "")
-                        if tk and tk not in seen_tk:
-                            seen_tk.add(tk); wc_markets.append(m)
-            except Exception: continue
-
-        if not wc_markets:
-            lines.append(f"\n  Searched {pages} event pages, {len(all_series)} unique series. Still nothing.")
-            lines.append("  All series tickers found (sorted):")
-            for s in sorted(all_series):
-                if s: lines.append(f"    {s}")
+    lines.append(f"  Series/event hits: {hits if hits else 'none'}")
 
     if wc_markets:
         by_event = {}
         for m in wc_markets:
             ev = m.get("event_ticker", "other")
             by_event.setdefault(ev, []).append(m)
-        lines.append(f"\n  FOUND {len(wc_markets)} WC markets via {found_via}")
+        lines.append(f"  FOUND {len(wc_markets)} WC markets via: {found_via}")
         for ev, ms in sorted(by_event.items()):
             lines.append(f"\n### {ev}")
             lines.append(f"  {'Title':<52} {'YES':>4} {'NO':>4}  Closes")
@@ -223,6 +207,9 @@ try:
                 y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars"))
                 n = cents(m.get("no_bid_dollars"))
                 lines.append(f"  {title:<52} {str(y)+'c' if y else '?':>4} {str(n)+'c' if n else '?':>4}  {close}")
+    else:
+        lines.append("  Tried all variants. WC markets not accessible via this API key.")
+        lines.append("  This may be a permissions issue or the markets use a private endpoint.")
 
 except Exception as e:
     lines.append(f"  ERROR: {e}")
