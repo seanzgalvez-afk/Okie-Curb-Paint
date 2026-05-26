@@ -43,7 +43,10 @@ jobs:
           git config user.name  "kalshi-bot"
           git config user.email "bot@kalshi"
           git add data/snapshot.txt
-          git diff --cached --quiet && echo "No changes" && exit 0
-          git commit -m "chore: update kalshi snapshot [skip ci]"
-          git pull --rebase origin claude/kalshi-bot-setup-4xG92
-          git push origin claude/kalshi-bot-setup-4xG92
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update kalshi snapshot [skip ci]"
+            git pull --rebase origin claude/kalshi-bot-setup-4xG92
+            git push origin claude/kalshi-bot-setup-4xG92
+          fi
