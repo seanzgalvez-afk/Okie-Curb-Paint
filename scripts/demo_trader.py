@@ -220,7 +220,7 @@ def should_trade_signal(signal, state):
     kelly_risk_cents = int(state["bankroll_cents"] * min(kelly_frac, 0.05))
     risk_cents = min(kelly_risk_cents, max_risk_cents)
 
-    if risk_cents < 50:  # min $0.50 per trade
+    if risk_cents < 10:  # min $0.10 per trade
         return False, None, 0, 0
 
     side = "yes" if "YES" in direction.upper() else "no"
@@ -322,45 +322,93 @@ def main():
 
     # 6. Process new signals
     new_orders = 0
-    max_new_orders = 3  # max new orders per run to avoid spam
+    max_new_orders = 5  # max new orders per run
 
     high_priority = [s for s in signals if s.get("priority", 9) <= 2]
     log(f"High-priority signals to evaluate: {len(high_priority)}")
 
-    for signal in high_priority[:10]:  # check top 10
+    # Pull current Kalshi markets for live prices
+    markets_data = data.get("markets", [])
+    market_prices = {m["ticker"]: m.get("yes_bid", m.get("yes_ask", 50))
+                     for m in markets_data if "ticker" in m}
+
+    for signal in high_priority[:10]:
         if new_orders >= max_new_orders:
             log(f"  Reached max new orders ({max_new_orders}) for this run")
             break
 
-        ticker = signal.get("ticker", "")
-        if not ticker:
+        sig_type  = signal.get("type", "")
+        ticker    = signal.get("ticker", "")
+        direction = signal.get("direction", "")
+
+        log(f"\nEvaluating: [{sig_type}] {ticker} {direction}")
+
+        # ── Bundle arb: buy YES on ALL contracts in the series ──────────────
+        if sig_type == "bundle_arb" and direction == "BUY ALL":
+            contracts = signal.get("contracts", [])
+            if not contracts:
+                log("  Skip bundle_arb: no contracts list")
+                continue
+
+            # Skip if any leg already tracked
+            tracked = {o["ticker"] for o in state["orders"]}
+            if any(c in tracked for c in contracts):
+                log(f"  Skip bundle_arb: already have leg open")
+                continue
+
+            # Size: risk up to 10% of bankroll split across legs
+            total_cost = signal.get("price", 80)  # sum of YES prices
+            risk_budget = int(state["bankroll_cents"] * 0.10)
+            qty = max(1, risk_budget // max(total_cost, 1))
+            qty = min(qty, 10)  # hard cap 10 contracts per leg
+
+            log(f"  Bundle arb: {len(contracts)} legs, qty={qty}, total_cost≈{total_cost}¢")
+            placed_legs = 0
+            for leg_ticker in contracts:
+                # Get live price for this contract
+                leg_price = market_prices.get(leg_ticker, 50)
+                limit_price = max(1, min(99, leg_price))  # at market for arb speed
+                order = place_limit_order(
+                    ticker=leg_ticker,
+                    side="yes",
+                    price_cents=limit_price,
+                    quantity=qty,
+                    signal_type="bundle_arb",
+                    rationale=signal.get("rationale", "")[:100],
+                )
+                if order:
+                    order["bundle_series"] = ticker
+                    state["orders"].append(order)
+                    new_orders += 1
+                    placed_legs += 1
+            log(f"  → Placed {placed_legs}/{len(contracts)} bundle legs")
             continue
 
-        log(f"\nEvaluating: [{signal.get('type')}] {ticker} {signal.get('direction')}")
+        # ── Standard single-contract signals ────────────────────────────────
+        if not ticker:
+            continue
 
         should, side, price, qty = should_trade_signal(signal, state)
         if not should:
             continue
 
-        # Get live market price to confirm signal still valid
+        # Get live market price to verify signal still valid
         book = get_market_info(ticker)
         if book:
-            current_bid = book.get("best_bid")
-            current_ask = book.get("best_ask")
-            log(f"  Market: bid={current_bid}¢ ask={current_ask}¢ | Signal price={signal.get('price')}¢")
+            log(f"  Market: bid={book.get('best_bid')}¢ ask={book.get('best_ask')}¢ | signal={signal.get('price')}¢")
 
         order = place_limit_order(
             ticker=ticker,
             side=side,
             price_cents=price,
             quantity=qty,
-            signal_type=signal.get("type", ""),
+            signal_type=sig_type,
             rationale=signal.get("rationale", ""),
         )
         if order:
             state["orders"].append(order)
             new_orders += 1
-            log(f"  → Added to tracker: {ticker}")
+            log(f"  → Tracked: {ticker}")
 
     log(f"\nNew orders placed: {new_orders}")
     log(f"Total tracked orders: {len(state['orders'])}")
