@@ -1,136 +1,124 @@
 {
-  "generated": "2026-05-26 20:38 UTC",
+  "generated": "2026-05-26 20:49 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 54,
-      "no_bid": 45,
-      "yes_ask": 55,
-      "no_ask": 46,
-      "last_price": 57,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
-      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 48,
-      "no_bid": 51,
-      "yes_ask": 49,
-      "no_ask": 52,
-      "last_price": 49,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTC15M-26MAY261645-45",
+      "ticker": "KXBTC15M-26MAY261700-00",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 6,
-      "no_bid": 94,
-      "yes_ask": 6,
-      "no_ask": 94,
-      "last_price": 6,
+      "yes_bid": 74,
+      "no_bid": 25,
+      "yes_ask": 75,
+      "no_ask": 26,
+      "last_price": 74,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26RAPSHO-RAP",
-      "title": "Will Malaika Rapolu win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 36,
-      "no_bid": 55,
-      "yes_ask": 45,
-      "no_ask": 64,
-      "last_price": 45,
+      "ticker": "KXACBGAME-26MAY261515VALZAR-VAL",
+      "title": "Valencia Basket vs Basket Zaragoza 2002 Winner?",
+      "yes_bid": 98,
+      "no_bid": 1,
+      "yes_ask": 99,
+      "no_ask": 2,
+      "last_price": 99,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMAYORLA-26-KBAS",
+      "title": "Who will win Los Angeles Mayoral Election?",
+      "yes_bid": 68,
+      "no_bid": 31,
+      "yes_ask": 69,
+      "no_ask": 32,
+      "last_price": 69,
+      "volume": 0,
+      "close_time": "2027-06-02",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
+      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 3,
+      "no_bid": 96,
+      "yes_ask": 4,
+      "no_ask": 97,
+      "last_price": 5,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26SEAMEJ-MEJ",
-      "title": "Will Nicolas Mejia win the Searle vs Mejia: Round Of 32 match?",
-      "yes_bid": 56,
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 57,
       "no_bid": 42,
       "yes_ask": 58,
-      "no_ask": 44,
-      "last_price": 59,
+      "no_ask": 43,
+      "last_price": 57,
       "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXIIHFGAME-26MAY261420CANCZE-CZE",
-      "title": "Canada at Czechia Winner?",
-      "yes_bid": 2,
-      "no_bid": 97,
-      "yes_ask": 3,
-      "no_ask": 98,
-      "last_price": 1,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXLIGUE1GAME-26MAY26STENIC-TIE",
-      "title": "Saint-Etienne vs Nice Winner?",
-      "yes_bid": 86,
-      "no_bid": 13,
-      "yes_ask": 87,
-      "no_ask": 14,
-      "last_price": 87,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
-      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 54,
-      "no_bid": 37,
-      "yes_ask": 63,
-      "no_ask": 46,
-      "last_price": 63,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXSILVERD-26MAY2617-T77",
-      "title": "Will the silver close price be above 77  USD/t.oz on May 26, 2026 at 5:00 PM EDT?",
-      "yes_bid": 40,
-      "no_bid": 43,
-      "yes_ask": 57,
-      "no_ask": 60,
-      "last_price": 51,
+      "ticker": "KXBRENTD-26MAY2617-T96.50",
+      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
+      "yes_bid": 75,
+      "no_bid": 24,
+      "yes_ask": 76,
+      "no_ask": 25,
+      "last_price": 76,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Other"
     },
     {
-      "ticker": "KXLIGUE1GAME-26MAY26STENIC-NIC",
-      "title": "Saint-Etienne vs Nice Winner?",
-      "yes_bid": 6,
-      "no_bid": 93,
-      "yes_ask": 7,
-      "no_ask": 94,
-      "last_price": 5,
+      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
+      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "yes_bid": 57,
+      "no_bid": 42,
+      "yes_ask": 58,
+      "no_ask": 43,
+      "last_price": 58,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
+      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "yes_bid": 42,
+      "no_bid": 57,
+      "yes_ask": 43,
+      "no_ask": 58,
+      "last_price": 43,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXVALORANTGAME-26MAY261600ADGNBG-ADG",
+      "title": "Will Azure Dragon Gaming win the Azure Dragon Gaming vs. Nightblood Gaming Valorant match?",
+      "yes_bid": 73,
+      "no_bid": 24,
+      "yes_ask": 76,
+      "no_ask": 27,
+      "last_price": 74,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Sports"
     },
     {
-      "ticker": "KXETH15M-26MAY261645-45",
+      "ticker": "KXETH15M-26MAY261700-00",
       "title": "ETH price up in next 15 mins?",
-      "yes_bid": 6,
-      "no_bid": 93,
-      "yes_ask": 7,
-      "no_ask": 94,
-      "last_price": 7,
+      "yes_bid": 76,
+      "no_bid": 21,
+      "yes_ask": 79,
+      "no_ask": 24,
+      "last_price": 74,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
@@ -148,56 +136,44 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXIIHFGAME-26MAY261420CANCZE-CAN",
-      "title": "Canada at Czechia Winner?",
-      "yes_bid": 98,
-      "no_bid": 1,
-      "yes_ask": 99,
-      "no_ask": 2,
-      "last_price": 98,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXITFMATCH-26MAY26SANZAM-SAN",
-      "title": "Will Roshan Santhosh win the Santhosh vs Zamora: M15 Lakewood CA Round of 32 match?",
-      "yes_bid": 10,
-      "no_bid": 88,
-      "yes_ask": 12,
-      "no_ask": 90,
-      "last_price": 12,
+      "ticker": "KXITFWMATCH-26MAY26GAREWI-EWI",
+      "title": "Will Salma Ewing win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 15,
+      "no_bid": 84,
+      "yes_ask": 16,
+      "no_ask": 85,
+      "last_price": 16,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 28,
-      "no_bid": 71,
-      "yes_ask": 29,
-      "no_ask": 72,
-      "last_price": 29,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXNBAGAME-26MAY26SASOKC-OKC",
-      "title": "Game 5: San Antonio at Oklahoma City Winner?",
-      "yes_bid": 59,
-      "no_bid": 40,
-      "yes_ask": 60,
-      "no_ask": 41,
-      "last_price": 60,
+      "ticker": "KXNBASPREAD-26MAY26SASOKC-OKC4",
+      "title": "Oklahoma City wins by over 4.5 points?",
+      "yes_bid": 47,
+      "no_bid": 52,
+      "yes_ask": 48,
+      "no_ask": 53,
+      "last_price": 47,
       "volume": 0,
       "close_time": "2026-06-10",
       "category": "Sports"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26GLUMAM-MAM",
-      "title": "Will Edda Mamedova win the Glushko vs Mamedova: W35 Wichita KS Round of 32 match?",
+      "ticker": "KXBTCD-26MAY2617-T76249.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 1,
+      "no_bid": 99,
+      "yes_ask": 1,
+      "no_ask": 100,
+      "last_price": 1,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXIIHFGAME-26MAY261420FINSUI-SUI",
+      "title": "Finland at Switzerland Winner?",
       "yes_bid": 99,
       "no_bid": 0,
       "yes_ask": 100,
@@ -205,83 +181,107 @@
       "last_price": 99,
       "volume": 0,
       "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
+      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
+      "yes_bid": 22,
+      "no_bid": 76,
+      "yes_ask": 24,
+      "no_ask": 78,
+      "last_price": 22,
+      "volume": 0,
+      "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXMLBKS-26MAY261845ATLBOS-ATLSSTRIDER99-8",
-      "title": "Spencer Strider: 8+ strikeouts?",
-      "yes_bid": 19,
-      "no_bid": 73,
-      "yes_ask": 27,
-      "no_ask": 81,
-      "last_price": 26,
+      "ticker": "KXTRUMPENDORSEMENTS-26MAY30-A3",
+      "title": "Will Trump endorse at least 3 people on Truth Social this week?",
+      "yes_bid": 88,
+      "no_bid": 9,
+      "yes_ask": 91,
+      "no_ask": 12,
+      "last_price": 90,
       "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
+      "close_time": "2026-05-31",
+      "category": "Other"
     },
     {
-      "ticker": "KXMLBTB-26MAY262210COLLAD-LADSOHTANI17-2",
-      "title": "Shohei Ohtani: 2+ total bases?",
-      "yes_bid": 50,
-      "no_bid": 49,
-      "yes_ask": 51,
-      "no_ask": 50,
-      "last_price": 51,
-      "volume": 0,
-      "close_time": "2026-05-30",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXIIHFGAME-26MAY261420FINSUI-FIN",
-      "title": "Finland at Switzerland Winner?",
-      "yes_bid": 44,
-      "no_bid": 52,
-      "yes_ask": 48,
-      "no_ask": 56,
-      "last_price": 49,
+      "ticker": "KXITFWMATCH-26MAY26GAREWI-GAR",
+      "title": "Will Julia Garcia win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 85,
+      "no_bid": 14,
+      "yes_ask": 86,
+      "no_ask": 15,
+      "last_price": 86,
       "volume": 0,
       "close_time": "2026-06-09",
-      "category": "Sports"
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
+      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 24,
+      "no_bid": 73,
+      "yes_ask": 27,
+      "no_ask": 76,
+      "last_price": 28,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY",
+      "title": "Will Aidan Mayo win the Mayo vs Butvilas: Round Of 32 match?",
+      "yes_bid": 40,
+      "no_bid": 57,
+      "yes_ask": 43,
+      "no_ask": 60,
+      "last_price": 41,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXSILVERD-26MAY2617-T77",
-      "title": "Will the silver close price be above 77  USD/t.oz on May 26, 2026 at 5:00 PM EDT?",
-      "side": "YES",
-      "price": 40,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
+      "ticker": "KXBTC15M-26MAY261700-00",
+      "title": "BTC price up in next 15 mins?",
+      "side": "NO",
+      "price": 26,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     },
     {
       "ticker": "KXBTCD-26MAY2617-T75999.99",
       "title": "Bitcoin price  on May 26, 2026?",
-      "side": "YES",
-      "price": 28,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
+      "side": "NO",
+      "price": 43,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     },
     {
-      "ticker": "KXMLBKS-26MAY261845ATLBOS-ATLSSTRIDER99-8",
-      "title": "Spencer Strider: 8+ strikeouts?",
-      "side": "YES",
-      "price": 19,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
+      "ticker": "KXBRENTD-26MAY2617-T96.50",
+      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
+      "side": "NO",
+      "price": 25,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26RAPSHO-RAP",
-      "title": "Will Malaika Rapolu win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
-      "side": "YES",
-      "price": 36,
-      "reason": "Underdog value zone + Expiring within 2 weeks",
-      "edge_score": 4.0
+      "ticker": "KXETH15M-26MAY261700-00",
+      "title": "ETH price up in next 15 mins?",
+      "side": "NO",
+      "price": 24,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     },
     {
-      "ticker": "KXIIHFGAME-26MAY261420FINSUI-FIN",
-      "title": "Finland at Switzerland Winner?",
+      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
+      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
       "side": "YES",
-      "price": 44,
+      "price": 42,
       "reason": "Underdog value zone + Expiring within 2 weeks",
       "edge_score": 4.0
     }
@@ -1061,10 +1061,10 @@
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "TEX -132",
+          "details": "TEX -136",
           "home_fav": true,
-          "home_moneyline": -132,
-          "away_moneyline": 109,
+          "home_moneyline": -136,
+          "away_moneyline": 113,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -1.5,
@@ -10127,6 +10127,15 @@
       "return_date": "2026-05-26"
     },
     {
+      "player": "Roman Anthony",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "10-Day-IL",
+      "detail": "Sprain",
+      "return_date": "2026-06-02"
+    },
+    {
       "player": "Romy Gonzalez",
       "team": "",
       "sport": "baseball",
@@ -10152,15 +10161,6 @@
       "status": "10-Day-IL",
       "detail": "Not Specified",
       "return_date": "2026-06-29"
-    },
-    {
-      "player": "Roman Anthony",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "10-Day-IL",
-      "detail": "Sprain",
-      "return_date": "2026-06-02"
     },
     {
       "player": "Kutter Crawford",
@@ -10460,6 +10460,15 @@
       "return_date": "2027-02-01"
     },
     {
+      "player": "Hunter Greene",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "60-Day-IL",
+      "detail": "Surgery",
+      "return_date": "2026-07-01"
+    },
+    {
       "player": "Rhett Lowder",
       "team": "",
       "sport": "baseball",
@@ -10494,15 +10503,6 @@
       "status": "10-Day-IL",
       "detail": "",
       "return_date": "2026-06-12"
-    },
-    {
-      "player": "Hunter Greene",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "60-Day-IL",
-      "detail": "Surgery",
-      "return_date": "2026-07-01"
     },
     {
       "player": "Connor Burns",
@@ -13961,6 +13961,22 @@
       "url": "https://www.espn.com/espn/betting/story/_/id/44686270/2026-nhl-stanley-cup-playoffs-championship-odds"
     },
     {
+      "headline": "2026 World Cup: List of squads, players announced so far",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T20:40:40Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48757621/2026-world-cup-squad-lists-players-announced-all-48-teams"
+    },
+    {
+      "headline": "Pochettino backs 'amazing' Reyna for World Cup success",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T20:40:29Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/video/clip/_/id/48884069/pochettino-backs-amazing-reyna-world-cup-success"
+    },
+    {
       "headline": "USA's 2026 World Cup roster reveal recap: Pulisic, Reyna headline 26-man squad",
       "sport": "soccer",
       "league": "fifa.world",
@@ -13983,31 +13999,15 @@
       "published": "2026-05-26T20:20:14Z",
       "is_alert": true,
       "url": "https://www.espn.com/espn/story/_/id/48883710/achraf-hakimi-brahim-diaz-headline-morocco-squad-fifa-world-cup-youssef-en-nesyri-out"
-    },
-    {
-      "headline": "USMNT's final World Cup roster has Pochettino taking risks",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:19:08Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/soccer/story/_/id/48882849/usmnt-final-world-cup-roster-pochettino-taking-risks"
-    },
-    {
-      "headline": "USMNT names 2026 World Cup roster after leaks",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:35:55Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/soccer/story/_/id/48882389/usa-2026-world-cup-roster-christian-pulisic-squad-mckennie-adams"
     }
   ],
   "crypto": {
-    "btc_usd": 75911,
-    "btc_24h_change": -1.74,
-    "eth_usd": 2072.09,
-    "eth_24h_change": -1.99,
-    "sol_usd": 83.69,
-    "sol_24h_change": -2.22
+    "btc_usd": 75983,
+    "btc_24h_change": -1.62,
+    "eth_usd": 2074.13,
+    "eth_24h_change": -1.79,
+    "sol_usd": 83.77,
+    "sol_24h_change": -1.85
   },
   "metaculus": []
 }
