@@ -35,6 +35,11 @@ def _load_private_key():
     """Load RSA private key from env var or file path."""
     raw = os.getenv("KALSHI_PRIVATE_KEY")
     if raw:
+        raw = raw.strip()
+        # Accept base64-encoded single-line OR raw PEM
+        if not raw.startswith("-----"):
+            import base64 as _b64
+            raw = _b64.b64decode(raw).decode()
         pem = raw.replace("\\n", "\n").encode()
     else:
         path = os.getenv("KALSHI_PRIVATE_KEY_PATH", "./kalshi_private_key.pem")
