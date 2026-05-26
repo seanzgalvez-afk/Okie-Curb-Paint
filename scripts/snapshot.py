@@ -514,7 +514,7 @@ def _cg_get(path, params=None):
 
 def _on_interval(minutes):
     """True if current UTC minute is on a multiple-of-minutes boundary."""
-    return datetime.now(timezone.utc).minute % minutes == 0
+    return True  # TEMP: force all intervals for API key test — revert after
 
 def fetch_crypto_prices():
     """Live prices for BTC/ETH/SOL + key alts. Every 15 min = 2,880 credits/month."""
