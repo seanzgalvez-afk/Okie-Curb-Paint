@@ -89,16 +89,37 @@ TEAM_HINTS = {
     "GER": "germany",       "ESP": "spain",        "POR": "portugal",
 }
 
-def am_to_prob(odds):
-    """American odds integer → implied probability 0-100."""
+def am_to_decimal(odds):
+    """American odds → decimal odds (from The Odds API sample utilities.py)."""
     try:
-        o = int(odds)
-        if o < 0: return abs(o) / (abs(o) + 100) * 100
-        return 100 / (o + 100) * 100
+        o = float(odds)
+        return 1 - 100.0 / o if o < 0 else 1 + o / 100.0
     except: return None
 
+def am_to_prob(odds):
+    """American odds → implied probability 0-100."""
+    d = am_to_decimal(odds)
+    return round(100.0 / d, 2) if d and d > 0 else None
+
+def find_most_balanced(side_1, side_2):
+    """Find the line with tightest spread across two sets of outcomes (sharpest true price).
+    Adapted from The Odds API samples/utilities.py."""
+    by_point_1 = {x["point"]: x for x in side_1 if "point" in x}
+    by_point_2 = {x["point"]: x for x in side_2 if "point" in x}
+    best_point, best_diff = None, float("inf")
+    for pt in by_point_1:
+        if pt not in by_point_2: continue
+        d1 = am_to_decimal(by_point_1[pt].get("price"))
+        d2 = am_to_decimal(by_point_2[pt].get("price"))
+        if d1 and d2:
+            diff = abs(d1 - d2)
+            if diff < best_diff:
+                best_diff, best_point = diff, pt
+    if best_point is None: return None, None
+    return by_point_1[best_point], by_point_2[best_point]
+
 def fetch_vegas_odds():
-    """Fetch all upcoming games from The Odds API. Returns list of game dicts."""
+    """Fetch h2h + spreads + totals for all upcoming games from The Odds API."""
     if not ODDS_API_KEY:
         log("ODDS_API_KEY not set — skipping Vegas comparison")
         return []
@@ -107,7 +128,7 @@ def fetch_vegas_odds():
         try:
             r = httpx.get(f"{ODDS_BASE}/sports/{sport}/odds/",
                 params={"apiKey": ODDS_API_KEY, "regions": "us",
-                        "markets": "h2h", "oddsFormat": "american"},
+                        "markets": "h2h,spreads,totals", "oddsFormat": "american"},
                 timeout=15)
             log(f"Odds API {sport} -> {r.status_code}")
             if r.status_code == 200:
@@ -121,17 +142,68 @@ def fetch_vegas_odds():
             log(f"Odds API {sport} error: {e}")
     return games
 
-def game_consensus_prob(game, team_fragment):
+def fetch_event_player_props(sport, event_id):
+    """Fetch player prop odds for a specific game (uses per-event endpoint).
+    Markets: player_points, player_rebounds, player_assists.
+    Note: costs extra quota credits per call — use sparingly."""
+    if not ODDS_API_KEY:
+        return []
+    try:
+        r = httpx.get(f"{ODDS_BASE}/sports/{sport}/events/{event_id}/odds",
+            params={"apiKey": ODDS_API_KEY, "regions": "us",
+                    "markets": "player_points,player_rebounds,player_assists",
+                    "oddsFormat": "american"},
+            timeout=15)
+        if r.status_code != 200:
+            return []
+        data = r.json()
+        props = []
+        for bm in data.get("bookmakers", [])[:2]:   # top 2 books only
+            for mkt in bm.get("markets", []):
+                for oc in mkt.get("outcomes", []):
+                    props.append({
+                        "book":    bm.get("title",""),
+                        "market":  mkt.get("key",""),
+                        "player":  oc.get("description",""),
+                        "name":    oc.get("name",""),   # Over/Under
+                        "point":   oc.get("point"),
+                        "price":   oc.get("price"),
+                        "prob":    am_to_prob(oc.get("price")),
+                    })
+        return props
+    except Exception as e:
+        log(f"Player props error ({sport} {event_id}): {e}")
+        return []
+
+def game_consensus_prob(game, team_fragment, market="h2h"):
     """Average implied probability for a team across all bookmakers (0-100)."""
     probs = []
     for bm in game.get("bookmakers", []):
         for mkt in bm.get("markets", []):
-            if mkt.get("key") != "h2h": continue
+            if mkt.get("key") != market: continue
             for oc in mkt.get("outcomes", []):
                 if team_fragment.lower() in oc.get("name", "").lower():
                     p = am_to_prob(oc.get("price"))
                     if p is not None: probs.append(p)
     return round(sum(probs) / len(probs), 1) if probs else None
+
+def game_consensus_total(game):
+    """Get consensus over/under total and sharpest line across books."""
+    all_overs, all_unders = [], []
+    for bm in game.get("bookmakers", []):
+        for mkt in bm.get("markets", []):
+            if mkt.get("key") != "totals": continue
+            for oc in mkt.get("outcomes", []):
+                if oc.get("name") == "Over":  all_overs.append(oc)
+                if oc.get("name") == "Under": all_unders.append(oc)
+    best_over, best_under = find_most_balanced(all_overs, all_unders)
+    if best_over and best_under:
+        return {
+            "line":       best_over.get("point"),
+            "over_prob":  am_to_prob(best_over.get("price")),
+            "under_prob": am_to_prob(best_under.get("price")),
+        }
+    return None
 
 def find_divergences(kalshi_markets, vegas_games):
     """Compare Kalshi prices to Vegas consensus. Return edge alert dicts."""
@@ -177,6 +249,7 @@ def find_divergences(kalshi_markets, vegas_games):
                         if matched_team.lower() in oc.get("name", "").lower():
                             books.append(f"{bm.get('title','?')}: {oc.get('price',0):+d}")
 
+            total = game_consensus_total(game)
             divs.append({
                 "ticker":       ticker,
                 "title":        title,
@@ -188,6 +261,7 @@ def find_divergences(kalshi_markets, vegas_games):
                 "game_time":    game.get("commence_time", ""),
                 "books":        books[:3],
                 "sport":        game.get("_sport", ""),
+                "total":        total,   # over/under consensus line
             })
 
     divs.sort(key=lambda x: abs(x["gap"]), reverse=True)
