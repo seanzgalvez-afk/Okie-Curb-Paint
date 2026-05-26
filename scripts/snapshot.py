@@ -1,4 +1,4 @@
-"""Kalshi snapshot — RSA-PSS auth."""
+"""Kalshi snapshot — RSA-PSS auth, liquid markets by volume."""
 import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -19,12 +19,9 @@ if key_path:
     pem = Path(key_path).read_bytes()
 else:
     raw = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
-    raw = "".join(raw.split())
-    pem = base64.b64decode(raw)
+    pem = base64.b64decode("".join(raw.split()))
 
 PRIV_KEY = serialization.load_pem_private_key(pem, password=None)
-print(f"Key ID : {KEY_ID}", file=sys.stderr)
-print(f"Key OK : {bool(PRIV_KEY)}", file=sys.stderr)
 
 def auth_headers(method, path):
     ts  = str(int(time.time() * 1000))
@@ -44,17 +41,19 @@ def get(path, params=None):
                   params=params, timeout=15)
     print(f"GET {path} -> {r.status_code}", file=sys.stderr)
     if not r.is_success:
-        print(f"  body: {r.text[:200]}", file=sys.stderr)
+        print(f"  {r.text[:200]}", file=sys.stderr)
         return None
     return r.json()
 
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 
+# Balance
 bal = get("/portfolio/balance")
 lines.append(f"\n## Balance: ${(bal.get('balance',0) if bal else 0)/100:.2f}"
              if bal else "\n## Balance: unavailable")
 
+# Positions
 pos = get("/portfolio/positions", {"limit": 50})
 if pos:
     positions = pos.get("market_positions", [])
@@ -66,18 +65,41 @@ if pos:
     else:
         lines.append("  none")
 
-mkts = get("/markets", {"status": "open", "limit": 40})
-if mkts:
-    markets = mkts.get("markets", [])
-    lines.append(f"\n## Open markets ({len(markets)}):")
-    lines.append(f"  {'Ticker':<36} {'Yes':>5} {'No':>5} {'Vol':>8}  Closes")
-    lines.append("  " + "-"*65)
-    for m in markets:
+# Markets sorted by volume descending — skip zero-volume parlays
+all_markets = []
+for series_ticker in [None]:  # None = all categories
+    params = {"status": "open", "limit": 100}
+    if series_ticker:
+        params["series_ticker"] = series_ticker
+    resp = get("/markets", params)
+    if resp:
+        all_markets.extend(resp.get("markets", []))
+
+# Sort by volume descending, filter out zero-volume
+liquid = sorted(
+    [m for m in all_markets if m.get("volume", 0) > 0],
+    key=lambda m: m.get("volume", 0),
+    reverse=True
+)[:40]
+
+zero_vol = [m for m in all_markets if m.get("volume", 0) == 0]
+
+if liquid:
+    lines.append(f"\n## Top markets by volume ({len(liquid)} liquid):")
+    lines.append(f"  {'Ticker':<40} {'Yes':>4} {'No':>4} {'Volume':>9}  Closes")
+    lines.append("  " + "-"*75)
+    for m in liquid:
         yes  = m.get("yes_bid", m.get("last_price", "?"))
         no_p = m.get("no_bid", "?")
-        lines.append(f"  {m.get('ticker',''):<36} {str(yes):>4}c {str(no_p):>4}c "
-                     f"{m.get('volume',0):>8,}  {str(m.get('close_time',''))[:10]}")
-        lines.append(f"    {m.get('title','')[:60]}")
+        vol  = m.get("volume", 0)
+        close = str(m.get("close_time", ""))[:10]
+        ticker = m.get("ticker", "")[:40]
+        title  = m.get("title", "")[:65]
+        lines.append(f"  {ticker:<40} {str(yes):>3}c {str(no_p):>3}c {vol:>9,}  {close}")
+        lines.append(f"    {title}")
+else:
+    lines.append(f"\n## No liquid markets found (all {len(zero_vol)} markets have 0 volume)")
+    lines.append("  Try checking Kalshi directly — the API may be returning limited data.")
 
 snapshot = "\n".join(lines)
 out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
