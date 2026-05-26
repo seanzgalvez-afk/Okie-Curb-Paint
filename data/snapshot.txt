@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 20:56 UTC
+# Generated: 2026-05-26 21:04 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261700-00                     91c   8c      48  2026-05-26  BTC price up in next 15 mins?
-  KXBTCD-26MAY2617-T75999.99                  66c  33c      24  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25AUGALT-ALT                47c  52c      19  2026-06-08  Will Daniel Altmaier win the Auger-Alias
-  KXITFWMATCH-26MAY26RAPSHO-RAP               74c  22c      10  2026-06-09  Will Malaika Rapolu win the Rapolu vs Sh
-  KXATPMATCH-26MAY25AUGALT-AUG                52c  47c       6  2026-06-08  Will Felix Auger-Aliassime win the Auger
-  KXLASTWORDMENTION-26MAY26-REDI              10c  67c       6  2026-06-10  What will James Talarico say during The 
-  KXITFWMATCH-26MAY26RAPSHO-SHO               21c  73c       5  2026-06-09  Will Maria Sholokhova win the Rapolu vs 
+  KXATPMATCH-26MAY25AUGALT-ALT                14c  85c      28  2026-06-08  Will Daniel Altmaier win the Auger-Alias
+  KXBTC15M-26MAY261715-15                     13c  86c      24  2026-05-26  BTC price up in next 15 mins?
+  KXATPMATCH-26MAY25AUGALT-AUG                83c  16c      19  2026-06-08  Will Felix Auger-Aliassime win the Auger
+  KXBTCD-26MAY2618-T75999.99                  30c  69c      13  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXITFMATCH-26MAY26SANZAM-SAN                 5c  93c       7  2026-06-09  Will Roshan Santhosh win the Santhosh vs
+  KXBTCD-26MAY2618-T75899.99                  55c  43c       6  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR         13c  86c       5  2026-06-09  Gremio vs Montevideo City Winner?
+  KXBTCD-26MAY2618-T75799.99                  78c  20c       4  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXHIGHAUS-26MAY26-B87.5                     48c  51c       4  2026-05-27  Will the **high temp in Austin** be 87-8
   KXNBAGAME-26MAY26SASOKC-SAS                 40c  59c       4  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXNATGASD-26MAY2617-T3.005                  63c  31c       4  2026-05-26  Will the natural gas close price be abov
-  KXNATGASD-26MAY2617-T3.010                  28c  62c       4  2026-05-26  Will the natural gas close price be abov
-  KXGOVIANOMR-26-RFEE                         68c  31c       4  2026-11-03  Will Randy Feenstra be the Republican no
-  KXITFWMATCH-26MAY26CAYIYE-IYE                2c  97c       3  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
-  KXNBAGAME-26MAY26SASOKC-OKC                 59c  40c       3  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXITFWMATCH-26MAY26CENHUI-CEN               97c   1c       3  2026-06-09  Will Olivia Center win the Center vs Hui
-  KXCONMEBOLLIBGAME-26MAY26LANMIR-TIE         29c  70c       3  2026-06-09  Lanus vs Mirassol Winner?
-  KXMVESPORTSMULTIGAMEEXTENDED-S2026B4C64CE3  22c  78c       3  2026-06-10  yes San Antonio,yes Over 215.5 points sc
-  KXCONMEBOLLIBGAME-26MAY26LANMIR-LAN         47c  52c       3  2026-06-09  Lanus vs Mirassol Winner?
-  KXBNB15M-26MAY261700-00                     67c  31c       2  2026-05-26  BNB price up in next 15 mins?
-  KXSENATETXR-26-JC                            4c  96c       2  2026-11-03  Will John Cornyn be the Republican nomin
-  KXUCLSPREAD-26MAY30PSGARS-PSG1              21c  77c       2  2026-06-13  PSG wins by over 1.5 goals?
+  KXHIGHTSFO-26MAY26-B64.5                    91c   7c       4  2026-05-27  Will the maximum temperature be  64-65° 
+  KXETH15M-26MAY261715-15                     11c  87c       3  2026-05-26  ETH price up in next 15 mins?
+  KXBTCD-26MAY2618-T75599.99                  96c   3c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXSOLD-26MAY2618-T82.9999                   99c    ?       3  2026-05-26  SOL price  on May 26, 2026?
+  KXNEWSOMENDORSE-26JUN02-XBEC                 5c  90c       3  2026-06-02  Will Gavin Newsom endorse Xavier Becerra
+  KXHIGHLAX-26MAY27-B68.5                     30c  69c       3  2026-05-28  Will the **high temp in LA** be 68-69° o
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026B0C20836  12c  87c       2  2026-05-29  yes Milwaukee,yes San Antonio,yes COL Av
+  KXNBAPTS-26MAY26SASOKC-SASSCASTLE5-20       34c  65c       2  2026-06-10  Stephon Castle: 20+ points
+  KXBTCD-26MAY2618-T76099.99                  16c  83c       2  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2618-T75699.99                  90c   9c       2  2026-05-26  Bitcoin price  on May 26, 2026?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Entertainment', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/OSCARS.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/OSCARS.p
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/TRUMPADMINROLE.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/TRUMP
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,27 +75,26 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
+  KXATPCHALLENGERMATCH
   KXATPMATCH
-  KXBNB15M
-  KXBTC
   KXBTC15M
   KXBTCD
-  KXCONMEBOLLIBGAME
-  KXDOGE15M
-  KXGOVIANOMR
+  KXCONMEBOLSUDGAME
+  KXETH15M
+  KXF1RACE
+  KXHIGHAUS
+  KXHIGHLAX
+  KXHIGHTSFO
+  KXHYPE15M
+  KXITFMATCH
   KXITFWMATCH
-  KXLASTWORDMENTION
   KXMLBGAME
-  KXMLBHR
   KXMLBRFI
-  KXMLBSPREAD
   KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
-  KXNATGASD
-  KXNBACOY
   KXNBAGAME
   KXNBAPTS
   KXNBASPREAD
-  KXSENATETXR
-  KXUCLSPREAD
-  KXWCGROUPWIN
+  KXNEWSOMENDORSE
+  KXSOLD
+  KXSPOTIFYW
