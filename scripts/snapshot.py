@@ -1199,18 +1199,41 @@ except Exception as e:
 
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
+vegas_games_count = 0
+odds_status = "no_key"
 try:
-    vegas_games = fetch_vegas_odds()
-    log(f"Total Vegas games: {len(vegas_games)}")
-    edges = find_divergences(markets_list, vegas_games)
-    log(f"Edge alerts found: {len(edges)}")
-    for e in edges:
-        log(f"  EDGE {e['gap']:+.1f}¢  {e['ticker']}  Kalshi={e['kalshi_price']}¢ Vegas={e['vegas_prob']}¢  {e['direction']}")
+    if ODDS_API_KEY:
+        vegas_games = fetch_vegas_odds()
+        vegas_games_count = len(vegas_games)
+        odds_status = f"ok_{vegas_games_count}_games"
+        log(f"Total Vegas games: {vegas_games_count}")
+        edges = find_divergences(markets_list, vegas_games)
+        log(f"Edge alerts found: {len(edges)}")
+        for e in edges:
+            log(f"  EDGE {e['gap']:+.1f}¢  {e['ticker']}  Kalshi={e['kalshi_price']}¢ Vegas={e['vegas_prob']}¢  {e['direction']}")
+    else:
+        odds_status = "no_key"
 except Exception as e:
+    odds_status = f"error: {e}"
     log(f"Odds comparison error: {e}")
     traceback.print_exc(file=sys.stderr)
 
 # ── Write JSON for dashboard ──────────────────────────────────────────────────
+
+# Build health check dict for diagnostics
+now_min = datetime.now(timezone.utc).minute
+health = {
+    "run_minute":   now_min,
+    "kalshi":       "ok" if markets_list else "error",
+    "odds_api":     odds_status,
+    "coingecko":    ("ok" if crypto_prices else ("skipped_interval" if not _on_interval(15) else "no_key_or_error")) if COINGECKO_API_KEY else "no_key",
+    "fear_greed":   "ok" if fear_greed else "error",
+    "fred":         ("ok" if fred_data else ("skipped_interval" if not _on_interval(60) else "no_key_or_error")) if FRED_API_KEY else "no_key",
+    "polymarket":   ("ok" if poly_markets else ("skipped_interval" if not _on_interval(15) else "error")),
+    "predictit":    ("ok" if pi_markets else ("skipped_interval" if not _on_interval(15) else "error")),
+    "metaculus":    "ok" if metaculus_qs else "empty_or_error",
+    "espn":         "ok" if espn_games else "empty",
+}
 docs_dir = Path(__file__).parent.parent / "docs"
 docs_dir.mkdir(exist_ok=True)
 
@@ -1237,5 +1260,6 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "polymarket":     poly_markets,
     "predictit":      pi_markets,
     "cross_arb":      cross_market_arb,
+    "health":         health,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
