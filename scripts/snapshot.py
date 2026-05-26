@@ -1,4 +1,4 @@
-"""Kalshi snapshot — finds active markets via the trades feed."""
+"""Kalshi snapshot — uses trades feed for prices + active market list."""
 import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -67,53 +67,81 @@ if pos:
     else:
         lines.append("  none")
 
-# --- Find active markets via recent trades ---
-# This bypasses the pagination problem (sports parlays dominate page 1-N)
-trades_resp = get("/markets/trades", {"limit": 100})
-active_tickers = []
+# ---- Step 1: Get recent trades (includes yes_price per trade) ----
+trades_resp = get("/markets/trades", {"limit": 200})
+
+# Build price map and trade-count map from trades
+last_price   = {}  # ticker -> last yes_price traded
+trade_counts = {}  # ticker -> number of recent trades
+ordered_tickers = []
 seen = set()
+
 if trades_resp:
     for t in trades_resp.get("trades", []):
-        tk = t.get("ticker", "")
-        if tk and tk not in seen:
+        tk    = t.get("ticker", "")
+        price = t.get("yes_price")
+        count = t.get("count", 1)
+        if not tk:
+            continue
+        if tk not in seen:
             seen.add(tk)
-            active_tickers.append(tk)
+            ordered_tickers.append(tk)
+        if price is not None:
+            last_price[tk] = price  # keeps most-recent (first in list)
+        trade_counts[tk] = trade_counts.get(tk, 0) + (count or 1)
 
-print(f"  Found {len(active_tickers)} recently-traded tickers", file=sys.stderr)
+print(f"  Trades feed: {len(ordered_tickers)} unique tickers", file=sys.stderr)
 
-# Fetch full market details for each active ticker
+# Sort tickers by trade activity (most active first)
+ordered_tickers.sort(key=lambda tk: trade_counts.get(tk, 0), reverse=True)
+
+# ---- Step 2: Fetch market details for top 40 active tickers ----
 markets = []
-for ticker in active_tickers[:40]:
+for ticker in ordered_tickers[:40]:
     resp = get(f"/markets/{ticker}")
-    if resp:
-        m = resp.get("market", resp)  # some endpoints wrap in 'market'
-        if isinstance(m, dict):
-            markets.append(m)
+    if not resp:
+        continue
+    # API wraps in {"market": {...}} or returns market directly
+    m = resp.get("market", resp) if isinstance(resp, dict) else resp
+    if not isinstance(m, dict):
+        continue
+    # Inject trade data we already know
+    m["_trade_price"]  = last_price.get(ticker)
+    m["_trade_count"] = trade_counts.get(ticker, 0)
+    markets.append(m)
 
-# Sort by volume descending
-markets.sort(key=lambda m: m.get("volume", 0), reverse=True)
+# Sort by trade activity
+markets.sort(key=lambda m: m.get("_trade_count", 0), reverse=True)
 
-lines.append(f"\n## Active markets (from recent trades feed, {len(markets)} markets):")
-if markets:
-    lines.append(f"  {'Ticker':<38} {'Yes':>4} {'No':>4} {'Volume':>10}  Closes")
-    lines.append("  " + "-"*75)
-    for m in markets:
-        yes_p = m.get("yes_bid", m.get("last_price", "?"))
-        no_p  = m.get("no_bid", "?")
-        vol   = m.get("volume", 0)
-        close = str(m.get("close_time", ""))[:10]
-        ticker = m.get("ticker", "")[:38]
-        title  = m.get("title", "")[:70]
-        lines.append(f"  {ticker:<38} {str(yes_p):>3}c {str(no_p):>3}c {vol:>10,}  {close}")
-        lines.append(f"    {title}")
-else:
-    # Fallback: show raw trades if market fetch failed
-    lines.append("  Could not fetch market details. Raw recent trades:")
+# ---- Step 3: Build snapshot output ----
+lines.append(f"\n## Active markets — {len(markets)} recently traded:")
+lines.append(f"  {'Ticker':<40} {'Price':>6} {'Vol':>8}  Trades  Closes    Title")
+lines.append("  " + "-"*110)
+
+for m in markets:
+    ticker = m.get("ticker", "")[:40]
+    title  = m.get("title", "")[:55]
+    close  = str(m.get("close_time", ""))[:10]
+    vol    = m.get("volume") or 0
+    trades = m.get("_trade_count", 0)
+
+    # Best price: live bid first, then last trade from feed
+    raw_price = (
+        m.get("yes_bid") or
+        m.get("last_price") or
+        m.get("yes_ask") or
+        m.get("_trade_price")
+    )
+    price_str = f"{raw_price}c" if raw_price is not None else "  ?c"
+
+    lines.append(f"  {ticker:<40} {price_str:>6} {vol:>8,}  {trades:>6}  {close}  {title}")
+
+if not markets:
+    lines.append("  No active markets found.")
     if trades_resp:
-        for t in (trades_resp.get("trades", []) or [])[:20]:
-            lines.append(f"  {t.get('ticker',''):<38} price={t.get('yes_price','?')}c  count={t.get('count','?')}")
-    else:
-        lines.append("  No trades data available.")
+        lines.append("\n  Raw trades sample:")
+        for t in (trades_resp.get("trades") or [])[:10]:
+            lines.append(f"    {t}")
 
 snapshot = "\n".join(lines)
 out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
