@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kalshi Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { background-color: #0f172a; }
+    .card { background-color: #1e293b; }
+    .accent { color: #22d3ee; }
+    .pulse-green {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+      animation: pulse-anim 2s infinite;
+    }
+    .pulse-yellow {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: #fbbf24;
+      box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7);
+      animation: pulse-anim 2s infinite;
+    }
+    @keyframes pulse-anim {
+      0%   { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+      70%  { box-shadow: 0 0 0 8px rgba(74,222,128,0); }
+      100% { box-shadow: 0 0 0 0 rgba(74,222,128,0); }
+    }
+    .pick-card {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .pick-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(34, 211, 238, 0.15);
+    }
+    .market-card {
+      transition: background-color 0.15s ease;
+    }
+    .market-card:hover {
+      background-color: #273549;
+    }
+    .chart-container {
+      position: relative;
+      height: 280px;
+    }
+    table { border-collapse: collapse; width: 100%; }
+    thead th {
+      position: sticky;
+      top: 0;
+      background-color: #0f172a;
+      z-index: 1;
+    }
+    .sort-btn { cursor: pointer; user-select: none; }
+    .sort-btn:hover { color: #22d3ee; }
+    .scroll-x { overflow-x: auto; }
+    tr:nth-child(even) td { background-color: #162032; }
+    tr:nth-child(odd)  td { background-color: #1e293b; }
+    tr:hover td { background-color: #273549 !important; }
+    .tip-card {
+      transition: transform 0.2s ease;
+    }
+    .tip-card:hover {
+      transform: translateY(-2px);
+    }
+    #loading-overlay {
+      position: fixed; inset: 0;
+      background: #0f172a;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+    }
+    .spinner {
+      border: 3px solid #1e293b;
+      border-top: 3px solid #22d3ee;
+      border-radius: 50%;
+      width: 40px; height: 40px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen font-sans">
+
+  <!-- Loading overlay -->
+  <div id="loading-overlay">
+    <div class="text-center">
+      <div class="spinner mx-auto mb-4"></div>
+      <p class="text-slate-400 text-sm">Loading market data…</p>
+    </div>
+  </div>
+
+  <!-- Error state (hidden by default) -->
+  <div id="error-state" class="hidden flex flex-col items-center justify-center min-h-screen text-center px-4">
+    <p class="text-5xl mb-4">📡</p>
+    <h2 class="text-xl font-semibold text-slate-200 mb-2">Data not yet available</h2>
+    <p class="text-slate-400 text-sm mb-6">The snapshot hasn't run yet. Check back after the next scheduled update.</p>
+    <button onclick="fetchData()" class="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm transition">
+      Retry
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div id="main-content" class="hidden max-w-7xl mx-auto px-4 py-6">
+
+    <!-- ── Header ── -->
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-8">
+      <div class="flex items-center gap-3">
+        <div id="status-dot" class="pulse-green"></div>
+        <h1 class="text-2xl font-bold tracking-tight" style="color:#22d3ee;">Kalshi Dashboard</h1>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <div class="card rounded-xl px-4 py-2 text-center">
+          <p class="text-xs text-slate-400 uppercase tracking-wider">Balance</p>
+          <p id="balance-display" class="text-lg font-bold text-green-400">—</p>
+        </div>
+        <div class="card rounded-xl px-4 py-2 text-center">
+          <p class="text-xs text-slate-400 uppercase tracking-wider">Last updated</p>
+          <p id="last-updated" class="text-sm font-medium text-slate-200">—</p>
+        </div>
+        <button id="refresh-btn" onclick="fetchData()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.29 15A8 8 0 1018.71 9"/>
+          </svg>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Best Picks ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <span style="color:#22d3ee;">★</span> Best Picks
+      </h2>
+      <div id="best-picks" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- ── Charts row ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">Charts</h2>
+      <div class="scroll-x">
+        <div class="flex gap-4" style="min-width: 660px;">
+          <!-- Volume bar chart -->
+          <div class="card rounded-2xl p-4 flex-1" style="min-width: 300px;">
+            <p class="text-sm font-semibold text-slate-300 mb-3">Volume Leaders (top 10)</p>
+            <div class="chart-container">
+              <canvas id="volumeChart"></canvas>
+            </div>
+          </div>
+          <!-- Price distribution histogram -->
+          <div class="card rounded-2xl p-4 flex-1" style="min-width: 300px;">
+            <p class="text-sm font-semibold text-slate-300 mb-3">YES Price Distribution</p>
+            <div class="chart-container">
+              <canvas id="priceChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Markets Table ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">Open Markets</h2>
+      <div class="card rounded-2xl overflow-hidden">
+        <div class="scroll-x" style="max-height: 480px; overflow-y: auto;">
+          <table class="text-sm">
+            <thead>
+              <tr class="text-xs text-slate-400 uppercase tracking-wider">
+                <th class="px-4 py-3 text-left sort-btn" onclick="sortTable('title')">Title <span id="sort-title">↕</span></th>
+                <th class="px-4 py-3 text-right sort-btn" onclick="sortTable('yes_bid')">YES <span id="sort-yes_bid">↕</span></th>
+                <th class="px-4 py-3 text-right sort-btn" onclick="sortTable('no_bid')">NO <span id="sort-no_bid">↕</span></th>
+                <th class="px-4 py-3 text-right sort-btn" onclick="sortTable('volume')">Volume <span id="sort-volume">↓</span></th>
+                <th class="px-4 py-3 text-right sort-btn" onclick="sortTable('close_time')">Closes <span id="sort-close_time">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="markets-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Strategy Tips ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">Strategy Tips</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="card rounded-2xl p-5 tip-card">
+          <p class="text-base font-semibold text-cyan-400 mb-2">Drew Underpricing</p>
+          <p class="text-sm text-slate-400">Markets with YES prices in the 15–45¢ range are often undervalued underdogs worth a small position for asymmetric upside.</p>
+        </div>
+        <div class="card rounded-2xl p-5 tip-card">
+          <p class="text-base font-semibold text-yellow-400 mb-2">Expiration Pressure</p>
+          <p class="text-sm text-slate-400">Contracts expiring within 7 days see rapid price discovery — enter early or fade late movers as the event resolves.</p>
+        </div>
+        <div class="card rounded-2xl p-5 tip-card">
+          <p class="text-base font-semibold text-green-400 mb-2">News Arb</p>
+          <p class="text-sm text-slate-400">When breaking news hits, Kalshi often lags by 3–10 minutes — watch related markets and trade before prices fully adjust.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-600 pb-6">
+      Auto-refreshes every 15 minutes · Data from Kalshi API · For informational purposes only
+    </footer>
+  </div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allMarkets = [];
+let sortKey = 'volume';
+let sortDir = 'desc';
+let volumeChart = null;
+let priceChart = null;
+let refreshTimer = null;
+let countdownTimer = null;
+const REFRESH_MS = 15 * 60 * 1000;
+
+// ── Fetch & render ─────────────────────────────────────────────────────────
+async function fetchData() {
+  const btn = document.getElementById('refresh-btn');
+  btn.disabled = true;
+  btn.textContent = 'Loading…';
+
+  try {
+    const res = await fetch('./data.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    render(data);
+    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById('error-state').classList.add('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+  } catch (e) {
+    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById('error-state').classList.remove('hidden');
+    document.getElementById('main-content').classList.add('hidden');
+    console.error('Failed to load data.json:', e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582M20 20v-5h-.581M5.29 15A8 8 0 1018.71 9"/></svg> Refresh`;
+  }
+
+  // Reset auto-refresh countdown
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(fetchData, REFRESH_MS);
+}
+
+function render(data) {
+  renderHeader(data);
+  renderBestPicks(data.best_picks || []);
+  allMarkets = data.markets || [];
+  renderTable();
+  renderCharts(allMarkets);
+}
+
+// ── Header ─────────────────────────────────────────────────────────────────
+function renderHeader(data) {
+  // Balance
+  const bal = (data.balance_cents || 0) / 100;
+  document.getElementById('balance-display').textContent = '$' + bal.toFixed(2);
+
+  // Last updated
+  const generated = data.generated || '';
+  document.getElementById('last-updated').textContent = generated;
+
+  // Status dot
+  const dot = document.getElementById('status-dot');
+  if (generated) {
+    try {
+      const genDate = new Date(generated.replace(' UTC', 'Z').replace(' ', 'T'));
+      const ageMin = (Date.now() - genDate.getTime()) / 60000;
+      if (ageMin < 20) {
+        dot.className = 'pulse-green';
+      } else {
+        dot.className = 'pulse-yellow';
+      }
+    } catch (_) {}
+  }
+}
+
+// ── Best Picks ─────────────────────────────────────────────────────────────
+function renderBestPicks(picks) {
+  const container = document.getElementById('best-picks');
+  if (!picks.length) {
+    container.innerHTML = '<p class="text-slate-500 text-sm col-span-3">No picks available yet.</p>';
+    return;
+  }
+  container.innerHTML = picks.map(p => {
+    const isYes = p.side === 'YES';
+    const badgeClass = isYes ? 'bg-green-500 text-slate-900' : 'bg-red-500 text-slate-100';
+    const stars = scoreToStars(p.edge_score);
+    const kalshiUrl = 'https://kalshi.com/markets/' + encodeURIComponent(p.ticker);
+    return `
+      <div class="card rounded-2xl p-5 pick-card flex flex-col gap-3">
+        <div class="flex items-start justify-between gap-2">
+          <span class="font-mono text-xs text-slate-400 break-all">${escHtml(p.ticker)}</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-bold ${badgeClass} shrink-0">${escHtml(p.side)}</span>
+        </div>
+        <p class="text-sm font-semibold text-slate-200 leading-snug">${escHtml(p.title)}</p>
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-2xl font-bold ${isYes ? 'text-green-400' : 'text-red-400'}">${p.price}¢</p>
+            <p class="text-xs text-slate-500">current price</p>
+          </div>
+          <div class="text-right">
+            <p class="text-yellow-400 text-lg leading-none">${stars}</p>
+            <p class="text-xs text-slate-500">edge score ${p.edge_score}</p>
+          </div>
+        </div>
+        <div class="bg-slate-700 rounded-full h-1.5 w-full">
+          <div class="h-1.5 rounded-full" style="background:#22d3ee;width:${Math.min(100, (p.edge_score / 10) * 100)}%"></div>
+        </div>
+        <p class="text-xs text-slate-400">${escHtml(p.reason)}</p>
+        <a href="${kalshiUrl}" target="_blank" rel="noopener"
+           class="mt-auto text-center py-2 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-cyan-500 hover:text-slate-900 transition text-cyan-400 hover:text-slate-900">
+          View on Kalshi ↗
+        </a>
+      </div>
+    `;
+  }).join('');
+}
+
+function scoreToStars(score) {
+  const filled = Math.round((score / 10) * 5);
+  return '★'.repeat(Math.max(0, Math.min(5, filled))) + '☆'.repeat(5 - Math.max(0, Math.min(5, filled)));
+}
+
+// ── Charts ─────────────────────────────────────────────────────────────────
+function renderCharts(markets) {
+  // ── Volume Leaders (top 10) ──
+  const sorted = [...markets]
+    .filter(m => m.volume > 0)
+    .sort((a, b) => (b.volume || 0) - (a.volume || 0))
+    .slice(0, 10);
+
+  const volLabels = sorted.map(m => (m.ticker || '').length > 18 ? m.ticker.slice(0, 18) + '…' : m.ticker);
+  const volData = sorted.map(m => m.volume || 0);
+
+  if (volumeChart) volumeChart.destroy();
+  const volCtx = document.getElementById('volumeChart').getContext('2d');
+  volumeChart = new Chart(volCtx, {
+    type: 'bar',
+    data: {
+      labels: volLabels,
+      datasets: [{
+        label: 'Volume',
+        data: volData,
+        backgroundColor: '#22d3ee',
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + ctx.raw.toLocaleString() + ' contracts'
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#94a3b8', font: { size: 10 }, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'k' : v },
+          grid: { color: '#1e293b' }
+        },
+        y: {
+          ticks: { color: '#94a3b8', font: { size: 10 } },
+          grid: { color: '#1e293b' }
+        }
+      }
+    }
+  });
+
+  // ── Price Distribution Histogram ──
+  const buckets = [0,0,0,0,0,0,0,0,0,0]; // 0-10, 10-20, ..., 90-100
+  const bucketLabels = ['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90-100'];
+
+  markets.forEach(m => {
+    const price = m.yes_bid ?? m.last_price;
+    if (price === null || price === undefined) return;
+    const idx = Math.min(9, Math.floor(price / 10));
+    if (idx >= 0) buckets[idx]++;
+  });
+
+  const bucketColors = buckets.map((_, i) => {
+    if (i < 4) return '#f87171';      // red zone (< 40¢)
+    if (i === 4 || i === 5) return '#fbbf24'; // yellow (40-60)
+    return '#4ade80';                  // green zone (> 60¢)
+  });
+
+  if (priceChart) priceChart.destroy();
+  const priceCtx = document.getElementById('priceChart').getContext('2d');
+  priceChart = new Chart(priceCtx, {
+    type: 'bar',
+    data: {
+      labels: bucketLabels,
+      datasets: [{
+        label: 'Markets',
+        data: buckets,
+        backgroundColor: bucketColors,
+        borderRadius: 4,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + ctx.raw + ' market' + (ctx.raw !== 1 ? 's' : '')
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#94a3b8', font: { size: 10 } },
+          grid: { color: '#1e293b' }
+        },
+        y: {
+          ticks: { color: '#94a3b8', font: { size: 10 }, stepSize: 1 },
+          grid: { color: '#1e293b' }
+        }
+      }
+    }
+  });
+}
+
+// ── Markets Table ──────────────────────────────────────────────────────────
+function sortTable(key) {
+  if (sortKey === key) {
+    sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey = key;
+    sortDir = key === 'volume' ? 'desc' : 'asc';
+  }
+  // Update arrows
+  ['title','yes_bid','no_bid','volume','close_time'].forEach(k => {
+    const el = document.getElementById('sort-' + k);
+    if (el) el.textContent = k === sortKey ? (sortDir === 'asc' ? '↑' : '↓') : '↕';
+  });
+  renderTable();
+}
+
+function renderTable() {
+  const sorted = [...allMarkets].sort((a, b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if (av === null || av === undefined) av = sortDir === 'asc' ? Infinity : -Infinity;
+    if (bv === null || bv === undefined) bv = sortDir === 'asc' ? Infinity : -Infinity;
+    if (typeof av === 'string' && typeof bv === 'string') {
+      return sortDir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+    }
+    return sortDir === 'asc' ? av - bv : bv - av;
+  });
+
+  const tbody = document.getElementById('markets-table-body');
+  tbody.innerHTML = sorted.map(m => {
+    const yesPrice = m.yes_bid ?? m.last_price;
+    const noPrice = m.no_bid ?? null;
+    const yesClass = yesPrice === null ? 'text-slate-500'
+                   : yesPrice > 60 ? 'text-green-400 font-semibold'
+                   : yesPrice < 40 ? 'text-red-400 font-semibold'
+                   : 'text-yellow-400 font-semibold';
+    const title = (m.title || '').length > 55 ? m.title.slice(0, 55) + '…' : (m.title || '');
+    const vol = (m.volume || 0).toLocaleString();
+    const closes = m.close_time ? m.close_time.slice(0, 10) : '—';
+    return `
+      <tr class="market-card text-slate-300">
+        <td class="px-4 py-2.5 max-w-xs">
+          <span class="font-mono text-xs text-slate-500 block">${escHtml(m.ticker || '')}</span>
+          <span class="text-sm">${escHtml(title)}</span>
+        </td>
+        <td class="px-4 py-2.5 text-right ${yesClass}">${yesPrice !== null && yesPrice !== undefined ? yesPrice + '¢' : '—'}</td>
+        <td class="px-4 py-2.5 text-right text-slate-400">${noPrice !== null && noPrice !== undefined ? noPrice + '¢' : '—'}</td>
+        <td class="px-4 py-2.5 text-right text-slate-400">${vol}</td>
+        <td class="px-4 py-2.5 text-right text-slate-500 text-xs">${escHtml(closes)}</td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
+
+// ── Boot ───────────────────────────────────────────────────────────────────
+fetchData();
+</script>
+</body>
+</html>
