@@ -131,6 +131,20 @@
       </div>
     </header>
 
+    <!-- ── Live Feed Bar ── -->
+    <div id="live-feed" class="mb-8 hidden">
+      <!-- Crypto ticker -->
+      <div id="crypto-bar" class="card rounded-xl px-4 py-3 mb-4 flex flex-wrap gap-6 items-center">
+        <span class="text-xs text-slate-500 uppercase tracking-wider">Crypto</span>
+        <div id="crypto-prices" class="flex flex-wrap gap-6 text-sm"></div>
+      </div>
+      <!-- Injury alerts -->
+      <div id="injury-section" class="hidden">
+        <h3 class="text-sm font-semibold text-yellow-400 mb-2">⚠️ Injury Report</h3>
+        <div id="injury-list" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
     <!-- ── Best Picks ── -->
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -321,6 +335,7 @@ function render(data) {
   allMarkets = data.markets || [];
   renderTable();
   renderCharts(allMarkets);
+  renderLiveFeed(data);
 }
 
 // ── Header ─────────────────────────────────────────────────────────────────
@@ -393,6 +408,50 @@ function renderBestPicks(picks) {
 function scoreToStars(score) {
   const filled = Math.round((score / 10) * 5);
   return '★'.repeat(Math.max(0, Math.min(5, filled))) + '☆'.repeat(5 - Math.max(0, Math.min(5, filled)));
+}
+
+// ── Live Feed ──────────────────────────────────────────────────────────────
+function renderLiveFeed(data) {
+  const feed = document.getElementById('live-feed');
+
+  // Crypto
+  const crypto = data.crypto || {};
+  const cpEl = document.getElementById('crypto-prices');
+  if (Object.keys(crypto).length) {
+    feed.classList.remove('hidden');
+    const fmt = (sym, price, change) => {
+      const col = change >= 0 ? 'text-green-400' : 'text-red-400';
+      const arrow = change >= 0 ? '▲' : '▼';
+      return `<span class="flex items-center gap-1">
+        <span class="text-slate-400">${sym}</span>
+        <span class="font-semibold text-slate-100">$${price ? price.toLocaleString() : '—'}</span>
+        <span class="${col} text-xs">${arrow}${Math.abs(change).toFixed(1)}%</span>
+      </span>`;
+    };
+    cpEl.innerHTML = [
+      crypto.btc_usd ? fmt('BTC', crypto.btc_usd, crypto.btc_24h_change) : '',
+      crypto.eth_usd ? fmt('ETH', crypto.eth_usd, crypto.eth_24h_change) : '',
+      crypto.sol_usd ? fmt('SOL', crypto.sol_usd, crypto.sol_24h_change) : '',
+    ].filter(Boolean).join('');
+  }
+
+  // Injuries
+  const injuries = (data.espn_injuries || []).filter(i =>
+    ['Out','Doubtful','Questionable'].includes(i.status)
+  );
+  if (injuries.length) {
+    feed.classList.remove('hidden');
+    document.getElementById('injury-section').classList.remove('hidden');
+    const injEl = document.getElementById('injury-list');
+    injEl.innerHTML = injuries.slice(0, 12).map(i => {
+      const col = i.status === 'Out' ? 'bg-red-900 text-red-300 border-red-700'
+                : i.status === 'Doubtful' ? 'bg-orange-900 text-orange-300 border-orange-700'
+                : 'bg-yellow-900 text-yellow-300 border-yellow-700';
+      return `<span class="border rounded-full px-2 py-0.5 text-xs ${col}">
+        ${escHtml(i.player)} (${escHtml(i.team)}) — ${escHtml(i.status)}
+      </span>`;
+    }).join('');
+  }
 }
 
 // ── Live Edges ─────────────────────────────────────────────────────────────
@@ -614,6 +673,40 @@ function escHtml(str) {
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
+}
+
+// ── Kelly Calculator ───────────────────────────────────────────────────────
+function calcKelly() {
+  const bankroll = parseFloat(document.getElementById('kelly-bankroll').value) || 0;
+  const price    = parseFloat(document.getElementById('kelly-price').value) / 100 || 0;
+  const estimate = parseFloat(document.getElementById('kelly-estimate').value) / 100 || 0;
+  const fraction = parseFloat(document.getElementById('kelly-fraction').value) || 0.5;
+
+  const result   = document.getElementById('kelly-result');
+  const warning  = document.getElementById('kelly-warning');
+  result.classList.remove('hidden');
+
+  // Kelly formula for binary bet: f* = (p*b - q) / b
+  // where b = (1/price - 1) = net odds, p = your prob, q = 1-p
+  const b    = (1 / price) - 1;   // net odds on a win
+  const p    = estimate;
+  const q    = 1 - p;
+  const rawK = (p * b - q) / b;   // full kelly fraction of bankroll
+  const adjK = rawK * fraction;
+  const edge = estimate - price;
+
+  document.getElementById('kelly-edge').textContent = (edge * 100).toFixed(1) + '¢';
+  document.getElementById('kelly-raw').textContent  = (rawK * 100).toFixed(1) + '%';
+  document.getElementById('kelly-adjusted').textContent = (adjK * 100).toFixed(1) + '%';
+
+  if (rawK <= 0 || edge <= 0) {
+    document.getElementById('kelly-bet').textContent = '$0';
+    warning.classList.remove('hidden');
+  } else {
+    warning.classList.add('hidden');
+    const bet = Math.max(0, bankroll * adjK);
+    document.getElementById('kelly-bet').textContent = '$' + bet.toFixed(2);
+  }
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────────
