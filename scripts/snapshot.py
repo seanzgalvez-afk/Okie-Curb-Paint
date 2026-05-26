@@ -1,4 +1,5 @@
 """Kalshi snapshot — active markets + full World Cup section."""
+# v2 — auto-trigger on push
 import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -51,14 +52,6 @@ def cents(d):
     except (TypeError, ValueError):
         return None
 
-def price_str(m):
-    """Return 'YES XXc / NO XXc' or best available price string."""
-    y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars"))
-    n = cents(m.get("no_bid_dollars"))
-    y_s = f"{y}¢" if y is not None else " ?"
-    n_s = f"{n}¢" if n is not None else " ?"
-    return f"YES {y_s:>4} / NO {n_s:>4}"
-
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 
@@ -106,7 +99,7 @@ for t in trades:
 ordered.sort(key=lambda tk: trade_count.get(tk, 0), reverse=True)
 
 markets_active = []
-for ticker in ordered[:20]:  # top 20 most active
+for ticker in ordered[:20]:
     resp = get(f"/markets/{ticker}")
     if not resp:
         continue
@@ -122,16 +115,18 @@ markets_active.sort(key=lambda m: m.get("_trade_count", 0), reverse=True)
 lines.append(f"\n" + "="*70)
 lines.append(f"## MOST ACTIVE MARKETS RIGHT NOW ({len(markets_active)} shown)")
 lines.append("="*70)
-lines.append(f"  {'Ticker':<42} {'Price':>6}  Trades  Closes")
-lines.append("  " + "-"*80)
+lines.append(f"  {'Ticker':<42} {'YES ¢':>6}  Trades  Closes  Title")
+lines.append("  " + "-"*90)
 for m in markets_active:
-    ticker = m.get("ticker", "")[:42]
-    close  = str(m.get("close_time", ""))[:10]
+    ticker   = m.get("ticker", "")[:42]
+    close    = str(m.get("close_time", ""))[:10]
     trades_n = m.get("_trade_count", 0)
     y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars")) or m.get("_trade_price")
+    n = cents(m.get("no_bid_dollars"))
     p_s = f"{y}¢" if y is not None else "  ?"
-    title = m.get("title", "")[:50]
-    lines.append(f"  {ticker:<42} {p_s:>5}  {trades_n:>6}  {close}  {title}")
+    n_s = f"{n}¢" if n is not None else "  ?"
+    title = m.get("title", "")[:45]
+    lines.append(f"  {ticker:<42} {p_s:>4}/{n_s:<4}  {trades_n:>6}  {close}  {title}")
 
 # ================================================================
 # SECTION 2: World Cup markets
@@ -142,10 +137,9 @@ lines.append("="*70)
 
 WC_KEYWORDS = ["world cup", "fifa", "worldcup", "wc2026", "wc 2026"]
 
-# Strategy A: scan events endpoint for WC events
 wc_event_tickers = []
 cursor = None
-for _ in range(10):  # up to 1000 events
+for _ in range(10):
     params = {"status": "open", "limit": 100}
     if cursor:
         params["cursor"] = cursor
@@ -154,7 +148,7 @@ for _ in range(10):  # up to 1000 events
         break
     events = resp.get("events", []) or []
     for e in events:
-        title = (e.get("title") or "").lower()
+        title  = (e.get("title") or "").lower()
         series = (e.get("series_ticker") or "").lower()
         if any(kw in title or kw in series for kw in WC_KEYWORDS):
             wc_event_tickers.append(e.get("event_ticker", ""))
@@ -162,16 +156,14 @@ for _ in range(10):  # up to 1000 events
     if not cursor or not events:
         break
 
-print(f"  Found {len(wc_event_tickers)} WC events from events endpoint", file=sys.stderr)
+print(f"  WC events found: {len(wc_event_tickers)}", file=sys.stderr)
 
-# Strategy B: also try known series tickers directly
 WC_SERIES = ["KXFIFAWC26", "KXFIFAWC", "KXWC26", "KXWC2026", "KXWC",
              "FIFAWC", "FIFAWC26", "SOCCER26", "KXSOCCER"]
 
 wc_markets = []
 seen_tickers = set()
 
-# Fetch markets from discovered WC events
 for event_ticker in wc_event_tickers[:50]:
     resp = get(f"/events/{event_ticker}")
     if not resp:
@@ -183,46 +175,41 @@ for event_ticker in wc_event_tickers[:50]:
             seen_tickers.add(tk)
             wc_markets.append(m)
 
-# Fetch markets from known series tickers
 for series in WC_SERIES:
     resp = get("/markets", {"status": "open", "series_ticker": series, "limit": 100})
     if not resp:
         continue
-    for m in (resp.get("markets") or []):
+    batch = resp.get("markets") or []
+    for m in batch:
         tk = m.get("ticker", "")
         if tk and tk not in seen_tickers:
             seen_tickers.add(tk)
             wc_markets.append(m)
-    if wc_markets:
-        print(f"  Series {series}: found {len(wc_markets)} WC markets", file=sys.stderr)
-        break  # found them, stop trying
+    if batch:
+        print(f"  Series {series}: +{len(batch)} markets", file=sys.stderr)
+        break
 
 print(f"  Total WC markets: {len(wc_markets)}", file=sys.stderr)
 
 if wc_markets:
-    # Group by event_ticker
     by_event = {}
     for m in wc_markets:
         ev = m.get("event_ticker", "other")
         by_event.setdefault(ev, []).append(m)
-
-    for event_ticker, ms in sorted(by_event.items()):
-        lines.append(f"\n### {event_ticker}")
-        lines.append(f"  {'Title':<55} {'YES':>5} {'NO':>5}  Closes")
-        lines.append("  " + "-"*80)
+    for ev, ms in sorted(by_event.items()):
+        lines.append(f"\n### {ev}")
+        lines.append(f"  {'Title':<52} {'YES':>4} {'NO':>4}  Closes")
+        lines.append("  " + "-"*75)
         for m in sorted(ms, key=lambda x: x.get("title", "")):
-            title = m.get("title", "")[:55]
+            title = m.get("title", "")[:52]
             close = str(m.get("close_time", ""))[:10]
             y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars"))
             n = cents(m.get("no_bid_dollars"))
             y_s = f"{y}¢" if y is not None else "  ?"
             n_s = f"{n}¢" if n is not None else "  ?"
-            lines.append(f"  {title:<55} {y_s:>5} {n_s:>5}  {close}")
+            lines.append(f"  {title:<52} {y_s:>4} {n_s:>4}  {close}")
 else:
-    lines.append("\n  No World Cup markets found via events or known series tickers.")
-    lines.append("  The WC series ticker may differ — check data below for clues.")
-    # Dump a sample of event titles to help find the right series
-    lines.append("\n  Sample open event titles (first 20):")
+    lines.append("\n  No WC markets found. Sample event titles to find the right series:")
     resp = get("/events", {"status": "open", "limit": 20})
     if resp:
         for e in (resp.get("events") or [])[:20]:
