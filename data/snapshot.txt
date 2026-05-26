@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 18:11 UTC
+# Generated: 2026-05-26 20:07 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261415-15                     33c  66c      96  2026-05-26  BTC price up in next 15 mins?
-  KXATPMATCH-26MAY25AUGALT-AUG                53c  46c      10  2026-06-08  Will Felix Auger-Aliassime win the Auger
-  KXITFWMATCH-26MAY26WANHAM-HAM               20c  78c       8  2026-06-09  Will Alanis Hamilton win the Wang vs Ham
-  KXISLGAME-26MAY131100ELIHGE-HGE             40c  57c       6  2026-05-27  Ironi Kiryat ATA vs Hapoel Galil Elyon W
-  KXHYPE15M-26MAY261415-15                    23c  75c       5  2026-05-26  HYPE price up in next 15 mins?
-  KXWTAMATCH-26MAY24WALSIN-WAL                22c  77c       5  2026-06-07  Will Simona Waltert win the Waltert vs S
-  KXBNB15M-26MAY261415-15                     55c  39c       3  2026-05-26  BNB price up in next 15 mins?
-  KXLEAVEGROUPKATSEYE-27                      51c  46c       3  2027-01-01  Will Manon leave Katseye before Jan 1, 2
-  KXATPMATCH-26MAY25QUICOM-QUI                23c  76c       3  2026-06-08  Will Ethan Quinn win the Quinn vs Comesa
-  KXATPMATCH-26MAY25SINTAB-SIN                99c    ?       3  2026-06-08  Will Jannik Sinner win the Sinner vs Tab
-  KXVANCEMENTION-26MAY26-SOMA                 41c  56c       3  2026-06-10  What will JD Vance say during Roundtable
-  KXMVESPORTSMULTIGAMEEXTENDED-S2026B4C64CE3  20c  78c       2  2026-06-10  yes San Antonio,yes Over 215.5 points sc
-  KXBTCD-26MAY2615-T75399.99                  93c   6c       2  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXWTAMATCH-26MAY24WALSIN-SIN                77c  22c       2  2026-06-07  Will Katerina Siniakova win the Waltert 
-  KXITFMATCH-26MAY26MCDWIL-MCD                54c  44c       2  2026-06-09  Will Niels McDonald win the McDonald vs 
-  KXETH15M-26MAY261415-15                     94c   3c       2  2026-05-26  ETH price up in next 15 mins?
-  KXWTASETWINNER-26MAY24BIRPEG-2-BIR          12c  41c       2  2026-06-07  Will Kimberly Birrell win set 2 in the K
-  KXISLGAME-26MAY131100ELIHGE-ELI             56c  42c       2  2026-05-27  Ironi Kiryat ATA vs Hapoel Galil Elyon W
-  KXBTCD-26MAY2617-T75999.99                  36c  63c       2  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXHIGHTLV-26MAY26-B92.5                     21c  77c       2  2026-05-27  Will the maximum temperature be  92-93° 
+  KXWTAMATCH-26MAY24BIRPEG-PEG                35c  64c      37  2026-06-07  Will Jessica Pegula win the Birrell vs P
+  KXBTC15M-26MAY261615-15                     82c  17c      34  2026-05-26  BTC price up in next 15 mins?
+  KXBTCD-26MAY2617-T75999.99                  44c  55c      14  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXT20MATCH-26MAY261400ESSHAM-ESS             1c  98c      14  2026-05-28  Hampshire vs Essex Winner?
+  KXWTAMATCH-26MAY24BIRPEG-BIR                66c  32c      13  2026-06-07  Will Kimberly Birrell win the Birrell vs
+  KXCS2GAME-26MAY261300BWKOL-KOL              53c  44c       6  2026-06-09  Will KOLESIE win the Bushido Wildcats vs
+  KXATPMATCH-26MAY25AUGALT-ALT                33c  66c       4  2026-06-08  Will Daniel Altmaier win the Auger-Alias
+  KXTXPRIMARY-35R26-JLUJ                      10c  83c       4  2027-11-03  Will John Lujan be the Republican nomine
+  KXATPMATCH-26MAY25AUGALT-AUG                66c  33c       4  2026-06-08  Will Felix Auger-Aliassime win the Auger
+  KXNBAGAME-26MAY26SASOKC-SAS                 39c  60c       4  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXHYPE15M-26MAY261615-15                     5c  81c       3  2026-05-26  HYPE price up in next 15 mins?
+  KXLIGUE1GAME-26MAY26STENIC-TIE              52c  46c       3  2026-06-09  Saint-Etienne vs Nice Winner?
+  KXNBATOTAL-26MAY26SASOKC-224                35c  64c       2  2026-06-10  Game 5: San Antonio at Oklahoma City: To
+  KXINXU-26MAY27H1600-T7499.9999              58c  32c       2  2026-05-27  Will the S&P 500 be above 7499.9999 on M
+  KXMVESPORTSMULTIGAMEEXTENDED-S202645EDC8BD   1c  99c       2  2026-06-10  yes Chet Holmgren: 1+,yes Shai Gilgeous-
+  KXCS2GAME-26MAY261300BWKOL-BW               43c  53c       2  2026-06-09  Will Bushido Wildcats win the Bushido Wi
+  KXPGATOUR-CHSC26-MMCC                        1c  97c       2  2026-06-14  Will Matthew McCarty win the Charles Sch
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026988319EE  45c  55c       2  2026-06-08  yes Felix Auger-Aliassime,yes Kimberly B
+  KXBRENTD-26MAY2617-T96.50                   54c  43c       2  2026-05-26  Will the brent crude oil close price be 
+  KXATPCHALLENGERMATCH-26MAY26MONSHI-MON      55c  43c       1  2026-06-09  Will Johannus Monday win the Monday vs S
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/AUSLEADERSEAT.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/AUSLEA
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Health', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/H5N1.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/H5N1.pdf', 'fee_m
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -77,30 +77,28 @@
 ### Series tickers found in trades feed:
   KXATPCHALLENGERMATCH
   KXATPMATCH
-  KXATPSETWINNER
-  KXBNB15M
+  KXBRENTD
   KXBTC15M
   KXBTCD
-  KXCONMEBOLSUDGAME
-  KXETH15M
-  KXHIGHNY
-  KXHIGHTLV
-  KXHIGHTPHX
-  KXHIGHTSEA
+  KXCS2GAME
+  KXHIGHCHI
+  KXHIGHTMIN
   KXHYPE15M
-  KXIPL
-  KXIPLTEAMTOTAL
-  KXISLGAME
-  KXITFMATCH
-  KXITFWMATCH
-  KXLEAVEGROUPKATSEYE
-  KXMAYORLA
+  KXINXU
+  KXLIGUE1GAME
+  KXLOLGAME
+  KXMENWORLDCUP
   KXMLBGAME
+  KXMLBHR
   KXMVESPORTSMULTIGAMEEXTENDED
+  KXNASDAQ100U
   KXNBA
+  KXNBADRAFT1
+  KXNBAGAME
   KXNBASPREAD
-  KXNBATEAMTOTAL
-  KXNBAWEST
-  KXVANCEMENTION
+  KXNBATOTAL
+  KXPGATOUR
+  KXRT
+  KXT20MATCH
+  KXTXPRIMARY
   KXWTAMATCH
-  KXWTASETWINNER
