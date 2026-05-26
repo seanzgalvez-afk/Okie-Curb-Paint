@@ -30,6 +30,7 @@ jobs:
         env:
           KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
           KALSHI_PRIVATE_KEY_PATH: .keys/pk.pem
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python scripts/snapshot.py -o data/snapshot.txt
 
       - name: Commit and push

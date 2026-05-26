@@ -1,4 +1,4 @@
-"""Kalshi snapshot — RSA-PSS auth, JSON dashboard output, WC discovery."""
+"""Kalshi snapshot — RSA-PSS auth, JSON dashboard output, Vegas edge finder."""
 import base64, json, os, sys, time, traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -51,6 +51,147 @@ def log(msg): print(msg, file=sys.stderr)
 def cents(d):
     try: return int(round(float(d) * 100))
     except: return None
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ODDS API — Vegas vs Kalshi edge finder
+# ═══════════════════════════════════════════════════════════════════════════════
+ODDS_API_KEY = os.environ.get("ODDS_API_KEY", "")
+ODDS_BASE    = "https://api.the-odds-api.com/v4"
+
+ODDS_SPORTS = [
+    "basketball_nba",
+    "americanfootball_nfl",
+    "baseball_mlb",
+    "icehockey_nhl",
+    "soccer_fifa_world_cup",
+]
+
+# Kalshi ticker/title fragment → team name fragment (for matching)
+TEAM_HINTS = {
+    # NBA
+    "OKC": "oklahoma city", "SA": "san antonio",  "BOS": "boston",
+    "MIA": "miami",         "NYK": "new york kni", "IND": "indiana",
+    "MIL": "milwaukee",     "MIN": "minnesota",    "DEN": "denver",
+    "LAL": "lakers",        "LAC": "clippers",     "GSW": "golden state",
+    "PHX": "phoenix",       "DAL": "dallas",       "MEM": "memphis",
+    "NOP": "new orleans",   "HOU": "houston",      "SAC": "sacramento",
+    "UTA": "utah",          "CHA": "charlotte",    "ATL": "atlanta",
+    "CHI": "chicago",       "CLE": "cleveland",    "DET": "detroit",
+    "ORL": "orlando",       "PHI": "76ers",        "TOR": "toronto",
+    "WAS": "washington",    "BKN": "brooklyn",     "POR": "portland",
+    # NFL
+    "KC":  "kansas city",   "SF":  "san francisco","BUF": "buffalo",
+    "NE":  "new england",   "GB":  "green bay",    "SEA": "seattle",
+    "BAL": "baltimore",     "CIN": "cincinnati",   "PIT": "pittsburgh",
+    # Soccer
+    "MEX": "mexico",        "USA": "united states","BRA": "brazil",
+    "ARG": "argentina",     "FRA": "france",       "ENG": "england",
+    "GER": "germany",       "ESP": "spain",        "POR": "portugal",
+}
+
+def am_to_prob(odds):
+    """American odds integer → implied probability 0-100."""
+    try:
+        o = int(odds)
+        if o < 0: return abs(o) / (abs(o) + 100) * 100
+        return 100 / (o + 100) * 100
+    except: return None
+
+def fetch_vegas_odds():
+    """Fetch all upcoming games from The Odds API. Returns list of game dicts."""
+    if not ODDS_API_KEY:
+        log("ODDS_API_KEY not set — skipping Vegas comparison")
+        return []
+    games = []
+    for sport in ODDS_SPORTS:
+        try:
+            r = httpx.get(f"{ODDS_BASE}/sports/{sport}/odds/",
+                params={"apiKey": ODDS_API_KEY, "regions": "us",
+                        "markets": "h2h", "oddsFormat": "american"},
+                timeout=15)
+            log(f"Odds API {sport} -> {r.status_code}")
+            if r.status_code == 200:
+                sport_games = r.json()
+                for g in sport_games:
+                    g["_sport"] = sport
+                    games.append(g)
+                remaining = r.headers.get("x-requests-remaining", "?")
+                log(f"  {len(sport_games)} games | {remaining} credits remaining")
+        except Exception as e:
+            log(f"Odds API {sport} error: {e}")
+    return games
+
+def game_consensus_prob(game, team_fragment):
+    """Average implied probability for a team across all bookmakers (0-100)."""
+    probs = []
+    for bm in game.get("bookmakers", []):
+        for mkt in bm.get("markets", []):
+            if mkt.get("key") != "h2h": continue
+            for oc in mkt.get("outcomes", []):
+                if team_fragment.lower() in oc.get("name", "").lower():
+                    p = am_to_prob(oc.get("price"))
+                    if p is not None: probs.append(p)
+    return round(sum(probs) / len(probs), 1) if probs else None
+
+def find_divergences(kalshi_markets, vegas_games):
+    """Compare Kalshi prices to Vegas consensus. Return edge alert dicts."""
+    divs = []
+    for km in kalshi_markets:
+        ticker = km.get("ticker", "")
+        title  = km.get("title", "")
+        kp     = km.get("yes_bid") or km.get("last_price")
+        if kp is None: continue
+
+        for game in vegas_games:
+            home = game.get("home_team", "").lower()
+            away = game.get("away_team", "").lower()
+            matched_team = None
+
+            # Try TEAM_HINTS lookup first
+            for abbr, hint in TEAM_HINTS.items():
+                if abbr in ticker.upper() or abbr in title.upper():
+                    if hint in home: matched_team = hint; break
+                    if hint in away: matched_team = hint; break
+
+            # Fallback: word overlap between game teams and Kalshi title
+            if not matched_team:
+                for team in [home, away]:
+                    for word in team.split():
+                        if len(word) > 4 and word in title.lower():
+                            matched_team = team; break
+                    if matched_team: break
+
+            if not matched_team: continue
+
+            vp = game_consensus_prob(game, matched_team)
+            if vp is None: continue
+
+            gap = round(vp - kp, 1)
+            if abs(gap) < 5: continue  # < 5¢ gap = noise
+
+            books = []
+            for bm in game.get("bookmakers", [])[:4]:
+                for mkt in bm.get("markets", []):
+                    if mkt.get("key") != "h2h": continue
+                    for oc in mkt.get("outcomes", []):
+                        if matched_team.lower() in oc.get("name", "").lower():
+                            books.append(f"{bm.get('title','?')}: {oc.get('price',0):+d}")
+
+            divs.append({
+                "ticker":       ticker,
+                "title":        title,
+                "kalshi_price": kp,
+                "vegas_prob":   vp,
+                "gap":          gap,
+                "direction":    "BUY YES" if gap > 0 else "BUY NO",
+                "game":         f"{game.get('away_team','')} @ {game.get('home_team','')}",
+                "game_time":    game.get("commence_time", ""),
+                "books":        books[:3],
+                "sport":        game.get("_sport", ""),
+            })
+
+    divs.sort(key=lambda x: abs(x["gap"]), reverse=True)
+    return divs[:10]
 
 def score_market(m, all_volumes, today):
     """Calculate edge score (0-10) for best picks ranking."""
@@ -291,6 +432,19 @@ for (score, reason), m in scored[:5]:
                         "side": side, "price": price,
                         "reason": reason, "edge_score": score})
 
+# ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
+edges = []
+try:
+    vegas_games = fetch_vegas_odds()
+    log(f"Total Vegas games: {len(vegas_games)}")
+    edges = find_divergences(markets_list, vegas_games)
+    log(f"Edge alerts found: {len(edges)}")
+    for e in edges:
+        log(f"  EDGE {e['gap']:+.1f}¢  {e['ticker']}  Kalshi={e['kalshi_price']}¢ Vegas={e['vegas_prob']}¢  {e['direction']}")
+except Exception as e:
+    log(f"Odds comparison error: {e}")
+    traceback.print_exc(file=sys.stderr)
+
 # ── Write JSON for dashboard ──────────────────────────────────────────────────
 docs_dir = Path(__file__).parent.parent / "docs"
 docs_dir.mkdir(exist_ok=True)
@@ -304,5 +458,6 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "positions":     positions_list,
     "markets":       clean_markets,
     "best_picks":    best_picks,
+    "edges":         edges,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
