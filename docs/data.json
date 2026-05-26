@@ -1,0 +1,289 @@
+{
+  "generated": "2026-05-26 14:42 UTC",
+  "balance_cents": 0,
+  "positions": [],
+  "markets": [
+    {
+      "ticker": "KXCS2MAP-26MAY261000LCAM-1-LC",
+      "title": "Will Lazer Cats win map 1 in the Lazer Cats vs. AM Gaming match?",
+      "yes_bid": 2,
+      "no_bid": 29,
+      "yes_ask": 71,
+      "no_ask": 98,
+      "last_price": 1,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXIPLGAME-26MAY261000GTRCB-RCB",
+      "title": "Royal Challengers Bengaluru vs Gujarat Titans Winner?",
+      "yes_bid": 67,
+      "no_bid": 32,
+      "yes_ask": 68,
+      "no_ask": 33,
+      "last_price": 68,
+      "volume": 0,
+      "close_time": "2026-05-28",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2611-T76799.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 54,
+      "no_bid": 45,
+      "yes_ask": 55,
+      "no_ask": 46,
+      "last_price": 55,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26SEKKRU-SEK",
+      "title": "Will Philip Sekulic win the Sekulic vs Krueger: Round Of 32 match?",
+      "yes_bid": 42,
+      "no_bid": 54,
+      "yes_ask": 46,
+      "no_ask": 58,
+      "last_price": 47,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25KOPMOU-KOP",
+      "title": "Will Vit Kopriva win the Kopriva vs Moutet: Round Of 128 match?",
+      "yes_bid": 54,
+      "no_bid": 45,
+      "yes_ask": 55,
+      "no_ask": 46,
+      "last_price": 55,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXPGATOUR-USO26-SSCH",
+      "title": "Will Scottie Scheffler win the U.S. Open?",
+      "yes_bid": 14,
+      "no_bid": 85,
+      "yes_ask": 15,
+      "no_ask": 86,
+      "last_price": 15,
+      "volume": 0,
+      "close_time": "2026-07-05",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXWTI-26MAY2614-T92.99",
+      "title": "Will the WTI crude oil settlement price be above 92.99 USD/Bbl on May 26, 2026?",
+      "yes_bid": 66,
+      "no_bid": 30,
+      "yes_ask": 70,
+      "no_ask": 34,
+      "last_price": 70,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXIPLGAME-26MAY261000GTRCB-GT",
+      "title": "Royal Challengers Bengaluru vs Gujarat Titans Winner?",
+      "yes_bid": 33,
+      "no_bid": 66,
+      "yes_ask": 34,
+      "no_ask": 67,
+      "last_price": 33,
+      "volume": 0,
+      "close_time": "2026-05-28",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAECOP-COP",
+      "title": "Will Kimmer Coppejans win the Maestrelli vs Coppejans: Round Of 32 match?",
+      "yes_bid": 26,
+      "no_bid": 72,
+      "yes_ask": 28,
+      "no_ask": 74,
+      "last_price": 28,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26KOTONC-KOT",
+      "title": "Will Pavel Kotov win the Kotov vs Onclin: Round Of 32 match?",
+      "yes_bid": 64,
+      "no_bid": 35,
+      "yes_ask": 65,
+      "no_ask": 36,
+      "last_price": 65,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
+      "title": "Game 5: San Antonio at Oklahoma City Winner?",
+      "yes_bid": 38,
+      "no_bid": 61,
+      "yes_ask": 39,
+      "no_ask": 62,
+      "last_price": 39,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXWTAMATCH-26MAY24SIEOSA-OSA",
+      "title": "Will Naomi Osaka win the Siegemund vs Osaka: Round Of 128 match?",
+      "yes_bid": 86,
+      "no_bid": 13,
+      "yes_ask": 87,
+      "no_ask": 14,
+      "last_price": 87,
+      "volume": 0,
+      "close_time": "2026-06-07",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXDOTA2GAME-26MAY260950TSTUNDRA-TS",
+      "title": "Will Team Spirit win the Team Spirit vs. Tundra Esports Dota 2 match?",
+      "yes_bid": 70,
+      "no_bid": 29,
+      "yes_ask": 71,
+      "no_ask": 30,
+      "last_price": 70,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBSLGAME-26MAY261100TRABAH-TRA",
+      "title": "Trabzonspor Basketbol vs Bahcesehir Koleji Winner?",
+      "yes_bid": 25,
+      "no_bid": 67,
+      "yes_ask": 33,
+      "no_ask": 75,
+      "last_price": 36,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXWTAMATCH-26MAY24SIEOSA-SIE",
+      "title": "Will Laura Siegemund win the Siegemund vs Osaka: Round Of 128 match?",
+      "yes_bid": 12,
+      "no_bid": 86,
+      "yes_ask": 14,
+      "no_ask": 88,
+      "last_price": 14,
+      "volume": 0,
+      "close_time": "2026-06-07",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2611-T76599.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 73,
+      "no_bid": 25,
+      "yes_ask": 75,
+      "no_ask": 27,
+      "last_price": 74,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2617-T76499.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 66,
+      "no_bid": 32,
+      "yes_ask": 68,
+      "no_ask": 34,
+      "last_price": 67,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY24LANPRA-LAN",
+      "title": "Will Martin Landaluce win the Landaluce vs Prado Angelo: Round Of 128 match?",
+      "yes_bid": 94,
+      "no_bid": 5,
+      "yes_ask": 95,
+      "no_ask": 6,
+      "last_price": 95,
+      "volume": 0,
+      "close_time": "2026-06-07",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPSETWINNER-26MAY25BUBSTR-1-STR",
+      "title": "Will Jan-Lennard Struff win set 1 in the Alexander Bublik vs Jan-Lennard Struff match",
+      "yes_bid": 27,
+      "no_bid": 60,
+      "yes_ask": 40,
+      "no_ask": 73,
+      "last_price": 30,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25BAEBUR-BUR",
+      "title": "Will Roman Andres Burruchaga win the Baez vs Burruchaga: Round Of 128 match?",
+      "yes_bid": 52,
+      "no_bid": 47,
+      "yes_ask": 53,
+      "no_ask": 48,
+      "last_price": 52,
+      "volume": 0,
+      "close_time": "2026-06-08",
+      "category": "Other"
+    }
+  ],
+  "best_picks": [
+    {
+      "ticker": "KXIPLGAME-26MAY261000GTRCB-GT",
+      "title": "Royal Challengers Bengaluru vs Gujarat Titans Winner?",
+      "side": "YES",
+      "price": 33,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
+    },
+    {
+      "ticker": "KXIPLGAME-26MAY261000GTRCB-RCB",
+      "title": "Royal Challengers Bengaluru vs Gujarat Titans Winner?",
+      "side": "NO",
+      "price": 33,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXWTI-26MAY2614-T92.99",
+      "title": "Will the WTI crude oil settlement price be above 92.99 USD/Bbl on May 26, 2026?",
+      "side": "NO",
+      "price": 34,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXBTCD-26MAY2611-T76599.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "side": "NO",
+      "price": 27,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXBTCD-26MAY2617-T76499.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "side": "NO",
+      "price": 34,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    }
+  ]
+}

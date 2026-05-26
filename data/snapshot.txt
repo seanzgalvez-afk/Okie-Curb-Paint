@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 14:04 UTC
+# Generated: 2026-05-26 14:42 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261015-15                     56c  43c      52  2026-05-26  BTC price up in next 15 mins?
-  KXIPLGAME-26MAY261000GTRCB-RCB              53c  46c      16  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
-  KXWTAMATCH-26MAY24GAUTOW-TOW                 7c  92c       7  2026-06-07  Will Taylor Townsend win the Gauff vs To
-  KXITFMATCH-26MAY26SAKOVE-SAK                38c  58c       7  2026-06-09  Will Dimitris Sakellaridis win the Sakel
-  KXIPLGAME-26MAY261000GTRCB-GT               46c  53c       6  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
-  KXATPMATCH-26MAY24LANPRA-PRA                 8c  91c       5  2026-06-07  Will Juan Carlos Prado Angelo win the La
-  KXTRUMPSAY-26JUN01-THUG                     50c  47c       5  2026-06-01  Will Trump say "Thug" before Jun 1, 2026
-  KXWTAMATCH-26MAY24GAUTOW-GAU                92c   7c       4  2026-06-07  Will Coco Gauff win the Gauff vs Townsen
-  KXATPMATCH-26MAY24FAUVAC-VAC                99c    ?       4  2026-06-07  Will Valentin Vacherot win the Faurel vs
-  KXATPCHALLENGERMATCH-26MAY26DUTBRO-BRO      95c   4c       4  2026-06-09  Will Liam Broady win the Dutra Da Silva 
-  KXWTAMATCH-26MAY24SIEOSA-OSA                85c  14c       3  2026-06-07  Will Naomi Osaka win the Siegemund vs Os
-  KXATPMATCH-26MAY25KOPMOU-MOU                56c  43c       3  2026-06-08  Will Corentin Moutet win the Kopriva vs 
-  KXATPCHALLENGERMATCH-26MAY26CLAKAR-CLA      96c   3c       3  2026-06-09  Will Jay Clarke win the Clarke vs Karol:
-  KXATPMATCH-26MAY25BAEBUR-BUR                21c  78c       3  2026-06-08  Will Roman Andres Burruchaga win the Bae
-  KXBTCD-26MAY2611-T76899.99                  74c  25c       3  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25GARTIE-TIE                76c  21c       3  2026-06-08  Will Learner Tien win the Garin vs Tien:
-  KXPRIMARYMOV-TX33D26-CALL-P7                32c  67c       2  2027-05-26  Will the margin of victory for Colin All
-  KXMVESPORTSMULTIGAMEEXTENDED-S202666B39620   1c  99c       2  2026-06-10  yes Shai Gilgeous-Alexander: 8+,yes Isai
-  KXNBAGAME-26MAY26SASOKC-SAS                 38c  61c       2  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXWTAMATCH-26MAY24SIEOSA-SIE                14c  85c       2  2026-06-07  Will Laura Siegemund win the Siegemund v
+  KXCS2MAP-26MAY261000LCAM-1-LC                2c  29c       9  2026-06-09  Will Lazer Cats win map 1 in the Lazer C
+  KXIPLGAME-26MAY261000GTRCB-RCB              67c  32c       8  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXBTCD-26MAY2611-T76799.99                  54c  45c       8  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPCHALLENGERMATCH-26MAY26SEKKRU-SEK      42c  54c       8  2026-06-09  Will Philip Sekulic win the Sekulic vs K
+  KXATPMATCH-26MAY25KOPMOU-KOP                54c  45c       7  2026-06-08  Will Vit Kopriva win the Kopriva vs Mout
+  KXPGATOUR-USO26-SSCH                        14c  85c       6  2026-07-05  Will Scottie Scheffler win the U.S. Open
+  KXWTI-26MAY2614-T92.99                      66c  30c       6  2026-05-26  Will the WTI crude oil settlement price 
+  KXIPLGAME-26MAY261000GTRCB-GT               33c  66c       5  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXATPCHALLENGERMATCH-26MAY26MAECOP-COP      26c  72c       5  2026-06-09  Will Kimmer Coppejans win the Maestrelli
+  KXATPCHALLENGERMATCH-26MAY26KOTONC-KOT      64c  35c       5  2026-06-09  Will Pavel Kotov win the Kotov vs Onclin
+  KXNBAGAME-26MAY26SASOKC-SAS                 38c  61c       4  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXWTAMATCH-26MAY24SIEOSA-OSA                86c  13c       4  2026-06-07  Will Naomi Osaka win the Siegemund vs Os
+  KXDOTA2GAME-26MAY260950TSTUNDRA-TS          70c  29c       4  2026-06-09  Will Team Spirit win the Team Spirit vs.
+  KXBSLGAME-26MAY261100TRABAH-TRA             25c  67c       4  2026-06-09  Trabzonspor Basketbol vs Bahcesehir Kole
+  KXWTAMATCH-26MAY24SIEOSA-SIE                12c  86c       3  2026-06-07  Will Laura Siegemund win the Siegemund v
+  KXBTCD-26MAY2611-T76599.99                  73c  25c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2617-T76499.99                  66c  32c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPMATCH-26MAY24LANPRA-LAN                94c   5c       3  2026-06-07  Will Martin Landaluce win the Landaluce 
+  KXATPSETWINNER-26MAY25BUBSTR-1-STR          27c  60c       3  2026-06-08  Will Jan-Lennard Struff win set 1 in the
+  KXATPMATCH-26MAY25BAEBUR-BUR                52c  47c       3  2026-06-08  Will Roman Andres Burruchaga win the Bae
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/GERPOLLFIRST.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/GERPOLL
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Science and Technology', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/OAIMUSKSUIT.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifica
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -77,17 +77,20 @@
 ### Series tickers found in trades feed:
   KXATPCHALLENGERMATCH
   KXATPMATCH
+  KXATPSETWINNER
+  KXBSLGAME
   KXBTC15M
   KXBTCD
-  KXETH15M
+  KXCS2MAP
+  KXDOTA2GAME
+  KXHYPE15M
   KXIPLGAME
-  KXITFMATCH
+  KXIPLTEAMTOTAL
+  KXMAMDANIMENTION
   KXMLBGAME
-  KXMVECROSSCATEGORY
-  KXMVESPORTSMULTIGAMEEXTENDED
+  KXNBA
   KXNBAGAME
-  KXPRIMARYMOV
-  KXSOL15M
-  KXTRUMPSAY
+  KXPGATOUR
   KXWTAMATCH
-  KXWTASETWINNER
+  KXWTI
+  KXWTIMINM
