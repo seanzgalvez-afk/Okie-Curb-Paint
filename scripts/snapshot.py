@@ -18,7 +18,9 @@ if not KEY_ID:
 raw = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
 if raw:
     if not raw.startswith("-----"):
-        raw = base64.b64decode(raw).decode()
+        # Strip any whitespace that mobile copy-paste may have introduced
+        raw_clean = "".join(raw.split())
+        raw = base64.b64decode(raw_clean).decode()
     pem = raw.encode()
 else:
     pem = Path(os.environ.get("KALSHI_PRIVATE_KEY_PATH", "./kalshi_private_key.pem")).read_bytes()
