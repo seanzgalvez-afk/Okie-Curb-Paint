@@ -1,4 +1,4 @@
-"""Kalshi snapshot — active markets + deep World Cup search."""
+"""Kalshi snapshot — active markets + deep World Cup search (all statuses)."""
 import base64, os, sys, time, traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -46,7 +46,7 @@ def get(path, params=None):
             return None
         return r.json()
     except Exception as e:
-        print(f"GET {path} ERROR: {e}", file=sys.stderr)
+        print(f"ERROR {path}: {e}", file=sys.stderr)
         return None
 
 def cents(d):
@@ -67,13 +67,10 @@ except Exception:
 try:
     pos = get("/portfolio/positions", {"limit": 50})
     positions = (pos or {}).get("market_positions", []) or []
-    lines.append("\n## Open positions:")
-    if positions:
-        for p in positions:
-            qty = p.get("position", 0)
-            lines.append(f"  {p.get('ticker','')}  {'YES' if qty>0 else 'NO'}  qty={abs(qty)}")
-    else:
-        lines.append("  none")
+    lines.append("\n## Open positions: " + ("none" if not positions else ""))
+    for p in positions:
+        qty = p.get("position", 0)
+        lines.append(f"  {p.get('ticker','')}  {'YES' if qty>0 else 'NO'}  qty={abs(qty)}")
 except Exception:
     lines.append("\n## Positions: error")
 
@@ -121,7 +118,7 @@ except Exception as e:
     traceback.print_exc(file=sys.stderr)
 
 # ================================================================
-# SECTION 2: World Cup — exhaustive search
+# SECTION 2: World Cup — try multiple statuses + series scan
 # ================================================================
 lines.append("\n" + "="*70)
 lines.append("## FIFA WORLD CUP 2026")
@@ -129,65 +126,71 @@ lines.append("="*70)
 
 try:
     WC_KEYWORDS = [
-        "world cup", "fifa", "worldcup", "wc 2026", "wc2026",
-        "soccer", "football", "copa mundial", "copa",
-        "brazil", "france", "argentina", "england", "spain",
-        "germany", "portugal", "group a", "group b", "group c",
-        "group d", "group e", "group f", "group g", "group h",
+        "world cup", "fifa", "wc2026", "wc 2026", "soccer", "football",
+        "copa mundial", "copa", "group a", "group b", "group c", "group d",
+        "group e", "group f", "group g", "group h", "group i", "group j",
+        "group k", "group l",
     ]
-    # Broad list of possible series tickers
     WC_SERIES = [
         "KXFIFAWC26", "KXFIFAWC", "KXWC26", "KXWC2026", "KXWC",
-        "KXSOCCER", "KXSOCCER26", "KXFIFA", "KXFIFA26",
-        "FIFAWC26", "KXCOPA", "KXCOPA26", "KXWORLDCUP",
-        "KXWORLDCUP26", "KXWC26CHAMP", "KXFOOTBALL",
-        "KXWC26GROUP", "KXWC26MATCH", "KXWC26WIN",
+        "KXSOCCER", "KXSOCCER26", "KXFIFA", "KXFIFA26", "KXFOOTBALL",
+        "FIFAWC26", "KXCOPA", "KXWORLDCUP", "KXWORLDCUP26",
+        "KXWC26CHAMP", "KXWC26GROUP", "KXWC26MATCH",
     ]
 
     wc_markets = []
-    found_series = None
+    found_via = None
     seen_tk = set()
 
-    # 1. Try series tickers directly
+    # 1. Try series tickers with NO status filter (catches pre-open markets too)
     for series in WC_SERIES:
-        resp = get("/markets", {"status": "open", "series_ticker": series, "limit": 100})
-        batch = (resp or {}).get("markets", []) or []
-        for m in batch:
-            tk = m.get("ticker", "")
-            if tk and tk not in seen_tk:
-                seen_tk.add(tk); wc_markets.append(m)
-        if batch:
-            found_series = series
-            print(f"  Found WC via series {series}: {len(batch)} markets", file=sys.stderr)
+        for status in [None, "open", "active"]:
+            params = {"series_ticker": series, "limit": 100}
+            if status:
+                params["status"] = status
+            resp = get("/markets", params)
+            batch = (resp or {}).get("markets", []) or []
+            for m in batch:
+                tk = m.get("ticker", "")
+                if tk and tk not in seen_tk:
+                    seen_tk.add(tk); wc_markets.append(m)
+            if batch:
+                found_via = f"series={series} status={status}"
+                print(f"  HIT: {found_via} -> {len(batch)} markets", file=sys.stderr)
+                break
+        if wc_markets:
             break
 
-    # 2. Scan ALL events pages (up to 3000 events) looking for WC
+    # 2. Scan events with no status filter (gets ALL events)
     if not wc_markets:
-        print("  Series scan failed, scanning all events...", file=sys.stderr)
+        print("  Scanning events with no status filter...", file=sys.stderr)
+        all_series = set()
         wc_event_tickers = []
-        all_series_seen = set()
         cursor = None
         pages = 0
-        while pages < 30:  # up to 3000 events
-            resp = get("/events", {"status": "open", "limit": 100,
-                                   **(({"cursor": cursor}) if cursor else {})})
+        while pages < 20:
+            params = {"limit": 100}
+            if cursor:
+                params["cursor"] = cursor
+            resp = get("/events", params)
             if not resp: break
             events = (resp or {}).get("events", []) or []
             for e in events:
                 t = (e.get("title") or "").lower()
-                s = (e.get("series_ticker") or "").lower()
-                all_series_seen.add(e.get("series_ticker", ""))
-                if any(kw in t or kw in s for kw in WC_KEYWORDS):
+                s = (e.get("series_ticker") or "")
+                all_series.add(s)
+                if any(kw in t or kw in s.lower() for kw in WC_KEYWORDS):
                     et = e.get("event_ticker", "")
-                    if et: wc_event_tickers.append((et, e.get("title",""), e.get("series_ticker","")))
+                    if et:
+                        wc_event_tickers.append(et)
+                        print(f"  WC event: [{s}] {e.get('title','')}", file=sys.stderr)
             cursor = resp.get("cursor")
             pages += 1
             if not cursor or not events: break
 
-        print(f"  Scanned {pages} pages. WC events: {len(wc_event_tickers)}", file=sys.stderr)
+        print(f"  Pages={pages}, WC events={len(wc_event_tickers)}, unique series={len(all_series)}", file=sys.stderr)
 
-        # Fetch markets for each WC event found
-        for et, etitle, eseries in wc_event_tickers[:50]:
+        for et in wc_event_tickers[:50]:
             try:
                 resp = get(f"/events/{et}")
                 event = (resp or {}).get("event", {})
@@ -199,11 +202,9 @@ try:
             except Exception: continue
 
         if not wc_markets:
-            # Show all unique series tickers found so we can identify the right one
-            lines.append("\n  No WC markets found after exhaustive search.")
-            lines.append(f"  Scanned {pages*100} events across {pages} pages.")
-            lines.append("  All unique series tickers found (sample):")
-            for s in sorted(all_series_seen)[:60]:
+            lines.append(f"\n  Searched {pages} event pages, {len(all_series)} unique series. Still nothing.")
+            lines.append("  All series tickers found (sorted):")
+            for s in sorted(all_series):
                 if s: lines.append(f"    {s}")
 
     if wc_markets:
@@ -211,9 +212,9 @@ try:
         for m in wc_markets:
             ev = m.get("event_ticker", "other")
             by_event.setdefault(ev, []).append(m)
-        lines.append(f"\n  Found {len(wc_markets)} WC markets across {len(by_event)} events (series: {found_series})")
+        lines.append(f"\n  FOUND {len(wc_markets)} WC markets via {found_via}")
         for ev, ms in sorted(by_event.items()):
-            lines.append(f"\n### {ev} ({len(ms)} markets)")
+            lines.append(f"\n### {ev}")
             lines.append(f"  {'Title':<52} {'YES':>4} {'NO':>4}  Closes")
             lines.append("  " + "-"*72)
             for m in sorted(ms, key=lambda x: x.get("title", "")):
@@ -221,12 +222,10 @@ try:
                 close = str(m.get("close_time", ""))[:10]
                 y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars"))
                 n = cents(m.get("no_bid_dollars"))
-                ys = f"{y}c" if y is not None else "  ?"
-                ns = f"{n}c" if n is not None else "  ?"
-                lines.append(f"  {title:<52} {ys:>4} {ns:>4}  {close}")
+                lines.append(f"  {title:<52} {str(y)+'c' if y else '?':>4} {str(n)+'c' if n else '?':>4}  {close}")
 
 except Exception as e:
-    lines.append(f"  World Cup ERROR: {e}")
+    lines.append(f"  ERROR: {e}")
     traceback.print_exc(file=sys.stderr)
 
 snapshot = "\n".join(lines)
