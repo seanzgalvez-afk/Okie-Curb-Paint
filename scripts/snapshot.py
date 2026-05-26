@@ -514,7 +514,7 @@ def _cg_get(path, params=None):
 
 def _on_interval(minutes):
     """True if current UTC minute is on a multiple-of-minutes boundary."""
-    return True  # TEMP: force all intervals for API key test — revert after
+    return datetime.now(timezone.utc).minute % minutes == 0
 
 def fetch_crypto_prices():
     """Live prices for BTC/ETH/SOL + key alts. Every 15 min = 2,880 credits/month."""
@@ -652,41 +652,51 @@ def fetch_fear_greed():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def fetch_metaculus_questions(search_terms=None):
-    """Fetch top active Metaculus questions for cross-market comparison."""
+    """Fetch top active Metaculus questions via their v3 API."""
     try:
+        # v3 API — questions endpoint with open status
         params = {
             "status": "open",
             "order_by": "-activity",
             "limit": 20,
-            "type": "forecast",
         }
         if search_terms:
             params["search"] = search_terms
-        r = httpx.get("https://www.metaculus.com/api2/questions/", params=params, timeout=10)
-        log(f"Metaculus -> {r.status_code}")
-        if r.status_code != 200:
-            log(f"Metaculus body: {r.text[:300]}")
+        headers = {"Accept": "application/json"}
+        # Try v3 first, fall back to v2
+        for url in [
+            "https://www.metaculus.com/api/posts/",
+            "https://www.metaculus.com/api2/questions/",
+        ]:
+            r = httpx.get(url, params=params, headers=headers, timeout=10)
+            log(f"Metaculus {url} -> {r.status_code}")
+            if r.status_code == 200:
+                data = r.json()
+                raw = data.get("results", data if isinstance(data, list) else [])
+                if raw:
+                    break
+        else:
             return []
-        data = r.json()
-        log(f"Metaculus keys: {list(data.keys())[:5]}")
-        results = data.get("results", data if isinstance(data, list) else [])
         questions = []
-        for q in results:
-            # community_prediction is a float 0-1 or None
-            cp = q.get("community_prediction", {})
+        for q in raw:
+            # v3 nests question inside "question" key
+            inner = q.get("question", q)
+            cp = inner.get("community_prediction") or q.get("community_prediction")
             if isinstance(cp, dict):
-                prob = cp.get("full", {}).get("q2")  # median
+                prob = cp.get("full", {}).get("q2")
             elif isinstance(cp, (int, float)):
                 prob = cp
             else:
                 prob = None
+            qid = inner.get("id") or q.get("id")
             questions.append({
-                "id": q.get("id"),
-                "title": q.get("title", ""),
-                "prob": round(prob * 100, 1) if prob is not None else None,
-                "close_time": str(q.get("close_time", ""))[:10],
-                "url": f"https://www.metaculus.com/questions/{q.get('id')}/",
+                "id":         qid,
+                "title":      inner.get("title") or q.get("title", ""),
+                "prob":       round(prob * 100, 1) if prob is not None else None,
+                "close_time": str(inner.get("scheduled_close_time") or q.get("close_time", ""))[:10],
+                "url":        f"https://www.metaculus.com/questions/{qid}/",
             })
+        log(f"Metaculus: {len(questions)} questions")
         return questions
     except Exception as e:
         log(f"Metaculus error: {e}")
