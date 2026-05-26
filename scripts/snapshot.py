@@ -1,174 +1,137 @@
-#!/usr/bin/env python3
 """
-kalshi_snapshot.py — run this locally to get a market snapshot you can
-paste into Claude for trading advice.
-
-Setup (one time):
-    pip install httpx cryptography python-dotenv
-
-Usage:
-    python snapshot.py                  # prints snapshot
-    python snapshot.py | pbcopy         # macOS: copies to clipboard
-    python snapshot.py | clip           # Windows: copies to clipboard
-    python snapshot.py -o snapshot.txt  # saves to file
-
-Credentials — set these as environment variables OR create a .env file
-in the same directory:
-    KALSHI_API_KEY_ID=your-key-id
-    KALSHI_PRIVATE_KEY_PATH=./kalshi_private_key.pem
-    KALSHI_ENV=prod
+Fetch Kalshi market data using the official kalshi-python SDK.
+Writes a snapshot to data/snapshot.txt for Claude to analyze.
 """
-
-from __future__ import annotations
-
-import argparse
 import base64
-import json
 import os
 import sys
-import time
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-# ── Optional: load .env if present ────────────────────────────────────────────
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass  # pip install python-dotenv if you want .env support
+# Write private key to temp file (SDK requires a file path)
+raw = os.environ.get("KALSHI_PRIVATE_KEY", "")
+if not raw:
+    key_path = os.environ.get("KALSHI_PRIVATE_KEY_PATH", "./kalshi_private_key.pem")
+else:
+    raw = raw.strip()
+    if not raw.startswith("-----"):
+        raw = base64.b64decode(raw).decode()
+    tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pem", mode="w")
+    tmp.write(raw)
+    tmp.close()
+    key_path = tmp.name
 
-import httpx
-from cryptography.hazmat.primitives import hashes, serialization
+key_id  = os.environ.get("KALSHI_API_KEY_ID", "")
+env     = os.environ.get("KALSHI_ENV", "prod")
+out     = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
+
+if not key_id:
+    sys.exit("ERROR: KALSHI_API_KEY_ID not set")
+
+import kalshi_python
+from kalshi_python import ApiClient, Configuration
+from kalshi_python.api.market_api import MarketApi
+from kalshi_python.api.portfolio_api import PortfolioApi
+
+cfg = Configuration()
+cfg.host = (
+    "https://trading-api.kalshi.com/trade-api/v2" if env == "prod"
+    else "https://demo-api.kalshi.co/trade-api/v2"
+)
+
+client = ApiClient(configuration=cfg)
+client.key_id = key_id
+with open(key_path, "rb") as f:
+    from cryptography.hazmat.primitives import serialization
+    client.private_key = serialization.load_pem_private_key(f.read(), password=None)
+
+# Patch the client to use Kalshi auth headers
+import time, hashlib
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
-# ── Config ─────────────────────────────────────────────────────────────────────
-_BASE = {
-    "prod": "https://trading-api.kalshi.com/trade-api/v2",
-    "demo": "https://demo-api.kalshi.co/trade-api/v2",
-}
-_PREFIX = "/trade-api/v2"
+original_call = client.call_api.__func__ if hasattr(client.call_api, '__func__') else None
 
+# Monkey-patch REST client to inject auth headers
+from kalshi_python.rest import RESTClientObject
+orig_request = RESTClientObject.request
 
-def _load_key():
-    raw = os.getenv("KALSHI_PRIVATE_KEY")
-    if raw:
-        raw = raw.strip()
-        # Accept base64-encoded single-line OR raw PEM
-        if not raw.startswith("-----"):
-            import base64 as _b64
-            raw = _b64.b64decode(raw).decode()
-        pem = raw.replace("\\n", "\n").encode()
-    else:
-        path = os.getenv("KALSHI_PRIVATE_KEY_PATH", "./kalshi_private_key.pem")
-        pem = Path(path).expanduser().read_bytes()
-    return serialization.load_pem_private_key(pem, password=None)
-
-
-def _sign(key, ts_ms: int, method: str, path: str) -> str:
-    msg = f"{ts_ms}{method.upper()}{_PREFIX}{path}".encode()
-    sig = key.sign(
-        msg,
-        padding.PSS(
-            mgf=padding.MGF1(hashes.SHA256()),
-            salt_length=padding.PSS.DIGEST_LENGTH,
-        ),
-        hashes.SHA256(),
-    )
-    return base64.b64encode(sig).decode()
-
-
-def _headers(key, key_id: str, method: str, path: str) -> dict:
+def authed_request(self, method, url, *args, **kwargs):
     ts = int(time.time() * 1000)
-    return {
-        "KALSHI-ACCESS-KEY": key_id,
+    from urllib.parse import urlparse
+    path = urlparse(url).path
+    msg = f"{ts}{method.upper()}{path}".encode()
+    sig = base64.b64encode(
+        client.private_key.sign(
+            msg,
+            padding.PSS(mgf=padding.MGF1(hashes.SHA256()), salt_length=padding.PSS.DIGEST_LENGTH),
+            hashes.SHA256(),
+        )
+    ).decode()
+    headers = kwargs.get("headers", {}) or {}
+    headers.update({
+        "KALSHI-ACCESS-KEY": client.key_id,
         "KALSHI-ACCESS-TIMESTAMP": str(ts),
-        "KALSHI-ACCESS-SIGNATURE": _sign(key, ts, method, path),
-        "Content-Type": "application/json",
-    }
+        "KALSHI-ACCESS-SIGNATURE": sig,
+    })
+    kwargs["headers"] = headers
+    return orig_request(self, method, url, *args, **kwargs)
 
+RESTClientObject.request = authed_request
 
-def get(client, key, key_id, path, params=None):
-    r = client.get(path, headers=_headers(key, key_id, "GET", path), params=params)
-    r.raise_for_status()
-    return r.json()
+ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+lines = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n{'='*70}"]
 
+market_api = MarketApi(client)
+portfolio_api = PortfolioApi(client)
 
-# ── Snapshot builder ───────────────────────────────────────────────────────────
-def build_snapshot(market_limit: int = 40) -> str:
-    env      = os.getenv("KALSHI_ENV", "prod")
-    key_id   = os.getenv("KALSHI_API_KEY_ID", "")
-    base_url = _BASE[env]
+# Balance
+try:
+    bal = portfolio_api.get_balance()
+    cents = getattr(bal, 'balance', 0) or 0
+    lines.append(f"\n## Balance: ${cents/100:.2f}")
+except Exception as e:
+    lines.append(f"\n## Balance: ERROR — {e}")
 
-    if not key_id:
-        sys.exit("ERROR: KALSHI_API_KEY_ID not set")
-
-    key    = _load_key()
-    client = httpx.Client(base_url=base_url, timeout=15)
-
-    lines = [
-        "# Kalshi Market Snapshot",
-        f"# Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}",
-        "=" * 70,
-    ]
-
-    # Balance
-    try:
-        bal = get(client, key, key_id, "/portfolio/balance")
-        cents = bal.get("balance", 0)
-        lines.append(f"\n## Balance:  ${cents/100:.2f}")
-    except Exception as e:
-        lines.append(f"\n## Balance:  ERROR — {e}")
-
-    # Positions
-    try:
-        pos = get(client, key, key_id, "/portfolio/positions", {"limit": 50})
-        positions = pos.get("market_positions", [])
-        if positions:
-            lines.append("\n## Open positions:")
-            for p in positions:
-                qty  = p.get("position", 0)
-                side = "YES" if qty > 0 else "NO"
-                exp  = p.get("market_exposure", 0) / 100
-                lines.append(f"  {p.get('ticker','')}  {side}  qty={abs(qty)}  exposure=${exp:.2f}")
-        else:
-            lines.append("\n## Open positions: none")
-    except Exception as e:
-        lines.append(f"\n## Open positions:  ERROR — {e}")
-
-    # Open markets
-    try:
-        resp    = get(client, key, key_id, "/markets", {"status": "open", "limit": market_limit})
-        markets = resp.get("markets", [])
-        lines.append(f"\n## Open markets  (showing {len(markets)}):")
-        lines.append(f"  {'Ticker':<35} {'Yes':>5} {'No':>5} {'Vol':>8}  Closes")
-        lines.append("  " + "-" * 65)
-        for m in markets:
-            yes   = m.get("yes_bid", m.get("last_price", "?"))
-            no_p  = m.get("no_bid", "?")
-            vol   = m.get("volume", 0)
-            close = str(m.get("close_time", ""))[:10]
-            title = m.get("title", m.get("ticker", ""))[:52]
-            lines.append(f"  {m.get('ticker',''):<35} {str(yes):>4}¢ {str(no_p):>4}¢ {vol:>8,}  {close}")
-            lines.append(f"    {title}")
-    except Exception as e:
-        lines.append(f"\n## Markets:  ERROR — {e}")
-
-    return "\n".join(lines)
-
-
-# ── CLI ────────────────────────────────────────────────────────────────────────
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Kalshi market snapshot for Claude")
-    parser.add_argument("-n", "--limit",  type=int, default=40, help="Number of markets (default 40)")
-    parser.add_argument("-o", "--output", type=str, default=None, help="Save to file instead of stdout")
-    args = parser.parse_args()
-
-    snap = build_snapshot(market_limit=args.limit)
-
-    if args.output:
-        Path(args.output).write_text(snap)
-        print(f"Saved to {args.output}")
+# Positions
+try:
+    pos = portfolio_api.get_positions(limit=50)
+    positions = getattr(pos, 'market_positions', []) or []
+    if positions:
+        lines.append("\n## Open positions:")
+        for p in positions:
+            qty  = getattr(p, 'position', 0) or 0
+            side = "YES" if qty > 0 else "NO"
+            exp  = (getattr(p, 'market_exposure', 0) or 0) / 100
+            lines.append(f"  {getattr(p, 'ticker', '')}  {side}  qty={abs(qty)}  exposure=${exp:.2f}")
     else:
-        print(snap)
-        print("\n" + "=" * 70)
-        print("Paste the above into Claude and ask: 'What should I trade right now?'")
+        lines.append("\n## Open positions: none")
+except Exception as e:
+    lines.append(f"\n## Open positions: ERROR — {e}")
+
+# Markets
+try:
+    resp = market_api.get_markets(status="open", limit=40)
+    markets = getattr(resp, 'markets', []) or []
+    lines.append(f"\n## Open markets ({len(markets)}):")
+    lines.append(f"  {'Ticker':<36} {'Yes':>5} {'No':>5} {'Vol':>8}  Closes")
+    lines.append("  " + "-"*65)
+    for m in markets:
+        yes   = getattr(m, 'yes_bid', None) or getattr(m, 'last_price', '?')
+        no_p  = getattr(m, 'no_bid', '?')
+        vol   = getattr(m, 'volume', 0) or 0
+        close = str(getattr(m, 'close_time', ''))[:10]
+        title = (getattr(m, 'title', '') or '')[:55]
+        ticker = getattr(m, 'ticker', '')
+        lines.append(f"  {ticker:<36} {str(yes):>4}¢ {str(no_p):>4}¢ {vol:>8,}  {close}")
+        lines.append(f"    {title}")
+except Exception as e:
+    lines.append(f"\n## Markets: ERROR — {e}")
+
+snapshot = "\n".join(lines)
+if out:
+    Path(out).write_text(snapshot)
+    print(f"Saved to {out}")
+else:
+    print(snapshot)

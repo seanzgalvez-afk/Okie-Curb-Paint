@@ -22,14 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install httpx cryptography
-
-      - name: Debug auth
-        continue-on-error: true
-        env:
-          KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
-          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
-        run: python3 scripts/debug_auth.py
+        run: pip install httpx cryptography python-dotenv kalshi-python
 
       - name: Fetch Kalshi snapshot
         env:
