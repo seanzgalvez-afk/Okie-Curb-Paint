@@ -1,4 +1,4 @@
-"""Kalshi snapshot — RSA-PSS auth, paginates to find liquid markets."""
+"""Kalshi snapshot — finds active markets via the trades feed."""
 import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -51,8 +51,7 @@ lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 # Balance
 bal = get("/portfolio/balance")
 if bal:
-    cents = bal.get("balance", 0)
-    lines.append(f"\n## Balance: ${cents/100:.2f}")
+    lines.append(f"\n## Balance: ${bal.get('balance', 0)/100:.2f}")
 else:
     lines.append("\n## Balance: unavailable")
 
@@ -68,36 +67,37 @@ if pos:
     else:
         lines.append("  none")
 
-# Paginate through markets to find liquid ones (up to 500)
-all_markets = []
-cursor = None
-for page_num in range(5):
-    params = {"status": "open", "limit": 100}
-    if cursor:
-        params["cursor"] = cursor
-    resp = get("/markets", params)
-    if not resp:
-        break
-    batch = resp.get("markets", [])
-    all_markets.extend(batch)
-    print(f"  Page {page_num+1}: got {len(batch)} markets (total={len(all_markets)})", file=sys.stderr)
-    cursor = resp.get("cursor")
-    if not cursor or len(batch) == 0:
-        break
+# --- Find active markets via recent trades ---
+# This bypasses the pagination problem (sports parlays dominate page 1-N)
+trades_resp = get("/markets/trades", {"limit": 100})
+active_tickers = []
+seen = set()
+if trades_resp:
+    for t in trades_resp.get("trades", []):
+        tk = t.get("ticker", "")
+        if tk and tk not in seen:
+            seen.add(tk)
+            active_tickers.append(tk)
 
-# Filter: must have actual volume > 0
-liquid = [
-    m for m in all_markets
-    if m.get("volume", 0) > 0
-]
-liquid.sort(key=lambda m: m.get("volume", 0), reverse=True)
-top40 = liquid[:40]
+print(f"  Found {len(active_tickers)} recently-traded tickers", file=sys.stderr)
 
-lines.append(f"\n## Top markets by volume ({len(liquid)} liquid out of {len(all_markets)} scanned):")
-if top40:
+# Fetch full market details for each active ticker
+markets = []
+for ticker in active_tickers[:40]:
+    resp = get(f"/markets/{ticker}")
+    if resp:
+        m = resp.get("market", resp)  # some endpoints wrap in 'market'
+        if isinstance(m, dict):
+            markets.append(m)
+
+# Sort by volume descending
+markets.sort(key=lambda m: m.get("volume", 0), reverse=True)
+
+lines.append(f"\n## Active markets (from recent trades feed, {len(markets)} markets):")
+if markets:
     lines.append(f"  {'Ticker':<38} {'Yes':>4} {'No':>4} {'Volume':>10}  Closes")
     lines.append("  " + "-"*75)
-    for m in top40:
+    for m in markets:
         yes_p = m.get("yes_bid", m.get("last_price", "?"))
         no_p  = m.get("no_bid", "?")
         vol   = m.get("volume", 0)
@@ -107,8 +107,13 @@ if top40:
         lines.append(f"  {ticker:<38} {str(yes_p):>3}c {str(no_p):>3}c {vol:>10,}  {close}")
         lines.append(f"    {title}")
 else:
-    lines.append(f"  No markets with volume > 0 found in {len(all_markets)} scanned.")
-    lines.append("  (All open markets appear to be zero-volume parlays right now.)")
+    # Fallback: show raw trades if market fetch failed
+    lines.append("  Could not fetch market details. Raw recent trades:")
+    if trades_resp:
+        for t in (trades_resp.get("trades", []) or [])[:20]:
+            lines.append(f"  {t.get('ticker',''):<38} price={t.get('yes_price','?')}c  count={t.get('count','?')}")
+    else:
+        lines.append("  No trades data available.")
 
 snapshot = "\n".join(lines)
 out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
