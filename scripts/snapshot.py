@@ -1,4 +1,4 @@
-"""Kalshi snapshot — active markets + targeted WC search."""
+"""Kalshi snapshot — discover WC via /series endpoint + brute force event fetch."""
 import base64, os, sys, time, traceback
 from datetime import datetime, timezone
 from pathlib import Path
@@ -40,20 +40,16 @@ def get(path, params=None):
     try:
         r = httpx.get(f"{BASE_URL}{path}", headers=auth_headers("GET", path),
                       params=params, timeout=15)
-        print(f"GET {path} {params} -> {r.status_code}", file=sys.stderr)
         if not r.is_success:
-            print(f"  {r.text[:200]}", file=sys.stderr)
             return None
         return r.json()
-    except Exception as e:
-        print(f"ERROR {path}: {e}", file=sys.stderr)
+    except Exception:
         return None
 
+def log(msg): print(msg, file=sys.stderr)
 def cents(d):
-    try:
-        return int(round(float(d) * 100))
-    except (TypeError, ValueError):
-        return None
+    try: return int(round(float(d) * 100))
+    except: return None
 
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
@@ -115,101 +111,64 @@ try:
                      f"{str(m.get('close_time',''))[:10]}  {m.get('title','')[:40]}")
 except Exception as e:
     lines.append(f"\n## Active markets ERROR: {e}")
-    traceback.print_exc(file=sys.stderr)
 
 # ================================================================
-# SECTION 2: World Cup — targeted search based on known categories
+# SECTION 2: World Cup discovery
 # ================================================================
 lines.append("\n" + "="*70)
-lines.append("## FIFA WORLD CUP 2026")
+lines.append("## FIFA WORLD CUP 2026 — DISCOVERY")
 lines.append("="*70)
 
 try:
-    # Based on app categories: Games, Futures, Awards, Group Winner,
-    # Group Qualifiers, Group Goals, Group Stage Specials, Furthest Stage,
-    # Stage of Elimination, Squad Selection, Tournament Goals,
-    # World Cup Specials, Country Goals, Host Nation
+    # Step 1: Try the /series endpoint to list all series
+    lines.append("\n### /series endpoint scan:")
+    for series_path in ["/series", "/series/?limit=100", "/series?limit=100"]:
+        resp = get(series_path)
+        if resp:
+            lines.append(f"  /series returned: {str(resp)[:500]}")
+            break
+    else:
+        lines.append("  /series endpoint: no response")
 
-    # Try every plausible series ticker variant
-    WC_SERIES = [
-        # Most likely
-        "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC", "KXWC",
-        # Category-based
-        "KXWC26FUTURES", "KXWC26GAMES", "KXWC26AWARDS",
-        "KXWC26GROUPWIN", "KXWC26GROUP", "KXWC26QUALS",
-        "KXWC26STAGE", "KXWC26GOALS", "KXWC26SPECIAL",
-        "KXWC26HOST", "KXWC26SQUAD", "KXWC26COUNTRY",
-        # Alt formats
-        "KXFIFA", "KXFIFA26", "KXWORLDCUP", "KXWORLDCUP26",
-        "KXSOCCER", "KXSOCCER26", "KXFOOTBALL", "KXFOOTBALL26",
-        "KXWC26WIN", "KXWC26CHAMP", "KXWC26ELIM", "KXWC26FURTHER",
-        # Try with 2026 appended differently
-        "KX2026WC", "KXWC26TOURN", "KXWC26SPEC",
-    ]
-    STATUSES = ["open", "active", "closed", ""]  # try all status values
-
-    wc_markets = []
-    found_via  = None
-    seen_tk    = set()
-    hits       = []  # log all hits for diagnostics
-
-    for series in WC_SERIES:
-        for status in STATUSES:
-            params = {"series_ticker": series, "limit": 100}
-            if status:
-                params["status"] = status
-            resp = get("/markets", params)
-            batch = (resp or {}).get("markets", []) or []
-            if batch:
-                hits.append(f"{series}/{status}: {len(batch)} markets")
-                for m in batch:
-                    tk = m.get("ticker", "")
-                    if tk and tk not in seen_tk:
-                        seen_tk.add(tk); wc_markets.append(m)
-                if not found_via:
-                    found_via = f"{series} (status={status or 'any'})"
-
-    # Also try fetching specific likely event tickers directly
-    WC_EVENTS = [
+    # Step 2: Brute-force specific event tickers
+    # Based on known Kalshi patterns like KXNBAGAME-DATE-MATCHUP
+    # WC futures might be just the series name as event ticker
+    lines.append("\n### Direct event ticker fetch attempts:")
+    GUESSES = [
+        "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC2026",
         "KXWC26FUTURES", "KXWC2026FUTURES", "KXFIFAWC26FUTURES",
-        "KXWC26WINNER", "KXWC26CHAMP", "KXWC2026WINNER",
+        "KXWC26WINNER", "KXWC26CHAMP", "KXWC26CHAMPION",
+        "KXWC26GROUPA", "KXWC26GROUPB", "KXWC26GROUPC",
+        "KXWC26-GROUPA", "KXWC26-GROUPB",
         "KXWC26GROUPAWINNER", "KXWC26GROUPBWINNER",
-        "KXWC2026", "KXFIFAWC2026",
+        "KXWC26FURTHEST", "KXWC26ELIM", "KXWC26STAGE",
+        "KXWC26HOST", "KXWC26USA", "KXWC26AWARDS",
+        "KXWC26GOALS", "KXWC26TOURGOALS", "KXWC26SQUAD",
+        "KXWC26SPEC", "KXWC26SPECIAL",
+        "KXSOCWC26", "KXSOC26", "KXSOCCERWC26",
+        # Try without KX prefix
+        "WC26FUTURES", "FIFAWC26",
     ]
-    for et in WC_EVENTS:
+    found_events = []
+    for et in GUESSES:
         resp = get(f"/events/{et}")
         if resp:
-            event = (resp or {}).get("event", {})
-            ms = (event.get("markets") or []) if isinstance(event, dict) else []
-            for m in ms:
-                tk = m.get("ticker", "")
-                if tk and tk not in seen_tk:
-                    seen_tk.add(tk); wc_markets.append(m)
-            if ms:
-                hits.append(f"event/{et}: {len(ms)} markets")
-                if not found_via: found_via = f"event/{et}"
+            lines.append(f"  HIT: /events/{et} -> {str(resp)[:200]}")
+            found_events.append(et)
+        else:
+            lines.append(f"  miss: {et}")
 
-    lines.append(f"  Series/event hits: {hits if hits else 'none'}")
-
-    if wc_markets:
-        by_event = {}
-        for m in wc_markets:
-            ev = m.get("event_ticker", "other")
-            by_event.setdefault(ev, []).append(m)
-        lines.append(f"  FOUND {len(wc_markets)} WC markets via: {found_via}")
-        for ev, ms in sorted(by_event.items()):
-            lines.append(f"\n### {ev}")
-            lines.append(f"  {'Title':<52} {'YES':>4} {'NO':>4}  Closes")
-            lines.append("  " + "-"*72)
-            for m in sorted(ms, key=lambda x: x.get("title", "")):
-                title = m.get("title", "")[:52]
-                close = str(m.get("close_time", ""))[:10]
-                y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars"))
-                n = cents(m.get("no_bid_dollars"))
-                lines.append(f"  {title:<52} {str(y)+'c' if y else '?':>4} {str(n)+'c' if n else '?':>4}  {close}")
-    else:
-        lines.append("  Tried all variants. WC markets not accessible via this API key.")
-        lines.append("  This may be a permissions issue or the markets use a private endpoint.")
+    # Step 3: Use known series tickers from trades to find WC pattern
+    # Extract series from known active tickers
+    lines.append("\n### Series tickers found in trades feed:")
+    known_series = set()
+    for ticker in ordered[:40]:
+        # Extract series by taking everything before the date pattern
+        parts = ticker.split("-")
+        if parts:
+            known_series.add(parts[0])
+    for s in sorted(known_series):
+        lines.append(f"  {s}")
 
 except Exception as e:
     lines.append(f"  ERROR: {e}")
