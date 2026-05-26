@@ -663,9 +663,13 @@ def fetch_metaculus_questions(search_terms=None):
         if search_terms:
             params["search"] = search_terms
         r = httpx.get("https://www.metaculus.com/api2/questions/", params=params, timeout=10)
+        log(f"Metaculus -> {r.status_code}")
         if r.status_code != 200:
+            log(f"Metaculus body: {r.text[:300]}")
             return []
-        results = r.json().get("results", [])
+        data = r.json()
+        log(f"Metaculus keys: {list(data.keys())[:5]}")
+        results = data.get("results", data if isinstance(data, list) else [])
         questions = []
         for q in results:
             # community_prediction is a float 0-1 or None
@@ -1231,7 +1235,8 @@ health = {
     "fred":         ("ok" if fred_data else ("skipped_interval" if not _on_interval(60) else "no_key_or_error")) if FRED_API_KEY else "no_key",
     "polymarket":   ("ok" if poly_markets else ("skipped_interval" if not _on_interval(15) else "error")),
     "predictit":    ("ok" if pi_markets else ("skipped_interval" if not _on_interval(15) else "error")),
-    "metaculus":    "ok" if metaculus_qs else "empty_or_error",
+    "metaculus":    f"ok_{len(metaculus_qs)}" if metaculus_qs else "empty_or_error",
+    "vegas_games":  vegas_games_count,
     "espn":         "ok" if espn_games else "empty",
 }
 docs_dir = Path(__file__).parent.parent / "docs"
