@@ -480,13 +480,24 @@ def fetch_all_espn_data():
 # ═══════════════════════════════════════════════════════════════════════════════
 # CoinGecko — BTC/ETH/SOL prices
 # ═══════════════════════════════════════════════════════════════════════════════
-# Free tier: no key needed, 30 calls/min
-# Pro tier:  set COINGECKO_API_KEY secret → uses pro.api.coingecko.com
-#            higher rate limits + more data (OHLCV, market depth, etc.)
+# Budget: ~10,000 credits/month replenishes June 1
+# Bot runs every 5 min = 8,640 calls/month — tight.
+# SOLUTION: only call CoinGecko on runs divisible by 15 min (every 3rd run).
+# That cuts usage to 2,880/month and leaves 7,120 credits of headroom.
+# Rate limit is 100 calls/min — no throttling needed.
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 
+def _should_fetch_crypto():
+    """Only fetch crypto on runs at :00, :15, :30, :45 past the hour to save credits."""
+    minute = datetime.now(timezone.utc).minute
+    return minute % 15 == 0
+
 def fetch_crypto_prices():
-    """Fetch BTC/ETH/SOL prices from CoinGecko. Uses Pro API if key is set."""
+    """Fetch BTC/ETH/SOL prices from CoinGecko. Uses Pro API if key is set.
+    Skips call if not on a 15-min boundary to conserve monthly credits."""
+    if not _should_fetch_crypto():
+        log("CoinGecko: skipping (not on 15-min boundary) — saving credits")
+        return {}
     try:
         if COINGECKO_API_KEY:
             # Pro endpoint — higher rate limits, more data
