@@ -21,6 +21,37 @@ jobs:
       - name: Install dependencies
         run: pip install httpx cryptography python-dotenv
 
+      - name: Debug auth formats
+        env:
+          KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
+          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
+        run: |
+          python3 - << 'EOF'
+          import os, time, base64, httpx
+          from cryptography.hazmat.primitives import hashes, serialization
+          from cryptography.hazmat.primitives.asymmetric import padding
+
+          raw = os.environ["KALSHI_PRIVATE_KEY"].strip()
+          if not raw.startswith("-----"):
+              raw = base64.b64decode(raw).decode()
+          key = serialization.load_pem_private_key(raw.encode(), password=None)
+          key_id = os.environ["KALSHI_API_KEY_ID"]
+
+          def try_sign(label, path_for_sig):
+              ts = int(time.time() * 1000)
+              msg = f"{ts}GET{path_for_sig}".encode()
+              sig = base64.b64encode(key.sign(msg, padding.PKCS1v15(), hashes.SHA256())).decode()
+              r = httpx.get(
+                  "https://trading-api.kalshi.com/trade-api/v2/exchange/status",
+                  headers={"KALSHI-ACCESS-KEY": key_id, "KALSHI-ACCESS-TIMESTAMP": str(ts), "KALSHI-ACCESS-SIGNATURE": sig},
+                  timeout=10
+              )
+              print(f"{label}: HTTP {r.status_code}  body={r.text[:120]}")
+
+          try_sign("1) /trade-api/v2/exchange/status", "/trade-api/v2/exchange/status")
+          try_sign("2) /exchange/status              ", "/exchange/status")
+          EOF
+
       - name: Fetch Kalshi snapshot
         env:
           KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
