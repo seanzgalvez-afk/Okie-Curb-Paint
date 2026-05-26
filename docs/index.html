@@ -247,6 +247,33 @@
       <p id="arb-empty" class="hidden text-slate-500 text-sm mt-2">No cross-platform gaps detected right now. Gaps appear when platforms disagree on the same event.</p>
     </section>
 
+    <!-- ── Demo Portfolio ── -->
+    <section class="mb-10" id="demo-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span style="color:#34d399;">🧪</span> Demo Portfolio
+        <span class="text-xs font-normal text-slate-500 ml-1">— paper trading on Kalshi sandbox</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-4">Bot places real limit orders on Kalshi's demo environment using strategy signals + Kelly sizing. All fake money — perfect for testing before going live.</p>
+      <div id="demo-stats" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6"></div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-sm font-semibold text-slate-300 mb-3">Open Orders</h3>
+          <div id="demo-open" class="space-y-2"></div>
+          <p id="demo-open-empty" class="text-slate-500 text-sm hidden">No open orders right now.</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-slate-300 mb-3">Closed / Settled</h3>
+          <div id="demo-closed" class="space-y-2"></div>
+          <p id="demo-closed-empty" class="text-slate-500 text-sm hidden">No closed trades yet.</p>
+        </div>
+      </div>
+      <p id="demo-empty" class="hidden text-slate-500 text-sm mt-4">
+        Demo trading not active. Add <code class="bg-slate-700 px-1 rounded">KALSHI_DEMO_API_KEY_ID</code> and
+        <code class="bg-slate-700 px-1 rounded">KALSHI_DEMO_PRIVATE_KEY</code> as GitHub secrets to enable.
+        Get demo credentials at <a href="https://demo.kalshi.co" target="_blank" class="text-cyan-400 underline">demo.kalshi.co</a>.
+      </p>
+    </section>
+
     <!-- ── Charts row ── -->
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">Charts</h2>
@@ -418,6 +445,7 @@ function render(data) {
   renderEdges(data.edges || []);
   renderFred(data.fred || {});
   renderCrossArb(data.cross_arb || []);
+  renderDemoPortfolio(data.demo_portfolio || null);
   allMarkets = data.markets || [];
   renderTable();
   renderCharts(allMarkets);
@@ -695,6 +723,74 @@ function renderCrossArb(arb) {
         </div>
       </div>`;
   }).join('');
+}
+
+// ── Demo Portfolio ────────────────────────────────────────────────────────────
+function renderDemoPortfolio(portfolio) {
+  const emptyEl  = document.getElementById('demo-empty');
+  const statsEl  = document.getElementById('demo-stats');
+  const openEl   = document.getElementById('demo-open');
+  const closedEl = document.getElementById('demo-closed');
+  const openEmp  = document.getElementById('demo-open-empty');
+  const closedEmp= document.getElementById('demo-closed-empty');
+
+  if (!portfolio) {
+    emptyEl.classList.remove('hidden');
+    statsEl.innerHTML = openEl.innerHTML = closedEl.innerHTML = '';
+    return;
+  }
+  emptyEl.classList.add('hidden');
+
+  const stats  = portfolio.stats || {};
+  const bal    = portfolio.balance_cents || 0;
+  const orders = portfolio.open_orders  || [];
+  const closed = portfolio.closed_trades|| [];
+
+  // Stats cards
+  const statCards = [
+    { label: 'Demo Balance',   value: `$${(bal/100).toFixed(2)}`,          color: '#34d399' },
+    { label: 'Open Orders',    value: orders.length,                        color: '#22d3ee' },
+    { label: 'Closed Trades',  value: stats.total_trades || 0,              color: '#a78bfa' },
+    { label: 'Last Run',       value: portfolio.last_run ? portfolio.last_run.slice(11,16)+' UTC' : '—', color: '#94a3b8' },
+  ];
+  statsEl.innerHTML = statCards.map(s => `
+    <div class="rounded-xl p-4 card border border-slate-700">
+      <p class="text-xs text-slate-500 mb-1">${s.label}</p>
+      <p class="text-xl font-bold" style="color:${s.color};">${s.value}</p>
+    </div>`).join('');
+
+  // Open orders
+  if (orders.length === 0) {
+    openEl.innerHTML = '';
+    openEmp.classList.remove('hidden');
+  } else {
+    openEmp.classList.add('hidden');
+    openEl.innerHTML = orders.map(o => `
+      <div class="rounded-lg p-3 card border border-slate-700 text-xs">
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-mono text-slate-300">${o.ticker}</span>
+          <span class="px-2 py-0.5 rounded font-bold ${o.side==='yes'?'bg-green-900 text-green-300':'bg-red-900 text-red-300'}">${o.side.toUpperCase()} @ ${o.price_cents}¢</span>
+        </div>
+        <p class="text-slate-400">${o.rationale || ''}</p>
+        <p class="text-slate-500 mt-1">Qty: ${o.quantity} · ${o.signal_type} · ${o.placed_at ? o.placed_at.slice(0,10) : ''}</p>
+      </div>`).join('');
+  }
+
+  // Closed trades
+  if (closed.length === 0) {
+    closedEl.innerHTML = '';
+    closedEmp.classList.remove('hidden');
+  } else {
+    closedEmp.classList.add('hidden');
+    closedEl.innerHTML = closed.map(o => `
+      <div class="rounded-lg p-3 card border border-slate-600 text-xs opacity-80">
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-mono text-slate-400">${o.ticker}</span>
+          <span class="text-slate-500">${o.status || 'settled'}</span>
+        </div>
+        <p class="text-slate-500">${o.signal_type} · ${o.placed_at ? o.placed_at.slice(0,10) : ''}</p>
+      </div>`).join('');
+  }
 }
 
 // ── Strategy Signals ──────────────────────────────────────────────────────────

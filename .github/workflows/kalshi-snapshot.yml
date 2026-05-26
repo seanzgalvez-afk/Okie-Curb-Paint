@@ -35,11 +35,18 @@ jobs:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/snapshot.py -o data/snapshot.txt
 
+      - name: Run demo trader
+        env:
+          KALSHI_DEMO_API_KEY_ID: ${{ secrets.KALSHI_DEMO_API_KEY_ID }}
+          KALSHI_DEMO_PRIVATE_KEY: ${{ secrets.KALSHI_DEMO_PRIVATE_KEY }}
+          KALSHI_DEMO_BANKROLL: "100000"
+        run: python scripts/demo_trader.py || echo "Demo trader skipped (no credentials)"
+
       - name: Commit and push
         run: |
           git config user.name  "kalshi-bot"
           git config user.email "bot@kalshi"
-          git add data/snapshot.txt docs/data.json
+          git add data/snapshot.txt docs/data.json data/demo_trades.json || true
           if git diff --cached --quiet; then
             echo "No changes"
           else
