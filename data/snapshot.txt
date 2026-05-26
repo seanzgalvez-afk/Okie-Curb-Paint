@@ -1,12 +1,89 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 09:04 UTC
+# Generated: 2026-05-26 10:03 UTC
 ======================================================================
 
-## Balance:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/portfolio/balance'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+## Balance: unavailable
 
-## Open positions:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/portfolio/positions?limit=50'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
-
-## Markets:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/markets?status=open&limit=40'
-For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+## Open markets (40):
+  Ticker                                 Yes    No      Vol  Closes
+  -----------------------------------------------------------------
+  KXMVESPORTSMULTIGAMEEXTENDED-S20264E02EEF90FF-4F7A5A2C57E    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
+  KXMVESPORTSMULTIGAMEEXTENDED-S20260CE61A5E1E4-C2D7DA6F4D9    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 6+,yes Victor Wembanyama: 2+,ye
+  KXMVECROSSCATEGORY-S2026826E545689A-5A8ACA76E00    ?c    ?c        0  2026-06-08
+    yes Matteo Arnaldi,yes Zachary Svajda,yes Adam Walton,yes Em
+  KXMVESPORTSMULTIGAMEEXTENDED-S202643448C7B975-EF9C1B63D02    ?c    ?c        0  2026-05-29
+    yes New York Y,yes Los Angeles D,no Over 8.5 runs scored,yes
+  KXMVESPORTSMULTIGAMEEXTENDED-S20268BC7AAB173B-7D859CD2ED7    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
+  KXMVESPORTSMULTIGAMEEXTENDED-S20267C5C6B48776-1AB258E439A    ?c    ?c        0  2026-06-08
+    yes Marin Cilic,yes Alexei Popyrin,yes Alejandro Tabilo,yes 
+  KXMVESPORTSMULTIGAMEEXTENDED-S20267C047D4D223-A6E6E67B533    ?c    ?c        0  2026-06-07
+    yes Jaime Faria,yes Adolfo Daniel Vallejo,yes San Antonio,ye
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026B7E55A7093A-CA4962D1844    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 1+,yes Shai Gilgeous-Alexander:
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026A040214DC16-DC76E74B1E2    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
+  KXMVESPORTSMULTIGAMEEXTENDED-S20267777024056B-2E2E575515C    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 1+,yes Victor Wembanyama: 1+,ye
+  KXMVESPORTSMULTIGAMEEXTENDED-S20269689D415B82-FE09B1C0908    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
+  KXMVESPORTSMULTIGAMEEXTENDED-S20261CBCF95960D-4868A0CADE7    ?c    ?c        0  2026-06-10
+    yes San Antonio,yes Shai Gilgeous-Alexander: 30+,yes De'Aaro
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026F7E198074E5-5BAD8ECEF49    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026C4BA0F1E004-60E9340B297    ?c    ?c        0  2026-06-10
+    yes San Antonio,yes Shai Gilgeous-Alexander: 30+,yes De'Aaro
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026CE38ED70D25-E5C3E300412    ?c    ?c        0  2026-05-29
+    yes Cleveland,yes Milwaukee,yes Seattle,yes Los Angeles D,ye
+  KXMVESPORTSMULTIGAMEEXTENDED-S202684C75EA360D-FFD31932DAC    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026F55C7995CCC-9F39FE6FB54    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 10+,yes Isaiah Hartenstein: 6+,yes De'Aar
+  KXMVESPORTSMULTIGAMEEXTENDED-S20261CBCF95960D-85FD7B72361    ?c    ?c        0  2026-06-10
+    yes San Antonio,yes Shai Gilgeous-Alexander: 30+,yes De'Aaro
+  KXMVESPORTSMULTIGAMEEXTENDED-S202658B2B3ED47C-C8F3BFB5C21    ?c    ?c        0  2026-06-08
+    yes Marin Cilic,yes Alexei Popyrin,yes Alejandro Tabilo,yes 
+  KXMVESPORTSMULTIGAMEEXTENDED-S20265444C15AA56-6A0F6F3372D    ?c    ?c        0  2026-05-29
+    yes Cleveland,yes Baltimore,yes Chicago C,yes Los Angeles A,
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026BB98CC82524-1B278D08102    ?c    ?c        0  2026-06-10
+    yes Luguentz Dort: 2+,yes Dylan Harper: 10+,yes Devin Vassel
+  KXMVESPORTSMULTIGAMEEXTENDED-S20260AB59CFD5DE-DF48489E28E    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026791209B77AE-FB565498820    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 6+,yes San Antonio,yes Chet Hol
+  KXMVECROSSCATEGORY-S20269A81711A9DA-338B65AF9EA    ?c    ?c        0  2026-06-07
+    yes Valentin Vacherot,yes Martin Landaluce,yes Felix Auger-A
+  KXMVECROSSCATEGORY-S2026B9064400C4A-FA22A8671B7    ?c    ?c        0  2026-06-07
+    yes Valentin Vacherot,yes Martin Landaluce,yes Felix Auger-A
+  KXMVESPORTSMULTIGAMEEXTENDED-S202673BCFEB4840-C469BC30351    ?c    ?c        0  2026-05-29
+    yes Pittsburgh,yes New York Y,no Boston wins by over 1.5 run
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026FA6ADB60B0D-55451898B07    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVESPORTSMULTIGAMEEXTENDED-S20260DB1FDD0947-DEA950513D6    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 1+,yes Luguentz Dort: 1+,yes De
+  KXMVESPORTSMULTIGAMEEXTENDED-S20261E07A521FB9-5755A4ABC99    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVESPORTSMULTIGAMEEXTENDED-S202614AF1468541-79E5A67FBC1    ?c    ?c        0  2026-06-10
+    yes Oklahoma City,yes Shai Gilgeous-Alexander: 2+,yes Over 2
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026B76A380022E-6079B0687ED    ?c    ?c        0  2026-06-10
+    yes Luguentz Dort: 2+,yes Devin Vassell: 15+,yes Stephon Cas
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026A290EA4CEA8-EDDE218F1B8    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 1+,yes Victor Wembanyama: 1+,ye
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026F5F81B1C168-6E2200FAAFA    ?c    ?c        0  2026-05-29
+    yes Christian Yelich: 5+,yes Jackson Merrill: 5+
+  KXMVESPORTSMULTIGAMEEXTENDED-S20265B5DF04C6A2-C713DDF94E5    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVECROSSCATEGORY-S202615B705EB389-A77804C043B    ?c    ?c        0  2026-06-08
+    yes Matteo Arnaldi,yes Zachary Svajda,yes Adam Walton
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026964F45782DD-CC91A38E89A    ?c    ?c        0  2026-06-07
+    yes Ann Li,yes Jessica Pegula,yes Coco Gauff,yes Anhelina Ka
+  KXMVESPORTSMULTIGAMEEXTENDED-S20262A12EF8D254-74710107F72    ?c    ?c        0  2026-06-07
+    yes Facundo Diaz Acosta,yes Valentin Vacherot,yes Martin Lan
+  KXMVESPORTSMULTIGAMEEXTENDED-S202671921F5472C-F415703549C    ?c    ?c        0  2026-06-10
+    yes Shai Gilgeous-Alexander: 1+,yes Victor Wembanyama: 1+,ye
+  KXMVESPORTSMULTIGAMEEXTENDED-S202608324B327EF-C735DB168CA    ?c    ?c        0  2026-05-26
+    yes $2,080 or above,yes Cleveland,yes Tampa Bay,yes Pittsbur
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026F7E198074E5-5B1A657C8C9    ?c    ?c        0  2026-06-10
+    yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes St
