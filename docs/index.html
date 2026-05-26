@@ -213,6 +213,61 @@
       </div>
     </section>
 
+    <!-- ── Kelly Calculator ── -->
+    <section class="mb-10">
+      <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">⚖️ Kelly Calculator</h2>
+      <div class="card rounded-2xl p-6 max-w-lg">
+        <p class="text-xs text-slate-400 mb-4">Enter a trade to calculate optimal bet size using the Kelly Criterion.</p>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Your Bankroll ($)</label>
+            <input id="kelly-bankroll" type="number" value="500" min="1"
+              class="w-full bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Kalshi Price (¢)</label>
+            <input id="kelly-price" type="number" value="40" min="1" max="99"
+              class="w-full bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Your Estimate (%)</label>
+            <input id="kelly-estimate" type="number" value="55" min="1" max="99"
+              class="w-full bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-500" />
+          </div>
+          <div>
+            <label class="text-xs text-slate-400 block mb-1">Kelly Fraction</label>
+            <select id="kelly-fraction" class="w-full bg-slate-700 text-slate-100 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-cyan-500">
+              <option value="1">Full Kelly</option>
+              <option value="0.5" selected>Half Kelly (safer)</option>
+              <option value="0.25">Quarter Kelly (conservative)</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="calcKelly()" class="w-full py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm transition mb-4">
+          Calculate
+        </button>
+        <div id="kelly-result" class="hidden bg-slate-700 rounded-xl p-4 space-y-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-slate-400">Edge</span>
+            <span id="kelly-edge" class="font-semibold text-cyan-400"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Raw Kelly %</span>
+            <span id="kelly-raw" class="font-semibold text-slate-200"></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">Adjusted Kelly %</span>
+            <span id="kelly-adjusted" class="font-semibold text-yellow-400"></span>
+          </div>
+          <div class="flex justify-between border-t border-slate-600 pt-2 mt-2">
+            <span class="text-slate-300 font-semibold">Recommended Bet</span>
+            <span id="kelly-bet" class="text-xl font-black text-green-400"></span>
+          </div>
+          <p id="kelly-warning" class="hidden text-xs text-red-400 mt-1">⚠️ Negative edge — do not bet this market.</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Footer -->
     <footer class="text-center text-xs text-slate-600 pb-6">
       Auto-refreshes every 15 minutes · Data from Kalshi API · For informational purposes only
