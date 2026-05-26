@@ -51,9 +51,17 @@ def _sign(private_key, timestamp_ms: int, method: str, path: str) -> str:
     """
     Build the Kalshi request signature.
     Message = str(timestamp_ms) + method.upper() + path  (no query string)
+    Uses RSA-PSS with SHA256 (as per official Kalshi SDK).
     """
     message = f"{timestamp_ms}{method.upper()}{path}".encode()
-    sig = private_key.sign(message, padding.PKCS1v15(), hashes.SHA256())
+    sig = private_key.sign(
+        message,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.DIGEST_LENGTH,
+        ),
+        hashes.SHA256(),
+    )
     return base64.b64encode(sig).decode()
 
 

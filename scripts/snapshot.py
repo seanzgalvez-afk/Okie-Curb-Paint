@@ -66,7 +66,14 @@ def _load_key():
 
 def _sign(key, ts_ms: int, method: str, path: str) -> str:
     msg = f"{ts_ms}{method.upper()}{_PREFIX}{path}".encode()
-    sig = key.sign(msg, padding.PKCS1v15(), hashes.SHA256())
+    sig = key.sign(
+        msg,
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.DIGEST_LENGTH,
+        ),
+        hashes.SHA256(),
+    )
     return base64.b64encode(sig).decode()
 
 
