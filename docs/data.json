@@ -1,151 +1,91 @@
 {
-  "generated": "2026-05-26 20:53 UTC",
+  "generated": "2026-05-26 20:56 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
       "ticker": "KXBTC15M-26MAY261700-00",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 57,
-      "no_bid": 42,
-      "yes_ask": 58,
-      "no_ask": 43,
-      "last_price": 57,
+      "yes_bid": 91,
+      "no_bid": 8,
+      "yes_ask": 92,
+      "no_ask": 9,
+      "last_price": 91,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26CAYIYE-CAY",
-      "title": "Will Eryn Cayetano win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 95,
-      "no_bid": 4,
-      "yes_ask": 96,
-      "no_ask": 5,
-      "last_price": 96,
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 66,
+      "no_bid": 33,
+      "yes_ask": 67,
+      "no_ask": 34,
+      "last_price": 66,
       "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     },
     {
       "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
       "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 37,
-      "no_bid": 62,
-      "yes_ask": 38,
-      "no_ask": 63,
-      "last_price": 37,
+      "yes_bid": 47,
+      "no_bid": 52,
+      "yes_ask": 48,
+      "no_ask": 53,
+      "last_price": 48,
       "volume": 0,
       "close_time": "2026-06-08",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26RAPSHO-RAP",
+      "title": "Will Malaika Rapolu win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 74,
+      "no_bid": 22,
+      "yes_ask": 78,
+      "no_ask": 26,
+      "last_price": 76,
+      "volume": 0,
+      "close_time": "2026-06-09",
       "category": "Other"
     },
     {
       "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
       "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 62,
-      "no_bid": 37,
-      "yes_ask": 63,
-      "no_ask": 38,
-      "last_price": 63,
+      "yes_bid": 52,
+      "no_bid": 47,
+      "yes_ask": 53,
+      "no_ask": 48,
+      "last_price": 53,
       "volume": 0,
       "close_time": "2026-06-08",
       "category": "Other"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
-      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 3,
-      "no_bid": 96,
-      "yes_ask": 4,
-      "no_ask": 97,
-      "last_price": 4,
+      "ticker": "KXLASTWORDMENTION-26MAY26-REDI",
+      "title": "What will James Talarico say during The Last Word With Lawrence O'Donnell?",
+      "yes_bid": 10,
+      "no_bid": 67,
+      "yes_ask": 33,
+      "no_ask": 90,
+      "last_price": 44,
       "volume": 0,
-      "close_time": "2026-06-09",
+      "close_time": "2026-06-10",
       "category": "Other"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26GAREWI-GAR",
-      "title": "Will Julia Garcia win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 76,
-      "no_bid": 19,
-      "yes_ask": 81,
-      "no_ask": 24,
-      "last_price": 80,
+      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
+      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 21,
+      "no_bid": 73,
+      "yes_ask": 27,
+      "no_ask": 79,
+      "last_price": 27,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
-    },
-    {
-      "ticker": "KXACBGAME-26MAY261515VALZAR-ZAR",
-      "title": "Valencia Basket vs Basket Zaragoza 2002 Winner?",
-      "yes_bid": 5,
-      "no_bid": 94,
-      "yes_ask": 6,
-      "no_ask": 95,
-      "last_price": 5,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBHR-26MAY262140SEAATH-SEARAROZARENA56-1",
-      "title": "Randy Arozarena: 1+ home runs?",
-      "yes_bid": 13,
-      "no_bid": 86,
-      "yes_ask": 14,
-      "no_ask": 87,
-      "last_price": 14,
-      "volume": 0,
-      "close_time": "2026-05-30",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26CENHUI-HUI",
-      "title": "Will Katherine Hui win the Center vs Hui: W15 Lakewood CA Round of 32 match?",
-      "yes_bid": 2,
-      "no_bid": 97,
-      "yes_ask": 3,
-      "no_ask": 98,
-      "last_price": 3,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXACBGAME-26MAY261515VALZAR-VAL",
-      "title": "Valencia Basket vs Basket Zaragoza 2002 Winner?",
-      "yes_bid": 94,
-      "no_bid": 5,
-      "yes_ask": 95,
-      "no_ask": 6,
-      "last_price": 95,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXHIGHTSATX-26MAY26-T85",
-      "title": "Will the maximum temperature be  <85\u00b0 on May 26, 2026?",
-      "yes_bid": 75,
-      "no_bid": 19,
-      "yes_ask": 81,
-      "no_ask": 25,
-      "last_price": 83,
-      "volume": 0,
-      "close_time": "2026-05-27",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 40,
-      "no_bid": 59,
-      "yes_ask": 41,
-      "no_ask": 60,
-      "last_price": 40,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
     },
     {
       "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
@@ -160,63 +100,51 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXITFWMATCH-26MAY26NGUSIN-SIN",
-      "title": "Will Juliana Nicole Singeorzan win the Nguyen vs Singeorzan: W15 Lakewood CA Round of 16 match?",
-      "yes_bid": 15,
-      "no_bid": 83,
-      "yes_ask": 17,
-      "no_ask": 85,
-      "last_price": 14,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBRENTD-26MAY2617-T96.50",
-      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
-      "yes_bid": 59,
-      "no_bid": 33,
-      "yes_ask": 67,
-      "no_ask": 41,
-      "last_price": 59,
+      "ticker": "KXNATGASD-26MAY2617-T3.005",
+      "title": "Will the natural gas close price be above 3.005  USD/MMBtu on May 26, 2026 at 5:00 PM EDT?",
+      "yes_bid": 63,
+      "no_bid": 31,
+      "yes_ask": 69,
+      "no_ask": 37,
+      "last_price": 63,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Other"
     },
     {
-      "ticker": "KXDPWORLDTOUR-AUAOPBKT26-JOLE",
-      "title": "Will Jacob Skov Olesen win the Austrian Alpine Open presented by Kitzb\u00fchel Tirol?",
+      "ticker": "KXNATGASD-26MAY2617-T3.010",
+      "title": "Will the natural gas close price be above 3.010  USD/MMBtu on May 26, 2026 at 5:00 PM EDT?",
+      "yes_bid": 28,
+      "no_bid": 62,
+      "yes_ask": 38,
+      "no_ask": 72,
+      "last_price": 39,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXGOVIANOMR-26-RFEE",
+      "title": "Will Randy Feenstra be the Republican nominee for Governor in Iowa?",
+      "yes_bid": 68,
+      "no_bid": 31,
+      "yes_ask": 69,
+      "no_ask": 32,
+      "last_price": 69,
+      "volume": 0,
+      "close_time": "2026-11-03",
+      "category": "Politics"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
+      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
       "yes_bid": 2,
       "no_bid": 97,
       "yes_ask": 3,
       "no_ask": 98,
       "last_price": 3,
       "volume": 0,
-      "close_time": "2026-06-14",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26GAREWI-EWI",
-      "title": "Will Salma Ewing win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
-      "yes_bid": 16,
-      "no_bid": 82,
-      "yes_ask": 18,
-      "no_ask": 84,
-      "last_price": 18,
-      "volume": 0,
       "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXWTASETWINNER-26MAY28GAUSHE-1-GAU",
-      "title": "Will Coco Gauff win set 1 in the Coco Gauff vs Maiar Sherif Ahmed Abdelaziz match",
-      "yes_bid": 86,
-      "no_bid": 10,
-      "yes_ask": 90,
-      "no_ask": 14,
-      "last_price": 61,
-      "volume": 0,
-      "close_time": "2026-06-11",
       "category": "Other"
     },
     {
@@ -232,56 +160,128 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26PALRIE-TIE",
-      "title": "Palestino vs Riestra Winner?",
-      "yes_bid": 30,
-      "no_bid": 69,
-      "yes_ask": 31,
-      "no_ask": 70,
-      "last_price": 31,
+      "ticker": "KXITFWMATCH-26MAY26CENHUI-CEN",
+      "title": "Will Olivia Center win the Center vs Hui: W15 Lakewood CA Round of 32 match?",
+      "yes_bid": 97,
+      "no_bid": 1,
+      "yes_ask": 99,
+      "no_ask": 3,
+      "last_price": 97,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXCONMEBOLLIBGAME-26MAY26LANMIR-TIE",
+      "title": "Lanus vs Mirassol Winner?",
+      "yes_bid": 29,
+      "no_bid": 70,
+      "yes_ask": 30,
+      "no_ask": 71,
+      "last_price": 30,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Sports"
+    },
+    {
+      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026B4C64CE3572-DD9DC3AF9D5",
+      "title": "yes San Antonio,yes Over 215.5 points scored",
+      "yes_bid": 22,
+      "no_bid": 78,
+      "yes_ask": 22,
+      "no_ask": 100,
+      "last_price": 22,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXCONMEBOLLIBGAME-26MAY26LANMIR-LAN",
+      "title": "Lanus vs Mirassol Winner?",
+      "yes_bid": 47,
+      "no_bid": 52,
+      "yes_ask": 48,
+      "no_ask": 53,
+      "last_price": 48,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBNB15M-26MAY261700-00",
+      "title": "BNB price up in next 15 mins?",
+      "yes_bid": 67,
+      "no_bid": 31,
+      "yes_ask": 69,
+      "no_ask": 33,
+      "last_price": 79,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXSENATETXR-26-JC",
+      "title": "Will John Cornyn be the Republican nominee for the Senate in Texas?",
+      "yes_bid": 4,
+      "no_bid": 96,
+      "yes_ask": 4,
+      "no_ask": 96,
+      "last_price": 4,
+      "volume": 0,
+      "close_time": "2026-11-03",
+      "category": "Politics"
+    },
+    {
+      "ticker": "KXUCLSPREAD-26MAY30PSGARS-PSG1",
+      "title": "PSG wins by over 1.5 goals?",
+      "yes_bid": 21,
+      "no_bid": 77,
+      "yes_ask": 23,
+      "no_ask": 79,
+      "last_price": 22,
+      "volume": 0,
+      "close_time": "2026-06-13",
+      "category": "Other"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
+      "ticker": "KXNATGASD-26MAY2617-T3.010",
+      "title": "Will the natural gas close price be above 3.010  USD/MMBtu on May 26, 2026 at 5:00 PM EDT?",
       "side": "YES",
-      "price": 40,
+      "price": 28,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXBTC15M-26MAY261700-00",
-      "title": "BTC price up in next 15 mins?",
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
       "side": "NO",
-      "price": 43,
+      "price": 34,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     },
     {
-      "ticker": "KXHIGHTSATX-26MAY26-T85",
-      "title": "Will the maximum temperature be  <85\u00b0 on May 26, 2026?",
+      "ticker": "KXNATGASD-26MAY2617-T3.005",
+      "title": "Will the natural gas close price be above 3.005  USD/MMBtu on May 26, 2026 at 5:00 PM EDT?",
       "side": "NO",
-      "price": 25,
-      "reason": "Strong favorite zone + Expiring soon",
-      "edge_score": 4.5
-    },
-    {
-      "ticker": "KXBRENTD-26MAY2617-T96.50",
-      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
-      "side": "NO",
-      "price": 41,
-      "reason": "Strong favorite zone + Expiring soon",
-      "edge_score": 4.5
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "side": "YES",
       "price": 37,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXBNB15M-26MAY261700-00",
+      "title": "BNB price up in next 15 mins?",
+      "side": "NO",
+      "price": 33,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
+      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
+      "side": "YES",
+      "price": 21,
       "reason": "Underdog value zone + Expiring within 2 weeks",
       "edge_score": 4.0
     }
@@ -12377,15 +12377,6 @@
       "return_date": "2026-06-07"
     },
     {
-      "player": "Josh Jung",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "Day-To-Day",
-      "detail": "",
-      "return_date": ""
-    },
-    {
       "player": "Corey Seager",
       "team": "",
       "sport": "baseball",
@@ -13514,7 +13505,7 @@
       "headline": "Shams: Kenny Atkinson returning as Cavaliers coach next season",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T19:50:25Z",
+      "published": "2026-05-26T20:26:06Z",
       "is_alert": false,
       "url": "https://www.espn.com/video/clip/_/id/48883468/kenny-atkinson-returning-cavaliers-coach-next-season"
     },
@@ -13535,6 +13526,22 @@
       "url": "https://www.espn.com/nba/story/_/id/48883359/sources-allen-graves-likely-1st-round-pick-stay-nba-draft"
     },
     {
+      "headline": "2027 NFL draft quarterback class: Top prospects to know",
+      "sport": "football",
+      "league": "nfl",
+      "published": "2026-05-26T20:47:16Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/nfl/draft2027/story/_/id/48828988/2027-nfl-draft-quarterback-class-top-prospects-manning-moore-carr"
+    },
+    {
+      "headline": "Texans give star WR Nico Collins raise in reworked deal",
+      "sport": "football",
+      "league": "nfl",
+      "published": "2026-05-26T20:50:05Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/nfl/story/_/id/48883953/texans-give-star-wr-nico-collins-raise-reworked-deal"
+    },
+    {
       "headline": "Supreme Court won't intervene in Brian Flores' suit vs. NFL",
       "sport": "football",
       "league": "nfl",
@@ -13551,14 +13558,6 @@
       "url": "https://www.espn.com/nfl/story/_/id/48881180/manny-fernandez-star-1972-undefeated-dolphins-dies-79"
     },
     {
-      "headline": "2027 NFL draft quarterback class: Top prospects to know",
-      "sport": "football",
-      "league": "nfl",
-      "published": "2026-05-26T15:03:09Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/nfl/draft2027/story/_/id/48828988/2027-nfl-draft-quarterback-class-top-prospects-manning-moore-carr"
-    },
-    {
       "headline": "Raiders to put 'a lot' of pressure on Ashton Jeanty in Year 2",
       "sport": "football",
       "league": "nfl",
@@ -13567,18 +13566,18 @@
       "url": "https://www.espn.com/nfl/story/_/id/48873026/las-vegas-raiders-nfl-pressure-ashton-jeanty-year-2"
     },
     {
-      "headline": "Titans say OSU's Carnell Tate was perfect fit for Cam Ward",
-      "sport": "football",
-      "league": "nfl",
-      "published": "2026-05-25T10:35:26Z",
+      "headline": "2026 MLB awards tracker: Odds for MVP, Cy Young, Rookie of the Year",
+      "sport": "baseball",
+      "league": "mlb",
+      "published": "2026-05-26T20:47:03Z",
       "is_alert": false,
-      "url": "https://www.espn.com/nfl/story/_/id/48826160/tennessee-titans-wr-carnell-tate-perfect-pairing-cam-ward"
+      "url": "https://www.espn.com/espn/betting/story/_/id/48350446/2026-mlb-awards-sports-betting-odds-tracker-mvp-cy-young-rookie-year"
     },
     {
       "headline": "Jacob Misiorowsi on Pok\u00e9mon cards: There's always the chase for the big one",
       "sport": "baseball",
       "league": "mlb",
-      "published": "2026-05-26T20:44:56Z",
+      "published": "2026-05-26T20:46:58Z",
       "is_alert": false,
       "url": "https://www.espn.com/video/clip/_/id/48884110/there-always-chase-big-one"
     },
@@ -13605,14 +13604,6 @@
       "published": "2026-05-26T20:20:58Z",
       "is_alert": false,
       "url": "https://www.espn.com/mlb/story/_/id/48883711/rays-sign-veteran-reliever-craig-kimbrel-shore-bullpen"
-    },
-    {
-      "headline": "Fantasy baseball: A's forced to scramble and other news for Tuesday",
-      "sport": "baseball",
-      "league": "mlb",
-      "published": "2026-05-26T20:04:46Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/fantasy/baseball/story/_/id/48297021/espn-fantasy-baseball-buzz-injuries-promotions-demotions-trades-prospects-lineup-changes-mlb-news-analysis-2026"
     },
     {
       "headline": "Penguins' Malkin signs 1-year deal to return for 21st season",
@@ -13696,5 +13687,17 @@
     }
   ],
   "crypto": {},
+  "crypto_global": {},
+  "crypto_movers": {
+    "gainers": [],
+    "losers": []
+  },
+  "sparklines": {},
+  "fear_greed": {
+    "value": 34,
+    "label": "Fear",
+    "yesterday": 30,
+    "timestamp": "1779753600"
+  },
   "metaculus": []
 }

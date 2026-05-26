@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 20:53 UTC
+# Generated: 2026-05-26 20:56 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261700-00                     57c  42c      26  2026-05-26  BTC price up in next 15 mins?
-  KXITFWMATCH-26MAY26CAYIYE-CAY               95c   4c      23  2026-06-09  Will Eryn Cayetano win the Cayetano vs I
-  KXATPMATCH-26MAY25AUGALT-ALT                37c  62c      15  2026-06-08  Will Daniel Altmaier win the Auger-Alias
-  KXATPMATCH-26MAY25AUGALT-AUG                62c  37c      12  2026-06-08  Will Felix Auger-Aliassime win the Auger
-  KXITFWMATCH-26MAY26CAYIYE-IYE                3c  96c      11  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
-  KXITFWMATCH-26MAY26GAREWI-GAR               76c  19c      10  2026-06-09  Will Julia Garcia win the Garcia vs Ewin
-  KXACBGAME-26MAY261515VALZAR-ZAR              5c  94c       6  2026-06-09  Valencia Basket vs Basket Zaragoza 2002 
-  KXMLBHR-26MAY262140SEAATH-SEARAROZARENA56-  13c  86c       6  2026-05-30  Randy Arozarena: 1+ home runs?
-  KXITFWMATCH-26MAY26CENHUI-HUI                2c  97c       6  2026-06-09  Will Katherine Hui win the Center vs Hui
-  KXACBGAME-26MAY261515VALZAR-VAL             94c   5c       4  2026-06-09  Valencia Basket vs Basket Zaragoza 2002 
-  KXHIGHTSATX-26MAY26-T85                     75c  19c       4  2026-05-27  Will the maximum temperature be  <85° on
-  KXBTCD-26MAY2617-T75999.99                  40c  59c       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXNBAGAME-26MAY26SASOKC-SAS                 40c  59c       3  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXITFWMATCH-26MAY26NGUSIN-SIN               15c  83c       3  2026-06-09  Will Juliana Nicole Singeorzan win the N
-  KXBRENTD-26MAY2617-T96.50                   59c  33c       3  2026-05-26  Will the brent crude oil close price be 
-  KXDPWORLDTOUR-AUAOPBKT26-JOLE                2c  97c       3  2026-06-14  Will Jacob Skov Olesen win the Austrian 
-  KXITFWMATCH-26MAY26GAREWI-EWI               16c  82c       3  2026-06-09  Will Salma Ewing win the Garcia vs Ewing
-  KXWTASETWINNER-26MAY28GAUSHE-1-GAU          86c  10c       2  2026-06-11  Will Coco Gauff win set 1 in the Coco Ga
-  KXNBAGAME-26MAY26SASOKC-OKC                 59c  40c       2  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXCONMEBOLSUDGAME-26MAY26PALRIE-TIE         30c  69c       2  2026-06-09  Palestino vs Riestra Winner?
+  KXBTC15M-26MAY261700-00                     91c   8c      48  2026-05-26  BTC price up in next 15 mins?
+  KXBTCD-26MAY2617-T75999.99                  66c  33c      24  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPMATCH-26MAY25AUGALT-ALT                47c  52c      19  2026-06-08  Will Daniel Altmaier win the Auger-Alias
+  KXITFWMATCH-26MAY26RAPSHO-RAP               74c  22c      10  2026-06-09  Will Malaika Rapolu win the Rapolu vs Sh
+  KXATPMATCH-26MAY25AUGALT-AUG                52c  47c       6  2026-06-08  Will Felix Auger-Aliassime win the Auger
+  KXLASTWORDMENTION-26MAY26-REDI              10c  67c       6  2026-06-10  What will James Talarico say during The 
+  KXITFWMATCH-26MAY26RAPSHO-SHO               21c  73c       5  2026-06-09  Will Maria Sholokhova win the Rapolu vs 
+  KXNBAGAME-26MAY26SASOKC-SAS                 40c  59c       4  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXNATGASD-26MAY2617-T3.005                  63c  31c       4  2026-05-26  Will the natural gas close price be abov
+  KXNATGASD-26MAY2617-T3.010                  28c  62c       4  2026-05-26  Will the natural gas close price be abov
+  KXGOVIANOMR-26-RFEE                         68c  31c       4  2026-11-03  Will Randy Feenstra be the Republican no
+  KXITFWMATCH-26MAY26CAYIYE-IYE                2c  97c       3  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
+  KXNBAGAME-26MAY26SASOKC-OKC                 59c  40c       3  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXITFWMATCH-26MAY26CENHUI-CEN               97c   1c       3  2026-06-09  Will Olivia Center win the Center vs Hui
+  KXCONMEBOLLIBGAME-26MAY26LANMIR-TIE         29c  70c       3  2026-06-09  Lanus vs Mirassol Winner?
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026B4C64CE3  22c  78c       3  2026-06-10  yes San Antonio,yes Over 215.5 points sc
+  KXCONMEBOLLIBGAME-26MAY26LANMIR-LAN         47c  52c       3  2026-06-09  Lanus vs Mirassol Winner?
+  KXBNB15M-26MAY261700-00                     67c  31c       2  2026-05-26  BNB price up in next 15 mins?
+  KXSENATETXR-26-JC                            4c  96c       2  2026-11-03  Will John Cornyn be the Republican nomin
+  KXUCLSPREAD-26MAY30PSGARS-PSG1              21c  77c       2  2026-06-13  PSG wins by over 1.5 goals?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/POLITICALSTATTEMPORAL.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certification
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Entertainment', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/OSCARS.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/OSCARS.p
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,24 +75,27 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
-  KXACBGAME
-  KXAGNOMTXR
-  KXATPCHALLENGERMATCH
   KXATPMATCH
-  KXBRENTD
+  KXBNB15M
+  KXBTC
   KXBTC15M
   KXBTCD
-  KXCONMEBOLSUDGAME
-  KXDPWORLDTOUR
-  KXHIGHCHI
-  KXHIGHTSATX
+  KXCONMEBOLLIBGAME
+  KXDOGE15M
+  KXGOVIANOMR
   KXITFWMATCH
+  KXLASTWORDMENTION
   KXMLBGAME
   KXMLBHR
-  KXMLBHRR
+  KXMLBRFI
+  KXMLBSPREAD
   KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
+  KXNATGASD
+  KXNBACOY
   KXNBAGAME
-  KXVOTEPRIMARY
-  KXWC1STTIMEWIN
-  KXWTASETWINNER
+  KXNBAPTS
+  KXNBASPREAD
+  KXSENATETXR
+  KXUCLSPREAD
+  KXWCGROUPWIN
