@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 13:57 UTC
+# Generated: 2026-05-26 14:01 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,30 +11,30 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXATPMATCH-26MAY24FAUVAC-FAU                22c  77c      16  2026-06-07  Will Thomas Faurel win the Faurel vs Vac
-  KXBTCD-26MAY2610-T77099.99                  90c   9c      16  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2610-T77199.99                  57c  41c      16  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY24FAUVAC-VAC                76c  22c      12  2026-06-07  Will Valentin Vacherot win the Faurel vs
-  KXBTCD-26MAY2610-T76999.99                  98c   1c      12  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXITFMATCH-26MAY26ZIENIJ-ZIE                92c   5c       9  2026-06-09  Will Marcel Zielinski win the Zielinski 
-  KXATPCHALLENGERMATCH-26MAY26KASRON-RON      39c  60c       7  2026-06-09  Will Franco Roncadelli win the Kasnikows
-  KXBTCD-26MAY2610-T77299.99                   5c  93c       6  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXHIGHCHI-26MAY26-B83.5                     17c  82c       6  2026-05-27  Will the high temp in Chicago be 83-84° 
-  KXATPMATCH-26MAY25GARTIE-GAR                30c  69c       5  2026-06-08  Will Cristian Garin win the Garin vs Tie
-  KXATPMATCH-26MAY25GARTIE-TIE                69c  30c       5  2026-06-08  Will Learner Tien win the Garin vs Tien:
+  KXBTC15M-26MAY261015-15                     48c  50c      43  2026-05-26  BTC price up in next 15 mins?
+  KXATPCHALLENGERMATCH-26MAY26MAECOP-MAE      32c  64c      19  2026-06-09  Will Francesco Maestrelli win the Maestr
+  KXATPMATCH-26MAY24FAUVAC-FAU                22c  76c       9  2026-06-07  Will Thomas Faurel win the Faurel vs Vac
+  KXATPMATCH-26MAY25BAEBUR-BAE                66c  32c       8  2026-06-08  Will Sebastian Baez win the Baez vs Burr
+  KXWTI-26MAY2614-T95.99                      16c  83c       7  2026-05-26  Will the WTI crude oil settlement price 
+  KXATPMATCH-26MAY24LANPRA-PRA                 5c  94c       6  2026-06-07  Will Juan Carlos Prado Angelo win the La
+  KXATPCHALLENGERMATCH-26MAY26MAECOP-COP      64c  32c       5  2026-06-09  Will Kimmer Coppejans win the Maestrelli
+  KXATPMATCH-26MAY25BAEBUR-BUR                33c  66c       5  2026-06-08  Will Roman Andres Burruchaga win the Bae
+  KXIPLGAME-26MAY261000GTRCB-RCB              52c  47c       5  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXATPMATCH-26MAY24FAUVAC-VAC                76c  23c       5  2026-06-07  Will Valentin Vacherot win the Faurel vs
+  KXATPMATCH-26MAY25KOPMOU-MOU                52c  47c       4  2026-06-08  Will Corentin Moutet win the Kopriva vs 
   KXIPLGAME-26MAY261000GTRCB-GT               47c  52c       4  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
-  KXATPMATCH-26MAY25KOPMOU-KOP                56c  43c       3  2026-06-08  Will Vit Kopriva win the Kopriva vs Mout
-  KXWTAMATCH-26MAY24GAUTOW-TOW                14c  84c       3  2026-06-07  Will Taylor Townsend win the Gauff vs To
-  KXATPMATCH-26MAY25BAEBUR-BAE                69c  30c       3  2026-06-08  Will Sebastian Baez win the Baez vs Burr
-  KXITFMATCH-26MAY26JONMOE-MOE                34c  65c       3  2026-06-09  Will Marvin Moeller win the Jong vs Moel
-  KXATPMATCH-26MAY25KOPMOU-MOU                43c  56c       3  2026-06-08  Will Corentin Moutet win the Kopriva vs 
-  KXBTCD-26MAY2610-T76799.99                  99c    ?       2  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXWTAMATCH-26MAY24GAUTOW-GAU                85c  14c       2  2026-06-07  Will Coco Gauff win the Gauff vs Townsen
-  KXATPMATCH-26MAY25BAEBUR-BUR                30c  69c       2  2026-06-08  Will Roman Andres Burruchaga win the Bae
+  KXATPCHALLENGERMATCH-26MAY26VASTAB-VAS      93c   6c       3  2026-06-09  Will Jacopo Vasami win the Vasami vs Tab
+  KXTXSENCOMBO-26NOV-TALCOR                    5c  95c       3  2026-11-03  Will Dem Nominee be James Talarico AND G
+  KXBTCD-26MAY2611-T77199.99                  39c  60c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXRT-POW-80                                 70c  11c       2  2026-06-08  Power Ballad Rotten Tomatoes score?
+  KXATPMATCH-26MAY25GARTIE-GAR                30c  69c       2  2026-06-08  Will Cristian Garin win the Garin vs Tie
+  KXITFWMATCH-26MAY26VILKUM-VIL                4c  93c       2  2026-06-09  Will Marie Villet win the Villet vs Kumr
+  KXNBAGAME-26MAY26SASOKC-SAS                 38c  61c       2  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXATPMATCH-26MAY25GARTIE-TIE                68c  30c       2  2026-06-08  Will Learner Tien win the Garin vs Tien:
 
 ======================================================================
 ## FIFA WORLD CUP 2026
 ======================================================================
-
-  Searched 0 event pages, 0 unique series. Still nothing.
-  All series tickers found (sorted):
+  Series/event hits: none
+  Tried all variants. WC markets not accessible via this API key.
+  This may be a permissions issue or the markets use a private endpoint.
