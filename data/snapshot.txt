@@ -1,0 +1,12 @@
+# Kalshi Market Snapshot
+# Generated: 2026-05-26 08:36 UTC
+======================================================================
+
+## Balance:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/portfolio/balance'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+## Open positions:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/portfolio/positions?limit=50'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+## Markets:  ERROR — Client error '401 Unauthorized' for url 'https://trading-api.kalshi.com/trade-api/v2/markets?status=open&limit=40'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
