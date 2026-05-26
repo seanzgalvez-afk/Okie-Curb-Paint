@@ -1,4 +1,4 @@
-"""Kalshi snapshot — RSA-PSS auth, liquid markets by volume."""
+"""Kalshi snapshot — RSA-PSS auth, paginates to find liquid markets."""
 import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,10 +38,10 @@ def auth_headers(method, path):
 
 def get(path, params=None):
     r = httpx.get(f"{BASE_URL}{path}", headers=auth_headers("GET", path),
-                  params=params, timeout=15)
+                  params=params, timeout=20)
     print(f"GET {path} -> {r.status_code}", file=sys.stderr)
     if not r.is_success:
-        print(f"  {r.text[:200]}", file=sys.stderr)
+        print(f"  {r.text[:300]}", file=sys.stderr)
         return None
     return r.json()
 
@@ -50,8 +50,11 @@ lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 
 # Balance
 bal = get("/portfolio/balance")
-lines.append(f"\n## Balance: ${(bal.get('balance',0) if bal else 0)/100:.2f}"
-             if bal else "\n## Balance: unavailable")
+if bal:
+    cents = bal.get("balance", 0)
+    lines.append(f"\n## Balance: ${cents/100:.2f}")
+else:
+    lines.append("\n## Balance: unavailable")
 
 # Positions
 pos = get("/portfolio/positions", {"limit": 50})
@@ -65,41 +68,47 @@ if pos:
     else:
         lines.append("  none")
 
-# Markets sorted by volume descending — skip zero-volume parlays
+# Paginate through markets to find liquid ones (up to 500)
 all_markets = []
-for series_ticker in [None]:  # None = all categories
+cursor = None
+for page_num in range(5):
     params = {"status": "open", "limit": 100}
-    if series_ticker:
-        params["series_ticker"] = series_ticker
+    if cursor:
+        params["cursor"] = cursor
     resp = get("/markets", params)
-    if resp:
-        all_markets.extend(resp.get("markets", []))
+    if not resp:
+        break
+    batch = resp.get("markets", [])
+    all_markets.extend(batch)
+    print(f"  Page {page_num+1}: got {len(batch)} markets (total={len(all_markets)})", file=sys.stderr)
+    cursor = resp.get("cursor")
+    if not cursor or len(batch) == 0:
+        break
 
-# Sort by volume descending, filter out zero-volume
-liquid = sorted(
-    [m for m in all_markets if m.get("volume", 0) > 0],
-    key=lambda m: m.get("volume", 0),
-    reverse=True
-)[:40]
+# Filter: must have actual volume > 0
+liquid = [
+    m for m in all_markets
+    if m.get("volume", 0) > 0
+]
+liquid.sort(key=lambda m: m.get("volume", 0), reverse=True)
+top40 = liquid[:40]
 
-zero_vol = [m for m in all_markets if m.get("volume", 0) == 0]
-
-if liquid:
-    lines.append(f"\n## Top markets by volume ({len(liquid)} liquid):")
-    lines.append(f"  {'Ticker':<40} {'Yes':>4} {'No':>4} {'Volume':>9}  Closes")
+lines.append(f"\n## Top markets by volume ({len(liquid)} liquid out of {len(all_markets)} scanned):")
+if top40:
+    lines.append(f"  {'Ticker':<38} {'Yes':>4} {'No':>4} {'Volume':>10}  Closes")
     lines.append("  " + "-"*75)
-    for m in liquid:
-        yes  = m.get("yes_bid", m.get("last_price", "?"))
-        no_p = m.get("no_bid", "?")
-        vol  = m.get("volume", 0)
+    for m in top40:
+        yes_p = m.get("yes_bid", m.get("last_price", "?"))
+        no_p  = m.get("no_bid", "?")
+        vol   = m.get("volume", 0)
         close = str(m.get("close_time", ""))[:10]
-        ticker = m.get("ticker", "")[:40]
-        title  = m.get("title", "")[:65]
-        lines.append(f"  {ticker:<40} {str(yes):>3}c {str(no_p):>3}c {vol:>9,}  {close}")
+        ticker = m.get("ticker", "")[:38]
+        title  = m.get("title", "")[:70]
+        lines.append(f"  {ticker:<38} {str(yes_p):>3}c {str(no_p):>3}c {vol:>10,}  {close}")
         lines.append(f"    {title}")
 else:
-    lines.append(f"\n## No liquid markets found (all {len(zero_vol)} markets have 0 volume)")
-    lines.append("  Try checking Kalshi directly — the API may be returning limited data.")
+    lines.append(f"  No markets with volume > 0 found in {len(all_markets)} scanned.")
+    lines.append("  (All open markets appear to be zero-volume parlays right now.)")
 
 snapshot = "\n".join(lines)
 out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
