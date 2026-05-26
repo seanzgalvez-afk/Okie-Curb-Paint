@@ -478,75 +478,173 @@ def fetch_all_espn_data():
     return scoreboard, injuries, news
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# CoinGecko — BTC/ETH/SOL prices
 # ═══════════════════════════════════════════════════════════════════════════════
-# Budget: ~10,000 credits/month replenishes June 1
-# Bot runs every 5 min = 8,640 calls/month — tight.
-# SOLUTION: only call CoinGecko on runs divisible by 15 min (every 3rd run).
-# That cuts usage to 2,880/month and leaves 7,120 credits of headroom.
-# Rate limit is 100 calls/min — no throttling needed.
+# CoinGecko Pro — full crypto intelligence suite
+# ═══════════════════════════════════════════════════════════════════════════════
+# Budget: 10,000 credits/month (replenishes June 1)
+# Credit schedule:
+#   Prices   → every 15 min  = 2,880/month  (1 credit each)
+#   Global   → every 30 min  = 1,440/month  (1 credit each)
+#   Movers   → every 30 min  = 1,440/month  (1 credit each)
+#   Sparkline→ every 60 min  =   720/month  (1 credit each)
+#   Fear&Greed → FREE (alternative.me, not CoinGecko)
+#   ─────────────────────────────────────────────────────
+#   Total    =  6,480/month  →  3,520 credits headroom ✅
 COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 
-def _should_fetch_crypto():
-    """Only fetch crypto on runs at :00, :15, :30, :45 past the hour to save credits."""
-    minute = datetime.now(timezone.utc).minute
-    return minute % 15 == 0
+def _cg_headers():
+    if COINGECKO_API_KEY:
+        return {"x-cg-pro-api-key": COINGECKO_API_KEY}
+    return {}
+
+def _cg_base():
+    return "https://pro-api.coingecko.com/api/v3" if COINGECKO_API_KEY \
+           else "https://api.coingecko.com/api/v3"
+
+def _cg_get(path, params=None):
+    try:
+        r = httpx.get(f"{_cg_base()}{path}", params=params or {},
+                      headers=_cg_headers(), timeout=10)
+        if r.status_code == 200:
+            return r.json()
+        log(f"CoinGecko {path} -> {r.status_code}: {r.text[:80]}")
+    except Exception as e:
+        log(f"CoinGecko {path} error: {e}")
+    return None
+
+def _on_interval(minutes):
+    """True if current UTC minute is on a multiple-of-minutes boundary."""
+    return datetime.now(timezone.utc).minute % minutes == 0
 
 def fetch_crypto_prices():
-    """Fetch BTC/ETH/SOL prices from CoinGecko. Uses Pro API if key is set.
-    Skips call if not on a 15-min boundary to conserve monthly credits."""
-    if not _should_fetch_crypto():
-        log("CoinGecko: skipping (not on 15-min boundary) — saving credits")
+    """Live prices for BTC/ETH/SOL + key alts. Every 15 min = 2,880 credits/month."""
+    if not _on_interval(15):
+        log("CoinGecko prices: skipping (not 15-min mark)")
         return {}
-    try:
-        if COINGECKO_API_KEY:
-            # Pro endpoint — higher rate limits, more data
-            base_url = "https://pro-api.coingecko.com/api/v3/simple/price"
-            headers  = {"x-cg-pro-api-key": COINGECKO_API_KEY}
-            log("CoinGecko: using Pro API")
-        else:
-            # Free public endpoint — no key needed
-            base_url = "https://api.coingecko.com/api/v3/simple/price"
-            headers  = {}
-            log("CoinGecko: using free API")
-
-        r = httpx.get(base_url,
-            params={"ids": "bitcoin,ethereum,solana,sui,avalanche-2,chainlink",
-                    "vs_currencies": "usd",
-                    "include_24hr_change": "true",
-                    "include_market_cap": "true"},
-            headers=headers, timeout=10)
-
-        if r.status_code != 200:
-            log(f"CoinGecko {r.status_code}: {r.text[:100]}")
-            return {}
-        data = r.json()
-
-        def coin(key):
-            c = data.get(key, {})
-            return {
-                "usd":        c.get("usd"),
-                "change_24h": round(c.get("usd_24h_change") or 0, 2),
-                "market_cap": c.get("usd_market_cap"),
-            }
-
+    data = _cg_get("/simple/price", {
+        "ids": "bitcoin,ethereum,solana,sui,avalanche-2,chainlink,dogecoin",
+        "vs_currencies": "usd",
+        "include_24hr_change": "true",
+        "include_market_cap": "true",
+        "include_24hr_vol": "true",
+    })
+    if not data:
+        return {}
+    def coin(key):
+        c = data.get(key, {})
         return {
-            "btc": coin("bitcoin"),
-            "eth": coin("ethereum"),
-            "sol": coin("solana"),
-            "sui": coin("sui"),
-            "avax": coin("avalanche-2"),
-            "link": coin("chainlink"),
-            # Legacy flat keys for dashboard backward compatibility
-            "btc_usd": data.get("bitcoin",{}).get("usd"),
-            "btc_24h_change": round(data.get("bitcoin",{}).get("usd_24h_change") or 0, 2),
-            "eth_usd": data.get("ethereum",{}).get("usd"),
-            "eth_24h_change": round(data.get("ethereum",{}).get("usd_24h_change") or 0, 2),
-            "sol_usd": data.get("solana",{}).get("usd"),
-            "sol_24h_change": round(data.get("solana",{}).get("usd_24h_change") or 0, 2),
+            "usd":        c.get("usd"),
+            "change_24h": round(c.get("usd_24h_change") or 0, 2),
+            "market_cap": c.get("usd_market_cap"),
+            "vol_24h":    c.get("usd_24h_vol"),
         }
+    log(f"CoinGecko prices: BTC=${data.get('bitcoin',{}).get('usd','?')}")
+    return {
+        "btc": coin("bitcoin"),   "eth": coin("ethereum"),
+        "sol": coin("solana"),    "sui": coin("sui"),
+        "avax": coin("avalanche-2"), "link": coin("chainlink"),
+        "doge": coin("dogecoin"),
+        # Legacy flat keys for dashboard backward compatibility
+        "btc_usd": data.get("bitcoin",{}).get("usd"),
+        "btc_24h_change": round(data.get("bitcoin",{}).get("usd_24h_change") or 0, 2),
+        "eth_usd": data.get("ethereum",{}).get("usd"),
+        "eth_24h_change": round(data.get("ethereum",{}).get("usd_24h_change") or 0, 2),
+        "sol_usd": data.get("solana",{}).get("usd"),
+        "sol_24h_change": round(data.get("solana",{}).get("usd_24h_change") or 0, 2),
+    }
+
+def fetch_crypto_global():
+    """Global market data: total cap, BTC dominance, market trend.
+    Every 30 min = 1,440 credits/month."""
+    if not _on_interval(30):
+        log("CoinGecko global: skipping")
+        return {}
+    data = _cg_get("/global")
+    if not data:
+        return {}
+    d = data.get("data", {})
+    log(f"CoinGecko global: BTC dom={d.get('btc_dominance',0):.1f}%")
+    return {
+        "total_market_cap_usd":   d.get("total_market_cap", {}).get("usd"),
+        "total_volume_24h_usd":   d.get("total_volume", {}).get("usd"),
+        "btc_dominance":          round(d.get("btc_dominance") or 0, 2),
+        "eth_dominance":          round(d.get("eth_dominance") or 0, 2),
+        "active_cryptos":         d.get("active_cryptocurrencies"),
+        "market_cap_change_24h":  round(d.get("market_cap_change_percentage_24h_usd") or 0, 2),
+    }
+
+def fetch_crypto_movers():
+    """Top 5 gainers and losers in last 24h from top-250 coins.
+    Every 30 min = 1,440 credits/month."""
+    if not _on_interval(30):
+        log("CoinGecko movers: skipping")
+        return {"gainers": [], "losers": []}
+    data = _cg_get("/coins/markets", {
+        "vs_currency": "usd",
+        "order": "market_cap_desc",
+        "per_page": 100,
+        "page": 1,
+        "price_change_percentage": "24h",
+        "sparkline": "false",
+    })
+    if not data:
+        return {"gainers": [], "losers": []}
+    def fmt(c):
+        return {
+            "symbol": c.get("symbol","").upper(),
+            "name":   c.get("name",""),
+            "price":  c.get("current_price"),
+            "change": round(c.get("price_change_percentage_24h") or 0, 2),
+            "cap":    c.get("market_cap"),
+        }
+    ranked = sorted(data, key=lambda x: x.get("price_change_percentage_24h") or 0)
+    gainers = [fmt(c) for c in reversed(ranked[-5:])]
+    losers  = [fmt(c) for c in ranked[:5]]
+    log(f"CoinGecko movers: top gainer {gainers[0]['symbol']} +{gainers[0]['change']}%")
+    return {"gainers": gainers, "losers": losers}
+
+def fetch_crypto_sparklines():
+    """7-day hourly price data for BTC and ETH for chart display.
+    Every 60 min = 720 credits/month (1 credit per coin per call)."""
+    if not _on_interval(60):
+        log("CoinGecko sparklines: skipping")
+        return {}
+    result = {}
+    for coin_id, symbol in [("bitcoin","btc"),("ethereum","eth")]:
+        data = _cg_get(f"/coins/{coin_id}/market_chart", {
+            "vs_currency": "usd", "days": "7", "interval": "hourly",
+        })
+        if data:
+            # prices = [[timestamp_ms, price], ...]
+            prices = data.get("prices", [])
+            result[symbol] = {
+                "timestamps": [p[0] for p in prices],
+                "prices":     [round(p[1], 2) for p in prices],
+            }
+            log(f"CoinGecko sparkline {symbol}: {len(prices)} points")
+    return result
+
+def fetch_fear_greed():
+    """Crypto Fear & Greed Index from alternative.me — completely FREE, no credits used."""
+    try:
+        r = httpx.get("https://api.alternative.me/fng/?limit=2", timeout=8)
+        if r.status_code != 200:
+            return {}
+        items = r.json().get("data", [])
+        if not items:
+            return {}
+        today     = items[0]
+        yesterday = items[1] if len(items) > 1 else {}
+        result = {
+            "value":       int(today.get("value", 0)),
+            "label":       today.get("value_classification", ""),   # "Fear", "Greed", etc.
+            "yesterday":   int(yesterday.get("value", 0)) if yesterday else None,
+            "timestamp":   today.get("timestamp"),
+        }
+        log(f"Fear & Greed: {result['value']} ({result['label']})")
+        return result
     except Exception as e:
-        log(f"CoinGecko error: {e}")
+        log(f"Fear & Greed error: {e}")
         return {}
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -808,11 +906,41 @@ try:
 except Exception as e:
     log(f"ESPN error: {e}")
 
+crypto_prices     = {}
+crypto_global     = {}
+crypto_movers     = {"gainers": [], "losers": []}
+crypto_sparklines = {}
+fear_greed        = {}
+
 try:
     crypto_prices = fetch_crypto_prices()
-    log(f"Crypto: BTC=${crypto_prices.get('btc_usd','?')}")
+    log(f"Crypto prices: BTC=${crypto_prices.get('btc_usd','?')}")
 except Exception as e:
-    log(f"Crypto error: {e}")
+    log(f"Crypto prices error: {e}")
+
+try:
+    crypto_global = fetch_crypto_global()
+    log(f"Crypto global: BTC dom={crypto_global.get('btc_dominance','?')}%")
+except Exception as e:
+    log(f"Crypto global error: {e}")
+
+try:
+    crypto_movers = fetch_crypto_movers()
+    log(f"Crypto movers: {len(crypto_movers.get('gainers',[]))} gainers")
+except Exception as e:
+    log(f"Crypto movers error: {e}")
+
+try:
+    crypto_sparklines = fetch_crypto_sparklines()
+    log(f"Sparklines: {list(crypto_sparklines.keys())}")
+except Exception as e:
+    log(f"Crypto sparklines error: {e}")
+
+try:
+    fear_greed = fetch_fear_greed()
+    log(f"Fear & Greed: {fear_greed.get('value','?')} ({fear_greed.get('label','?')})")
+except Exception as e:
+    log(f"Fear & Greed error: {e}")
 
 try:
     metaculus_qs = fetch_metaculus_questions()
@@ -851,6 +979,10 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "espn_injuries": espn_injuries,
     "espn_news":     espn_news,
     "crypto":        crypto_prices,
+    "crypto_global": crypto_global,
+    "crypto_movers": crypto_movers,
+    "sparklines":    crypto_sparklines,
+    "fear_greed":    fear_greed,
     "metaculus":     metaculus_qs,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
