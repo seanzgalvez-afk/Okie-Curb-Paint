@@ -32,7 +32,7 @@ jobs:
           python3 - << 'EOF'
           import os, time, base64, httpx
           from cryptography.hazmat.primitives import hashes, serialization
-          from cryptography.hazmat.primitives.asymmetric import padding as asym_padding
+          from cryptography.hazmat.primitives.asymmetric import padding as ap
 
           raw = os.environ["KALSHI_PRIVATE_KEY"].strip()
           if not raw.startswith("-----"):
@@ -41,24 +41,18 @@ jobs:
           key_id = os.environ["KALSHI_API_KEY_ID"]
           url = "https://trading-api.kalshi.com/trade-api/v2/exchange/status"
 
-          def try_it(label, path_for_sig, ts_fn):
-              ts = ts_fn()
-              msg = f"{ts}GET{path_for_sig}".encode()
-              sig = base64.b64encode(key.sign(msg, asym_padding.PKCS1v15(), hashes.SHA256())).decode()
-              r = httpx.get(url, headers={
-                  "KALSHI-ACCESS-KEY": key_id,
-                  "KALSHI-ACCESS-TIMESTAMP": str(ts),
-                  "KALSHI-ACCESS-SIGNATURE": sig,
-              }, timeout=10)
-              print(f"{label:50s}  HTTP {r.status_code}  {r.text[:60]}")
+          def req(label, path_sig, use_pss):
+              ts = int(time.time() * 1000)
+              msg = f"{ts}GET{path_sig}".encode()
+              pad = ap.PSS(mgf=ap.MGF1(hashes.SHA256()), salt_length=ap.PSS.DIGEST_LENGTH) if use_pss else ap.PKCS1v15()
+              sig = base64.b64encode(key.sign(msg, pad, hashes.SHA256())).decode()
+              r = httpx.get(url, headers={"KALSHI-ACCESS-KEY": key_id, "KALSHI-ACCESS-TIMESTAMP": str(ts), "KALSHI-ACCESS-SIGNATURE": sig}, timeout=10)
+              print(f"{'PSS' if use_pss else 'v15'}  {path_sig:40s}  HTTP {r.status_code}  {r.text[:50]}")
 
-          ms = lambda: int(time.time() * 1000)
-          sec = lambda: int(time.time())
-
-          try_it("ms  + /trade-api/v2/exchange/status", "/trade-api/v2/exchange/status", ms)
-          try_it("ms  + /exchange/status",              "/exchange/status",               ms)
-          try_it("sec + /trade-api/v2/exchange/status", "/trade-api/v2/exchange/status", sec)
-          try_it("sec + /exchange/status",              "/exchange/status",               sec)
+          req("1", "/trade-api/v2/exchange/status", False)
+          req("2", "/exchange/status",               False)
+          req("3", "/trade-api/v2/exchange/status", True)
+          req("4", "/exchange/status",               True)
           EOF
 
       - name: Fetch Kalshi snapshot
