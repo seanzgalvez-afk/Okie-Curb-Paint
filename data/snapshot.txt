@@ -1,49 +1,64 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 10:34 UTC
+# Generated: 2026-05-26 10:38 UTC
 ======================================================================
 
 ## Balance: unavailable
 
-## Active markets — 40 recently traded:
-  Ticker                                    Price      Vol  Trades  Closes    Title
-  --------------------------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY260645-45                      ?c        0      58  2026-05-26  BTC price up in next 15 mins?
-  KXBTCD-26MAY2607-T77099.99                   ?c        0      14  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXVALORANTGAME-26MAY260500NOVAJDG-JDG        ?c        0      13  2026-06-09  Will JD Gaming win the Nova Esports vs. JD Gaming Valor
-  KXSOL15M-26MAY260645-45                      ?c        0      10  2026-05-26  SOL price up in next 15 mins?
-  KXBTCD-26MAY2607-T77199.99                   ?c        0       8  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXITFMATCH-26MAY26RECLIV-LIV                 ?c        0       7  2026-06-09  Will Ferdinand Livet Novkirichka win the Reco vs Livet 
-  KXATPMATCH-26MAY25CILKOU-KOU                 ?c        0       6  2026-06-08  Will Moise Kouame win the Cilic vs Kouame: Round Of 128
-  KXWTAMATCH-26MAY24SABBOU-BOU                 ?c        0       6  2026-06-07  Will Jessica Bouzas Maneiro win the Sabalenka vs Bouzas
-  KXBTCD-26MAY2607-T77299.99                   ?c        0       6  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXATPCHALLENGERMATCH-26MAY26NAGFOM-FOM       ?c        0       5  2026-06-09  Will Sergey Fomin win the Nagal vs Fomin: Round Of 32 m
-  KXITFMATCH-26MAY26RECLIV-REC                 ?c        0       5  2026-06-09  Will Alexandre Reco win the Reco vs Livet Novkirichka: 
-  KXWTAMATCH-26MAY24LIUUCH-LIU                 ?c        0       4  2026-06-07  Will Claire Liu win the Liu vs Uchijima: Round Of 128 m
-  KXBTCD-26MAY2607-T76999.99                   ?c        0       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25CILKOU-CIL                 ?c        0       4  2026-06-08  Will Marin Cilic win the Cilic vs Kouame: Round Of 128 
-  KXATPMATCH-26MAY25WALMED-WAL                 ?c        0       3  2026-06-08  Will Adam Walton win the Walton vs Medvedev: Round Of 1
-  KXATPCHALLENGERMATCH-26MAY26SAKDOS-SAK       ?c        0       3  2026-06-09  Will Pedro Sakamoto win the Sakamoto vs Dostanic: Round
-  KXATPCHALLENGERMATCH-26MAY26NAGFOM-NAG       ?c        0       2  2026-06-09  Will Sumit Nagal win the Nagal vs Fomin: Round Of 32 ma
-  KXATPMATCH-26MAY25GRIARN-GRI                 ?c        0       2  2026-06-08  Will Tallon Griekspoor win the Griekspoor vs Arnaldi: R
-  KXHIGHLAX-26MAY26-B62.5                      ?c        0       2  2026-05-27  Will the **high temp in LA** be 62-63° on May 26, 2026?
-  KXHYPE15M-26MAY260645-45                     ?c        0       2  2026-05-26  HYPE price up in next 15 mins?
-  KXVALORANTGAME-26MAY260500NOVAJDG-NOVA       ?c        0       2  2026-06-09  Will Nova Esports win the Nova Esports vs. JD Gaming Va
-  KXDOGE15M-26MAY260645-45                     ?c        0       2  2026-05-26  DOGE price up in next 15 mins?
-  KXETH15M-26MAY260645-45                      ?c        0       2  2026-05-26  ETH price up in next 15 mins?
-  KXBTCD-26MAY2617-T76999.99                   ?c        0       2  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXWTI-26MAY2614-T89.99                       ?c        0       2  2026-05-26  Will the WTI crude oil settlement price be above 89.99 
-  KXNBAGAME-26MAY26SASOKC-SAS                  ?c        0       1  2026-06-10  Game 5: San Antonio at Oklahoma City Winner?
-  KXIPLGAME-26MAY261000GTRCB-GT                ?c        0       1  2026-05-28  Royal Challengers Bengaluru vs Gujarat Titans Winner?
-  KXMVESPORTSMULTIGAMEEXTENDED-S20265E3131     ?c        0       1  2026-06-08  yes Marin Cilic,yes Alexei Popyrin,yes Iva Jovic,yes Em
-  KXATPMATCH-26MAY25GRIARN-ARN                 ?c        0       1  2026-06-08  Will Matteo Arnaldi win the Griekspoor vs Arnaldi: Roun
-  KXITFMATCH-26MAY26AUBBER-AUB                 ?c        0       1  2026-06-09  Will Alexandre Aubriot win the Aubriot vs BERARD: M25 C
-  KXITFWMATCH-26MAY26COPKOP-KOP                ?c        0       1  2026-06-09  Will Nikola Koprivova win the Coppez vs Koprivova: W15 
-  KXITFWMATCH-26MAY26COPKOP-COP                ?c        0       1  2026-06-09  Will Kaat Coppez win the Coppez vs Koprivova: W15 Szent
-  KXHIGHLAX-26MAY26-B64.5                      ?c        0       1  2026-05-27  Will the **high temp in LA** be 64-65° on May 26, 2026?
-  KXSOLD-26MAY2617-T84.9999                    ?c        0       1  2026-05-26  SOL price  on May 26, 2026?
-  KXMVESPORTSMULTIGAMEEXTENDED-S2026DAA38D     ?c        0       1  2026-06-07  yes Jaime Faria,yes Sebastian Baez,yes Corentin Moutet,
-  KXATPMATCH-26MAY25POPSVA-SVA                 ?c        0       1  2026-06-08  Will Zachary Svajda win the Popyrin vs Svajda: Round Of
-  KXMLBGAME-26MAY261810WSHCLE-CLE              ?c        0       1  2026-05-29  Washington vs Cleveland Winner?
-  KXMVECROSSCATEGORY-S20260B284E7CEAB-9FB3     ?c        0       1  2026-06-07  yes Valentin Vacherot,yes Marin Cilic,yes Tallon Grieks
-  KXBTCD-26MAY2617-T78749.99                   ?c        0       1  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXWTAMATCH-26MAY24SABBOU-SAB                 ?c        0       1  2026-06-07  Will Aryna Sabalenka win the Sabalenka vs Bouzas Maneir
+## DEBUG — raw trade object (first trade):
+{
+  "count_fp": "10.00",
+  "created_time": "2026-05-26T10:38:27.377238Z",
+  "no_price_dollars": "0.7300",
+  "taker_book_side": "bid",
+  "taker_outcome_side": "yes",
+  "taker_side": "yes",
+  "ticker": "KXBTCD-26MAY2607-T77399.99",
+  "trade_id": "0efba43e-a8b1-4cae-07d6-49e2ed2f3739",
+  "yes_price_dollars": "0.2700"
+}
+
+## DEBUG — raw market object:
+{
+  "market": {
+    "can_close_early": true,
+    "close_time": "2026-05-26T11:00:00Z",
+    "created_time": "2026-05-25T09:01:56.139239Z",
+    "event_ticker": "KXBTCD-26MAY2607",
+    "expected_expiration_time": "2026-05-26T11:05:00Z",
+    "expiration_time": "2026-06-02T11:00:00Z",
+    "expiration_value": "",
+    "floor_strike": 77399.99,
+    "fractional_trading_enabled": true,
+    "last_price_dollars": "0.2600",
+    "latest_expiration_time": "2026-06-02T11:00:00Z",
+    "liquidity_dollars": "0.0000",
+    "market_type": "binary",
+    "no_ask_dollars": "0.7400",
+    "no_bid_dollars": "0.7200",
+    "no_sub_title": "$77,400 or above",
+    "notional_value_dollars": "1.0000",
+    "occurrence_datetime": "2026-05-26T11:05:00Z",
+    "open_interest_fp": "9925.31",
+    "open_time": "2026-05-26T10:00:00Z",
+    "previous_price_dollars": "0.0000",
+    "previous_yes_ask_dollars": "0.0000",
+    "previous_yes_bid_dollars": "0.0000",
+    "price_level_structure": "linear_cent",
+    "price_ranges": [
+      {
+        "end": "1.0000",
+        "start": "0.0000",
+        "step": "0.0100"
+      }
+    ],
+    "response_price_units": "usd_cent",
+    "result": "",
+    "rules_primary": "If the simple average of the sixty seconds of CF Benchmarks' Bitcoin Real-Time Index (BRTI) before 7 AM EDT is above 77399.99 at 7 AM EDT on May 26, 2026, then the market resolves to Yes.",
+    "rules_secondary": "Not all cryptocurrency price data is the same. While checking a source like Google or Coinbase may help guide your decision, the price used to determine this market is based on CF Benchmarks' corresponding Real Time Index (RTI). At the last minute before expiration, 60 RTI prices are collected. The official and final value is the average of these prices.",
+    "settlement_timer_seconds": 60,
+    "status": "active",
+    "strike_type": "greater",
+    "subtitle": "$77,400 or above",
+    "ticker": "KXBTCD-26MAY2607-T77399.99",
+    "title": "Bitcoin price  on May 26, 2026?",
+    "updated_time": "2026-05-26T10:
