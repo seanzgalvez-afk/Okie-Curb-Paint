@@ -1,5 +1,5 @@
-"""Kalshi snapshot — uses trades feed for prices + active market list."""
-import base64, os, sys, time
+"""Kalshi snapshot — debug mode to discover correct field names."""
+import base64, json, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -60,88 +60,28 @@ pos = get("/portfolio/positions", {"limit": 50})
 if pos:
     positions = pos.get("market_positions", [])
     lines.append("\n## Open positions:")
-    if positions:
-        for p in positions:
-            qty = p.get("position", 0)
-            lines.append(f"  {p.get('ticker','')}  {'YES' if qty>0 else 'NO'}  qty={abs(qty)}")
-    else:
+    for p in (positions or []):
+        qty = p.get("position", 0)
+        lines.append(f"  {p.get('ticker','')}  {'YES' if qty>0 else 'NO'}  qty={abs(qty)}")
+    if not positions:
         lines.append("  none")
 
-# ---- Step 1: Get recent trades (includes yes_price per trade) ----
+# ---- Trades feed ----
 trades_resp = get("/markets/trades", {"limit": 200})
+trades = (trades_resp or {}).get("trades", []) or []
 
-# Build price map and trade-count map from trades
-last_price   = {}  # ticker -> last yes_price traded
-trade_counts = {}  # ticker -> number of recent trades
-ordered_tickers = []
-seen = set()
+# DEBUG: show first raw trade and first raw market so we can see exact field names
+if trades:
+    lines.append("\n## DEBUG — raw trade object (first trade):")
+    lines.append(json.dumps(trades[0], indent=2))
 
-if trades_resp:
-    for t in trades_resp.get("trades", []):
-        tk    = t.get("ticker", "")
-        price = t.get("yes_price")
-        count = t.get("count", 1)
-        if not tk:
-            continue
-        if tk not in seen:
-            seen.add(tk)
-            ordered_tickers.append(tk)
-        if price is not None:
-            last_price[tk] = price  # keeps most-recent (first in list)
-        trade_counts[tk] = trade_counts.get(tk, 0) + (count or 1)
-
-print(f"  Trades feed: {len(ordered_tickers)} unique tickers", file=sys.stderr)
-
-# Sort tickers by trade activity (most active first)
-ordered_tickers.sort(key=lambda tk: trade_counts.get(tk, 0), reverse=True)
-
-# ---- Step 2: Fetch market details for top 40 active tickers ----
-markets = []
-for ticker in ordered_tickers[:40]:
-    resp = get(f"/markets/{ticker}")
-    if not resp:
-        continue
-    # API wraps in {"market": {...}} or returns market directly
-    m = resp.get("market", resp) if isinstance(resp, dict) else resp
-    if not isinstance(m, dict):
-        continue
-    # Inject trade data we already know
-    m["_trade_price"]  = last_price.get(ticker)
-    m["_trade_count"] = trade_counts.get(ticker, 0)
-    markets.append(m)
-
-# Sort by trade activity
-markets.sort(key=lambda m: m.get("_trade_count", 0), reverse=True)
-
-# ---- Step 3: Build snapshot output ----
-lines.append(f"\n## Active markets — {len(markets)} recently traded:")
-lines.append(f"  {'Ticker':<40} {'Price':>6} {'Vol':>8}  Trades  Closes    Title")
-lines.append("  " + "-"*110)
-
-for m in markets:
-    ticker = m.get("ticker", "")[:40]
-    title  = m.get("title", "")[:55]
-    close  = str(m.get("close_time", ""))[:10]
-    vol    = m.get("volume") or 0
-    trades = m.get("_trade_count", 0)
-
-    # Best price: live bid first, then last trade from feed
-    raw_price = (
-        m.get("yes_bid") or
-        m.get("last_price") or
-        m.get("yes_ask") or
-        m.get("_trade_price")
-    )
-    price_str = f"{raw_price}c" if raw_price is not None else "  ?c"
-
-    lines.append(f"  {ticker:<40} {price_str:>6} {vol:>8,}  {trades:>6}  {close}  {title}")
-
-if not markets:
-    lines.append("  No active markets found.")
-    if trades_resp:
-        lines.append("\n  Raw trades sample:")
-        for t in (trades_resp.get("trades") or [])[:10]:
-            lines.append(f"    {t}")
+# Fetch one market and show its raw JSON too
+if trades:
+    first_ticker = trades[0].get("ticker", "")
+    raw_market_resp = get(f"/markets/{first_ticker}")
+    if raw_market_resp:
+        lines.append("\n## DEBUG — raw market object:")
+        lines.append(json.dumps(raw_market_resp, indent=2)[:2000])
 
 snapshot = "\n".join(lines)
 out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
