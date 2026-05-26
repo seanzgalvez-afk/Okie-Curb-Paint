@@ -1,42 +1,56 @@
-"""Kalshi snapshot — email/password token auth (no RSA keys needed)."""
-import os, sys, time
+"""Kalshi snapshot — RSA-PSS auth against the current API endpoint."""
+import base64, os, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 
 import httpx
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import padding
 
-EMAIL    = os.environ.get("KALSHI_EMAIL", "")
-PASSWORD = os.environ.get("KALSHI_PASSWORD", "")
-BASE_URL = "https://api.elections.kalshi.com/trade-api/v2"
+BASE_URL   = "https://api.elections.kalshi.com/trade-api/v2"
+API_PREFIX = "/trade-api/v2"
 
-if not EMAIL or not PASSWORD:
-    sys.exit("ERROR: KALSHI_EMAIL and KALSHI_PASSWORD must be set")
+# ── Credentials ────────────────────────────────────────────────────────────────
+KEY_ID = os.environ.get("KALSHI_API_KEY_ID", "")
+if not KEY_ID:
+    sys.exit("ERROR: KALSHI_API_KEY_ID not set")
 
-# ── Login ──────────────────────────────────────────────────────────────────────
-print("Logging in...", file=sys.stderr)
-r = httpx.post(f"{BASE_URL}/log_in",
-               json={"email": EMAIL, "password": PASSWORD}, timeout=15)
-print(f"Login → {r.status_code}", file=sys.stderr)
-if r.status_code != 200:
-    print(f"Login failed: {r.text[:300]}", file=sys.stderr)
-    sys.exit(1)
+raw = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
+if raw:
+    if not raw.startswith("-----"):
+        raw = base64.b64decode(raw).decode()
+    pem = raw.encode()
+else:
+    pem = Path(os.environ.get("KALSHI_PRIVATE_KEY_PATH", "./kalshi_private_key.pem")).read_bytes()
 
-token = r.json().get("token", "")
-if not token:
-    sys.exit(f"No token in response: {r.json()}")
+PRIV_KEY = serialization.load_pem_private_key(pem, password=None)
+print(f"Key ID : {KEY_ID}", file=sys.stderr)
+print(f"Key OK : {bool(PRIV_KEY)}", file=sys.stderr)
 
-print("Login OK ✓", file=sys.stderr)
-auth = {"Authorization": f"Bearer {token}"}
+# ── Auth ───────────────────────────────────────────────────────────────────────
+def auth_headers(method: str, path: str) -> dict:
+    ts  = str(int(time.time() * 1000))
+    msg = (ts + method.upper() + API_PREFIX + path).encode()
+    sig = base64.b64encode(
+        PRIV_KEY.sign(msg,
+            padding.PSS(mgf=padding.MGF1(hashes.SHA256()),
+                        salt_length=padding.PSS.DIGEST_LENGTH),
+            hashes.SHA256())
+    ).decode()
+    return {"KALSHI-ACCESS-KEY": KEY_ID,
+            "KALSHI-ACCESS-TIMESTAMP": ts,
+            "KALSHI-ACCESS-SIGNATURE": sig}
 
 def get(path: str, params: dict | None = None):
-    r = httpx.get(f"{BASE_URL}{path}", headers=auth, params=params, timeout=15)
+    r = httpx.get(f"{BASE_URL}{path}", headers=auth_headers("GET", path),
+                  params=params, timeout=15)
     print(f"GET {path} → {r.status_code}", file=sys.stderr)
     if not r.is_success:
         print(f"  body: {r.text[:200]}", file=sys.stderr)
         return None
     return r.json()
 
-# ── Fetch ──────────────────────────────────────────────────────────────────────
+# ── Snapshot ───────────────────────────────────────────────────────────────────
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n{'='*70}"]
 
