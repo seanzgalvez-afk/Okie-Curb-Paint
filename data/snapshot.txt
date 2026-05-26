@@ -1,64 +1,65 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 10:38 UTC
+# Generated: 2026-05-26 13:50 UTC
 ======================================================================
 
 ## Balance: unavailable
 
-## DEBUG — raw trade object (first trade):
-{
-  "count_fp": "10.00",
-  "created_time": "2026-05-26T10:38:27.377238Z",
-  "no_price_dollars": "0.7300",
-  "taker_book_side": "bid",
-  "taker_outcome_side": "yes",
-  "taker_side": "yes",
-  "ticker": "KXBTCD-26MAY2607-T77399.99",
-  "trade_id": "0efba43e-a8b1-4cae-07d6-49e2ed2f3739",
-  "yes_price_dollars": "0.2700"
-}
+## Open positions:
+  none
 
-## DEBUG — raw market object:
-{
-  "market": {
-    "can_close_early": true,
-    "close_time": "2026-05-26T11:00:00Z",
-    "created_time": "2026-05-25T09:01:56.139239Z",
-    "event_ticker": "KXBTCD-26MAY2607",
-    "expected_expiration_time": "2026-05-26T11:05:00Z",
-    "expiration_time": "2026-06-02T11:00:00Z",
-    "expiration_value": "",
-    "floor_strike": 77399.99,
-    "fractional_trading_enabled": true,
-    "last_price_dollars": "0.2600",
-    "latest_expiration_time": "2026-06-02T11:00:00Z",
-    "liquidity_dollars": "0.0000",
-    "market_type": "binary",
-    "no_ask_dollars": "0.7400",
-    "no_bid_dollars": "0.7200",
-    "no_sub_title": "$77,400 or above",
-    "notional_value_dollars": "1.0000",
-    "occurrence_datetime": "2026-05-26T11:05:00Z",
-    "open_interest_fp": "9925.31",
-    "open_time": "2026-05-26T10:00:00Z",
-    "previous_price_dollars": "0.0000",
-    "previous_yes_ask_dollars": "0.0000",
-    "previous_yes_bid_dollars": "0.0000",
-    "price_level_structure": "linear_cent",
-    "price_ranges": [
-      {
-        "end": "1.0000",
-        "start": "0.0000",
-        "step": "0.0100"
-      }
-    ],
-    "response_price_units": "usd_cent",
-    "result": "",
-    "rules_primary": "If the simple average of the sixty seconds of CF Benchmarks' Bitcoin Real-Time Index (BRTI) before 7 AM EDT is above 77399.99 at 7 AM EDT on May 26, 2026, then the market resolves to Yes.",
-    "rules_secondary": "Not all cryptocurrency price data is the same. While checking a source like Google or Coinbase may help guide your decision, the price used to determine this market is based on CF Benchmarks' corresponding Real Time Index (RTI). At the last minute before expiration, 60 RTI prices are collected. The official and final value is the average of these prices.",
-    "settlement_timer_seconds": 60,
-    "status": "active",
-    "strike_type": "greater",
-    "subtitle": "$77,400 or above",
-    "ticker": "KXBTCD-26MAY2607-T77399.99",
-    "title": "Bitcoin price  on May 26, 2026?",
-    "updated_time": "2026-05-26T10:
+======================================================================
+## MOST ACTIVE RIGHT NOW
+======================================================================
+  Ticker                                    YES   NO  Trades  Closes  Title
+  -----------------------------------------------------------------------------------------------
+  KXBTC15M-26MAY261000-00                   98c   2c      16  2026-05-26  BTC price up in next 15 mins?
+  KXDOGE15M-26MAY261000-00                  91c   5c      12  2026-05-26  DOGE price up in next 15 mins?
+  KXBTCD-26MAY2610-T77399.99                30c  69c      12  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2610-T77299.99                47c  49c      11  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBRENTD-26MAY2617-T97                    39c  60c      10  2026-05-26  Will the brent crude oil close price be 
+  KXBTCD-26MAY2610-T77199.99                69c  30c       8  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXWTI-26MAY2614-T92.99                    62c  36c       6  2026-05-26  Will the WTI crude oil settlement price 
+  KXWTI-26MAY2614-T93.99                    32c  66c       6  2026-05-26  Will the WTI crude oil settlement price 
+  KXBTCD-26MAY2610-T76999.99                92c   6c       5  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBRENTD-26MAY2617-T95                    72c  26c       5  2026-05-26  Will the brent crude oil close price be 
+  KXIPLGAME-26MAY261000GTRCB-RCB            52c  47c       5  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXBTCD-26MAY2610-T77499.99                14c  85c       5  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2610-T76899.99                97c   2c       4  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBRENTD-26MAY2617-T97.50                 34c  65c       4  2026-05-26  Will the brent crude oil close price be 
+  KXATPMATCH-26MAY24FAUVAC-FAU              16c  83c       4  2026-06-07  Will Thomas Faurel win the Faurel vs Vac
+  KXETH15M-26MAY261000-00                   95c   3c       4  2026-05-26  ETH price up in next 15 mins?
+  KXWTAMATCH-26MAY24GAUTOW-TOW              22c  77c       3  2026-06-07  Will Taylor Townsend win the Gauff vs To
+  KXATPCHALLENGERMATCH-26MAY26MIDREI-MID    53c  46c       3  2026-06-09  Will Lautaro Midon win the Midon vs Reis
+  KXINXU-26MAY26H1600-T7524.9999            51c  48c       3  2026-05-26  Will the S&P 500 be above 7524.9999 on M
+  KXWTI-26MAY2614-T90.99                    88c  11c       3  2026-05-26  Will the WTI crude oil settlement price 
+
+======================================================================
+## FIFA WORLD CUP 2026
+======================================================================
+
+  No WC markets found yet. Dumping sample event titles:
+    [KXELONMARS] Will Elon Musk visit Mars in his lifetime?
+    [KXNEWPOPE] Who will the next Pope be?
+    [KXWARMING] Will the world pass 2 degrees Celsius over pre-industrial levels before 2050?
+    [KXMARSVRAIL] Will a human land on Mars before California starts high-speed rail?
+    [KXERUPTSUPER] Will a supervolcano erupt before 2050?
+    [KXCOLONIZEMARS] Will humans colonize Mars before 2050?
+    [KXPERSONPRESMAM] Will Zohran Mamdani become President of the United States before 2045?
+    [KXXISUCCESSOR] Who will be named as Xi Jinping's successor?
+    [KXPERSONPRESFUENTES] Will Nick Fuentes become President of the United States before 2045?
+    [KXNEXTROMANIAPM] Who will be the next new Prime Minister of Romania?
+    [KXNEXTISRAELPM] Who will succeed Netanyahu as Prime Minister of Israel?
+    [KXG7LEADEROUT] Which G7 leader will leave next?
+    [KXRAMPBREX] Will Ramp or Brex IPO first?
+    [KXOAIANTH] Will OpenAI or Anthropic IPO first?
+    [KXFUSION] When will nuclear fusion be achieved?
+    [KXDEELRIP] Will Deel or Rippling IPO first?
+    [KXNEWROLEJP] Who will be the next CEO of JPMorgan Chase?
+    [KXNEWROLEGS] Who will be the next CEO of Goldman Sachs?
+    [KXPOPCHANGESTATE10] Will any U.S. state experience a population decrease of at least 10% between 2025 and 2035?
+    [KXEARTHQUAKECALIFORNIA] Will there be an at least 8.0 magnitude earthquake in California before 2035?
+    [KXROBOTMARS] Will a humanoid robot walk on Mars before a human does?
+    [KXPERFORMBONDSONG] Who will perform the next James Bond theme?
+    [KXJOHNNYDEPP] Will Johnny Depp be cast in the next Pirates of the Caribbean?
+    [KXBRUVSEAT] Will Andrew Tate's party win a seat in the next UK election?
+    [KXAFRICALEADEROUT] Which of these African leaders will leave office next?
