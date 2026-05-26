@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 22:21 UTC
+# Generated: 2026-05-26 22:40 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261830-30                     45c  54c      27  2026-05-26  BTC price up in next 15 mins?
-  KXCONMEBOLLIBGAME-26MAY26LANMIR-LAN         50c  47c      14  2026-06-09  Lanus vs Mirassol Winner?
-  KXNBAGAME-26MAY26SASOKC-SAS                 41c  58c       9  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXHIGHDEN-26MAY26-B79.5                     89c   1c       8  2026-05-27  Will the **high temp in Denver** be 79-8
-  KXLOLMAP-26MAY261600PNGAEST-3-EST           69c  13c       7  2026-06-09  Will Estral Esports win map 3 in the pai
-  KXCONMEBOLLIBGAME-26MAY26LANMIR-TIE         17c  82c       6  2026-06-09  Lanus vs Mirassol Winner?
-  KXMLBTOTAL-26MAY261810WSHCLE-8              44c  55c       5  2026-05-29  Washington vs Cleveland Total Runs?
-  KXMLBGAME-26MAY261810WSHCLE-WSH             43c  54c       5  2026-05-29  Washington vs Cleveland Winner?
-  KXETH15M-26MAY261830-30                     25c  72c       4  2026-05-26  ETH price up in next 15 mins?
-  KXVALORANTGAME-26MAY261600DNMD1-D1          77c  20c       4  2026-06-09  Will Division One win the Dynamo Esports
-  KXMVESPORTSMULTIGAMEEXTENDED-S20266B12BDBE   8c  91c       3  2026-05-29  yes New York Y,yes Milwaukee,yes San Ant
-  KXMLBGAME-26MAY261835TBBAL-TB               51c  48c       3  2026-05-29  Tampa Bay vs Baltimore Winner?
-  KXMLBGAME-26MAY261810WSHCLE-CLE             55c  44c       3  2026-05-29  Washington vs Cleveland Winner?
-  KXBTCD-26MAY2619-T75599.99                  73c  26c       3  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBNB15M-26MAY261830-30                     69c  25c       3  2026-05-26  BNB price up in next 15 mins?
-  KXNBASPREAD-26MAY26SASOKC-OKC3              51c  48c       3  2026-06-10  Oklahoma City wins by over 3.5 points?
-  KXLOLMAP-26MAY261600PNGAEST-3-PNGA          18c  76c       3  2026-06-09  Will paiN Gaming Academy win map 3 in th
-  KXMVESPORTSMULTIGAMEEXTENDED-S2026E2419408  16c  84c       3  2026-05-29  yes Tampa Bay,yes Atlanta,yes Milwaukee
-  KXMLBF5SPREAD-26MAY261835TBBAL-TB2          31c  67c       2  2026-05-29  Tampa Bay wins first 5 innings by over 1
-  KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT      60c  37c       2  2026-06-09  Will Edas Butvilas win the Mayo vs Butvi
+  KXBTC15M-26MAY261845-45                     58c  41c      35  2026-05-26  BTC price up in next 15 mins?
+  KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR         48c  51c      16  2026-06-09  Gremio vs Montevideo City Winner?
+  KXCONMEBOLLIBGAME-26MAY26LDUARE-ARE         35c  63c      11  2026-06-09  LDU Quito vs Always Ready Winner?
+  KXMLBRFI-26MAY261835TBBAL                   37c  50c       9  2026-05-29  Tampa Bay vs Baltimore First Inning Run?
+  KXCONMEBOLLIBGAME-26MAY26LDUARE-LDU         33c  65c       8  2026-06-09  LDU Quito vs Always Ready Winner?
+  KXMLBGAME-26MAY261810WSHCLE-WSH             60c  39c       7  2026-05-29  Washington vs Cleveland Winner?
+  KXITFWMATCH-26MAY26FERBOH-FER               38c  60c       6  2026-06-09  Will Bianca Jolie Fernandez win the Fern
+  KXMLBGAME-26MAY261835TBBAL-TB               52c  45c       6  2026-05-29  Tampa Bay vs Baltimore Winner?
+  KXITFWMATCH-26MAY26FERBOH-BOH               59c  38c       6  2026-06-09  Will Carolina Bohrer Martins win the Fer
+  KXBTCD-26MAY2619-T75699.99                  48c  51c       5  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXMLBGAME-26MAY261835TBBAL-BAL              48c  51c       5  2026-05-29  Tampa Bay vs Baltimore Winner?
+  KXBTCD-26MAY2619-T75799.99                  15c  84c       4  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXNBACOY-26-JBIC                             4c  94c       4  2027-04-12  Who will win Coach of the Year?
+  KXMLBRFI-26MAY261840LAADET                  51c  43c       4  2026-05-29  Los Angeles A vs Detroit First Inning Ru
+  KXMLBGAME-26MAY261810WSHCLE-CLE             41c  58c       3  2026-05-29  Washington vs Cleveland Winner?
+  KXMVESPORTSMULTIGAMEEXTENDED-S20265FE91273  29c  70c       3  2026-05-29  yes Pittsburgh,yes Cincinnati
+  KXMLBTB-26MAY261910CINNYM-CINEDELACRUZ44-2  37c  61c       3  2026-05-29  Elly De La Cruz: 2+ total bases?
+  KXCONMEBOLSUDGAME-26MAY26PALRIE-TIE         19c  80c       3  2026-06-09  Palestino vs Riestra Winner?
+  KXNBATOTAL-26MAY26SASOKC-218                47c  52c       2  2026-06-10  Game 5: San Antonio at Oklahoma City: To
+  KXATPCHALLENGERMATCH-26MAY26SEAMEJ-SEA      40c  58c       2  2026-06-09  Will Henry Searle win the Searle vs Meji
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.', 'Any candidate currently listed as a market within this event'], 'category': 'Elections', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/ELECTION.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-e
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'World', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/WGDP.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/WGDP.pdf', 'fee_mu
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,25 +75,25 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
-  KXAAAGASM
   KXATPCHALLENGERMATCH
-  KXBNB15M
   KXBTC15M
   KXBTCD
   KXCONMEBOLLIBGAME
   KXCONMEBOLSUDGAME
-  KXETH15M
-  KXHIGHDEN
-  KXLOLMAP
-  KXLOWTSFO
-  KXMLBALROTY
-  KXMLBF5SPREAD
+  KXFOMEN
+  KXHYPED
+  KXITFWMATCH
+  KXMLBF5
+  KXMLBF5TOTAL
   KXMLBGAME
+  KXMLBHR
+  KXMLBRFI
+  KXMLBTB
   KXMLBTOTAL
-  KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
-  KXNBA
+  KXNBACOY
   KXNBAGAME
-  KXNBASPREAD
-  KXSOL15M
-  KXVALORANTGAME
+  KXNBATOTAL
+  KXNBBGAME
+  KXTXRSENRUNOFFMOV
+  KXXRP15M
