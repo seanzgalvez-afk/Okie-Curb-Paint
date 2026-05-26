@@ -1,289 +1,289 @@
 {
-  "generated": "2026-05-26 22:40 UTC",
+  "generated": "2026-05-26 22:52 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
-      "ticker": "KXBTC15M-26MAY261845-45",
+      "ticker": "KXBTC15M-26MAY261900-00",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 58,
-      "no_bid": 41,
-      "yes_ask": 59,
-      "no_ask": 42,
-      "last_price": 58,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR",
-      "title": "Gremio vs Montevideo City Winner?",
-      "yes_bid": 48,
-      "no_bid": 51,
-      "yes_ask": 49,
-      "no_ask": 52,
-      "last_price": 51,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXCONMEBOLLIBGAME-26MAY26LDUARE-ARE",
-      "title": "LDU Quito vs Always Ready Winner?",
-      "yes_bid": 35,
-      "no_bid": 63,
-      "yes_ask": 37,
-      "no_ask": 65,
-      "last_price": 37,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBRFI-26MAY261835TBBAL",
-      "title": "Tampa Bay vs Baltimore First Inning Run?",
-      "yes_bid": 37,
-      "no_bid": 50,
-      "yes_ask": 50,
-      "no_ask": 63,
-      "last_price": 37,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXCONMEBOLLIBGAME-26MAY26LDUARE-LDU",
-      "title": "LDU Quito vs Always Ready Winner?",
-      "yes_bid": 33,
-      "no_bid": 65,
-      "yes_ask": 35,
-      "no_ask": 67,
-      "last_price": 33,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261810WSHCLE-WSH",
-      "title": "Washington vs Cleveland Winner?",
-      "yes_bid": 60,
-      "no_bid": 39,
-      "yes_ask": 61,
-      "no_ask": 40,
-      "last_price": 61,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26FERBOH-FER",
-      "title": "Will Bianca Jolie Fernandez win the Fernandez vs Bohrer Martins: W15 Lakewood CA Round of 32 match?",
-      "yes_bid": 38,
-      "no_bid": 60,
-      "yes_ask": 40,
-      "no_ask": 62,
-      "last_price": 40,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261835TBBAL-TB",
-      "title": "Tampa Bay vs Baltimore Winner?",
-      "yes_bid": 52,
-      "no_bid": 45,
-      "yes_ask": 55,
-      "no_ask": 48,
-      "last_price": 55,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXITFWMATCH-26MAY26FERBOH-BOH",
-      "title": "Will Carolina Bohrer Martins win the Fernandez vs Bohrer Martins: W15 Lakewood CA Round of 32 match?",
-      "yes_bid": 59,
-      "no_bid": 38,
-      "yes_ask": 62,
-      "no_ask": 41,
-      "last_price": 59,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2619-T75699.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 48,
-      "no_bid": 51,
-      "yes_ask": 49,
-      "no_ask": 52,
-      "last_price": 48,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261835TBBAL-BAL",
-      "title": "Tampa Bay vs Baltimore Winner?",
-      "yes_bid": 48,
-      "no_bid": 51,
-      "yes_ask": 49,
-      "no_ask": 52,
-      "last_price": 48,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2619-T75799.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 15,
-      "no_bid": 84,
-      "yes_ask": 16,
-      "no_ask": 85,
-      "last_price": 16,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXNBACOY-26-JBIC",
-      "title": "Who will win Coach of the Year?",
-      "yes_bid": 4,
+      "yes_bid": 6,
       "no_bid": 94,
       "yes_ask": 6,
-      "no_ask": 96,
+      "no_ask": 94,
       "last_price": 6,
       "volume": 0,
-      "close_time": "2027-04-12",
-      "category": "Sports"
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXMLBRFI-26MAY261840LAADET",
-      "title": "Los Angeles A vs Detroit First Inning Run?",
-      "yes_bid": 51,
-      "no_bid": 43,
-      "yes_ask": 57,
-      "no_ask": 49,
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT",
+      "title": "Will Edas Butvilas win the Mayo vs Butvilas: Round Of 32 match?",
+      "yes_bid": 48,
+      "no_bid": 48,
+      "yes_ask": 52,
+      "no_ask": 52,
       "last_price": 49,
       "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261810WSHCLE-CLE",
-      "title": "Washington vs Cleveland Winner?",
-      "yes_bid": 41,
-      "no_bid": 58,
-      "yes_ask": 42,
-      "no_ask": 59,
-      "last_price": 41,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20265FE91273AF2-594CBBC3C10",
-      "title": "yes Pittsburgh,yes Cincinnati",
-      "yes_bid": 29,
-      "no_bid": 70,
-      "yes_ask": 30,
-      "no_ask": 71,
-      "last_price": 30,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBTB-26MAY261910CINNYM-CINEDELACRUZ44-2",
-      "title": "Elly De La Cruz: 2+ total bases?",
-      "yes_bid": 37,
-      "no_bid": 61,
-      "yes_ask": 39,
-      "no_ask": 63,
-      "last_price": 39,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26PALRIE-TIE",
-      "title": "Palestino vs Riestra Winner?",
-      "yes_bid": 19,
-      "no_bid": 80,
-      "yes_ask": 20,
-      "no_ask": 81,
-      "last_price": 19,
-      "volume": 0,
       "close_time": "2026-06-09",
-      "category": "Sports"
+      "category": "Other"
     },
     {
-      "ticker": "KXNBATOTAL-26MAY26SASOKC-218",
+      "ticker": "KXNBATOTAL-26MAY26SASOKC-209",
       "title": "Game 5: San Antonio at Oklahoma City: Total Points",
-      "yes_bid": 47,
-      "no_bid": 52,
-      "yes_ask": 48,
-      "no_ask": 53,
-      "last_price": 48,
+      "yes_bid": 69,
+      "no_bid": 30,
+      "yes_ask": 70,
+      "no_ask": 31,
+      "last_price": 70,
       "volume": 0,
       "close_time": "2026-06-10",
       "category": "Sports"
     },
     {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26SEAMEJ-SEA",
-      "title": "Will Henry Searle win the Searle vs Mejia: Round Of 32 match?",
-      "yes_bid": 40,
-      "no_bid": 58,
-      "yes_ask": 42,
-      "no_ask": 60,
-      "last_price": 41,
+      "ticker": "KXMLBGAME-26MAY261840CHCPIT-CHC",
+      "title": "Chicago C vs Pittsburgh Winner?",
+      "yes_bid": 18,
+      "no_bid": 81,
+      "yes_ask": 19,
+      "no_ask": 82,
+      "last_price": 19,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXNBAGAME-26MAY26SASOKC-OKC",
+      "title": "Game 5: San Antonio at Oklahoma City Winner?",
+      "yes_bid": 58,
+      "no_bid": 41,
+      "yes_ask": 59,
+      "no_ask": 42,
+      "last_price": 59,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
+      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
+      "yes_bid": 33,
+      "no_bid": 64,
+      "yes_ask": 36,
+      "no_ask": 67,
+      "last_price": 33,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-MON",
+      "title": "Will Johannus Monday win the Monday vs Shick: Round Of 32 match?",
+      "yes_bid": 66,
+      "no_bid": 32,
+      "yes_ask": 68,
+      "no_ask": 34,
+      "last_price": 69,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMLBGAME-26MAY261840CHCPIT-PIT",
+      "title": "Chicago C vs Pittsburgh Winner?",
+      "yes_bid": 81,
+      "no_bid": 18,
+      "yes_ask": 82,
+      "no_ask": 19,
+      "last_price": 81,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR",
+      "title": "Gremio vs Montevideo City Winner?",
+      "yes_bid": 53,
+      "no_bid": 46,
+      "yes_ask": 54,
+      "no_ask": 47,
+      "last_price": 53,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBTOTAL-26MAY261810WSHCLE-11",
+      "title": "Washington vs Cleveland Total Runs?",
+      "yes_bid": 46,
+      "no_bid": 53,
+      "yes_ask": 47,
+      "no_ask": 54,
+      "last_price": 47,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXCONMEBOLSUDGAME-26MAY26MILOHF-OHF",
+      "title": "Millonarios vs O\u00b4Higgins Winner?",
+      "yes_bid": 72,
+      "no_bid": 27,
+      "yes_ask": 73,
+      "no_ask": 28,
+      "last_price": 72,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBGAME-26MAY261940NYYKC-NYY",
+      "title": "New York Y vs Kansas City Winner?",
+      "yes_bid": 64,
+      "no_bid": 35,
+      "yes_ask": 65,
+      "no_ask": 36,
+      "last_price": 65,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY28AUGBUR-AUG",
+      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Burruchaga: Round Of 64 match?",
+      "yes_bid": 70,
+      "no_bid": 28,
+      "yes_ask": 72,
+      "no_ask": 30,
+      "last_price": 72,
+      "volume": 0,
+      "close_time": "2026-06-11",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMLBSPREAD-26MAY261835TBBAL-TB2",
+      "title": "Tampa Bay wins by over 1.5 runs?",
+      "yes_bid": 49,
+      "no_bid": 50,
+      "yes_ask": 50,
+      "no_ask": 51,
+      "last_price": 50,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
+      "title": "Game 5: San Antonio at Oklahoma City Winner?",
+      "yes_bid": 41,
+      "no_bid": 58,
+      "yes_ask": 42,
+      "no_ask": 59,
+      "last_price": 42,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXHIGHTSEA-26MAY26-B60.5",
+      "title": "Will the maximum temperature be  60-61\u00b0 on May 26, 2026?",
+      "yes_bid": 39,
+      "no_bid": 59,
+      "yes_ask": 41,
+      "no_ask": 61,
+      "last_price": 41,
+      "volume": 0,
+      "close_time": "2026-05-27",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXNBARETURN-26JUNOKCJWILLIAMS8-527",
+      "title": "Will Jalen Williams play in a game for the Thunder after May 21, 2026 and before May 27, 2026?",
+      "yes_bid": 8,
+      "no_bid": 78,
+      "yes_ask": 22,
+      "no_ask": 92,
+      "last_price": 22,
+      "volume": 0,
+      "close_time": "2026-07-04",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXARTISTSTREAMSY-DRAKE26DEC31-22.5B",
+      "title": "Will Drake have 22500000000 Streams on Luminate during January 01 - December 31, 2026?",
+      "yes_bid": 98,
+      "no_bid": 1,
+      "yes_ask": 99,
+      "no_ask": 2,
+      "last_price": 98,
+      "volume": 0,
+      "close_time": "2027-01-02",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMLBGAME-26MAY261845ATLBOS-ATL",
+      "title": "Atlanta vs Boston Winner?",
+      "yes_bid": 45,
+      "no_bid": 54,
+      "yes_ask": 46,
+      "no_ask": 55,
+      "last_price": 46,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2619-T75599.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 53,
+      "no_bid": 46,
+      "yes_ask": 54,
+      "no_ask": 47,
+      "last_price": 53,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXMLBRFI-26MAY261835TBBAL",
-      "title": "Tampa Bay vs Baltimore First Inning Run?",
+      "ticker": "KXMLBGAME-26MAY261840CHCPIT-CHC",
+      "title": "Chicago C vs Pittsburgh Winner?",
       "side": "YES",
-      "price": 37,
+      "price": 18,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXBTCD-26MAY2619-T75799.99",
-      "title": "Bitcoin price  on May 26, 2026?",
+      "ticker": "KXHIGHTSEA-26MAY26-B60.5",
+      "title": "Will the maximum temperature be  60-61\u00b0 on May 26, 2026?",
       "side": "YES",
-      "price": 15,
+      "price": 39,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXMLBGAME-26MAY261810WSHCLE-CLE",
-      "title": "Washington vs Cleveland Winner?",
+      "ticker": "KXMLBGAME-26MAY261845ATLBOS-ATL",
+      "title": "Atlanta vs Boston Winner?",
       "side": "YES",
-      "price": 41,
+      "price": 45,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S20265FE91273AF2-594CBBC3C10",
-      "title": "yes Pittsburgh,yes Cincinnati",
-      "side": "YES",
-      "price": 29,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
+      "ticker": "KXMLBGAME-26MAY261840CHCPIT-PIT",
+      "title": "Chicago C vs Pittsburgh Winner?",
+      "side": "NO",
+      "price": 19,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     },
     {
-      "ticker": "KXMLBTB-26MAY261910CINNYM-CINEDELACRUZ44-2",
-      "title": "Elly De La Cruz: 2+ total bases?",
-      "side": "YES",
-      "price": 37,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
+      "ticker": "KXMLBGAME-26MAY261940NYYKC-NYY",
+      "title": "New York Y vs Kansas City Winner?",
+      "side": "NO",
+      "price": 36,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
     }
   ],
   "edges": [],
@@ -775,7 +775,7 @@
       "home_team": "Cleveland Guardians",
       "away_team": "Washington Nationals",
       "home_score": "0",
-      "away_score": "0",
+      "away_score": "4",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -792,14 +792,14 @@
         },
         {
           "provider": "DraftKings - Live Odds",
-          "details": "",
+          "details": "WSH -860",
           "home_fav": false,
-          "home_moneyline": 0,
-          "away_moneyline": 100,
+          "home_moneyline": 492,
+          "away_moneyline": -860,
           "home_win_pct": null,
           "away_win_pct": null,
-          "spread": 1.5,
-          "over_under": 0.0
+          "spread": 4.5,
+          "over_under": 10.5
         }
       ]
     },
@@ -814,7 +814,7 @@
       "home_team": "Baltimore Orioles",
       "away_team": "Tampa Bay Rays",
       "home_score": "0",
-      "away_score": "0",
+      "away_score": "1",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -824,6 +824,17 @@
           "home_fav": false,
           "home_moneyline": -105,
           "away_moneyline": -114,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": 1.5,
+          "over_under": 8.5
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "TB -219",
+          "home_fav": false,
+          "home_moneyline": 165,
+          "away_moneyline": -219,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
@@ -848,14 +859,25 @@
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "DET -143",
+          "details": "DET -137",
           "home_fav": true,
-          "home_moneyline": -143,
-          "away_moneyline": 119,
+          "home_moneyline": -137,
+          "away_moneyline": 114,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -1.5,
           "over_under": 9.0
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "DET -165",
+          "home_fav": true,
+          "home_moneyline": -165,
+          "away_moneyline": 126,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -1.5,
+          "over_under": 8.5
         }
       ]
     },
@@ -866,24 +888,35 @@
       "name": "Chicago Cubs at Pittsburgh Pirates",
       "short_name": "CHC @ PIT",
       "date": "2026-05-26T22:40Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Pittsburgh Pirates",
       "away_team": "Chicago Cubs",
-      "home_score": "0",
+      "home_score": "2",
       "away_score": "0",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "PIT -143",
+          "details": "PIT -137",
           "home_fav": true,
-          "home_moneyline": -143,
-          "away_moneyline": 119,
+          "home_moneyline": -137,
+          "away_moneyline": 114,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -1.5,
           "over_under": 8.0
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "PIT -165",
+          "home_fav": true,
+          "home_moneyline": -165,
+          "away_moneyline": 126,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -1.5,
+          "over_under": 7.5
         }
       ]
     },
@@ -894,7 +927,7 @@
       "name": "Atlanta Braves at Boston Red Sox",
       "short_name": "ATL @ BOS",
       "date": "2026-05-26T22:45Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Boston Red Sox",
       "away_team": "Atlanta Braves",
       "home_score": "0",
@@ -912,6 +945,17 @@
           "away_win_pct": null,
           "spread": 1.5,
           "over_under": 8.0
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "ATL -116",
+          "home_fav": false,
+          "home_moneyline": -112,
+          "away_moneyline": -116,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": 1.5,
+          "over_under": 7.5
         }
       ]
     },
@@ -988,10 +1032,10 @@
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "MIN -118",
+          "details": "MIN -117",
           "home_fav": false,
-          "home_moneyline": -105,
-          "away_moneyline": -118,
+          "home_moneyline": -103,
+          "away_moneyline": -117,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
@@ -1184,10 +1228,10 @@
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "LAD -239",
+          "details": "LAD -244",
           "home_fav": true,
-          "home_moneyline": -239,
-          "away_moneyline": 194,
+          "home_moneyline": -244,
+          "away_moneyline": 197,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -1.5,
@@ -5863,6 +5907,15 @@
       "return_date": ""
     },
     {
+      "player": "Patrick Mahomes",
+      "team": "",
+      "sport": "football",
+      "league": "nfl",
+      "status": "Questionable",
+      "detail": "Surgery",
+      "return_date": "2026-08-01"
+    },
+    {
       "player": "Rashee Rice",
       "team": "",
       "sport": "football",
@@ -5897,15 +5950,6 @@
       "status": "Active",
       "detail": "",
       "return_date": ""
-    },
-    {
-      "player": "Patrick Mahomes",
-      "team": "",
-      "sport": "football",
-      "league": "nfl",
-      "status": "Questionable",
-      "detail": "Surgery",
-      "return_date": "2026-08-01"
     },
     {
       "player": "EJ Smith",
@@ -11155,6 +11199,15 @@
       "return_date": "2027-02-01"
     },
     {
+      "player": "Max Muncy",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "Day-To-Day",
+      "detail": "Bruise",
+      "return_date": "2026-05-27"
+    },
+    {
       "player": "Evan Phillips",
       "team": "",
       "sport": "baseball",
@@ -11180,15 +11233,6 @@
       "status": "60-Day-IL",
       "detail": "Surgery",
       "return_date": "2026-06-15"
-    },
-    {
-      "player": "Max Muncy",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "Day-To-Day",
-      "detail": "Bruise",
-      "return_date": "2026-05-27"
     },
     {
       "player": "Tyler Glasnow",
@@ -13794,10 +13838,18 @@
   ],
   "espn_news": [
     {
-      "headline": "Hammon stands Brunson take but open to be 'proven wrong'",
+      "headline": "NBA playoffs 2026: Live updates from Spurs-Thunder Game 5",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T22:34:39Z",
+      "published": "2026-05-26T22:46:45Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/nba/story/_/id/48876421/oklahoma-city-thunder-san-antonio-spurs-game-5-nba-playoffs-2026-live-updates"
+    },
+    {
+      "headline": "Hammon stands by Brunson take but open to be 'proven wrong'",
+      "sport": "basketball",
+      "league": "nba",
+      "published": "2026-05-26T22:50:27Z",
       "is_alert": false,
       "url": "https://www.espn.com/nba/story/_/id/48884962/hammon-stands-brunson-take-open-proven-wrong"
     },
@@ -13826,12 +13878,12 @@
       "url": "https://www.espn.com/video/clip/_/id/48883468/kenny-atkinson-returning-cavaliers-coach-next-season"
     },
     {
-      "headline": "Sources: Kenny Atkinson to return as Cavaliers head coach",
-      "sport": "basketball",
-      "league": "nba",
-      "published": "2026-05-26T20:55:01Z",
+      "headline": "Trevor Lawrence's family, friends voiced concern over faux haircut",
+      "sport": "football",
+      "league": "nfl",
+      "published": "2026-05-26T22:40:49Z",
       "is_alert": false,
-      "url": "https://www.espn.com/nba/story/_/id/48883421/sources-kenny-atkinson-return-cavaliers-head-coach"
+      "url": "https://www.espn.com/nfl/story/_/id/48884765/trevor-lawrence-jacksonville-jaguars-schedule-release-hairstyle"
     },
     {
       "headline": "Source: Bucs RB Bucky Irving (shoulder) likely ready by summer",
@@ -13864,14 +13916,6 @@
       "published": "2026-05-26T21:04:24Z",
       "is_alert": false,
       "url": "https://www.espn.com/nfl/draft2027/story/_/id/48828988/2027-nfl-draft-quarterback-class-top-prospects-manning-moore-carr"
-    },
-    {
-      "headline": "Texans give star WR Nico Collins raise in reworked deal",
-      "sport": "football",
-      "league": "nfl",
-      "published": "2026-05-26T21:30:11Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/nfl/story/_/id/48883953/texans-give-star-wr-nico-collins-raise-reworked-deal"
     },
     {
       "headline": "Fantasy baseball stock watch: Louis Varland and Gregory Soto rise while Kenley Jansen falls",
@@ -14015,72 +14059,34 @@
   "weather": {},
   "strategy_signals": [
     {
-      "type": "bundle_arb",
-      "direction": "BUY ALL",
-      "ticker": "KXCONMEBOLLIBGAME-26MAY26LDUARE",
-      "title": "Bundle arb: 2 contracts sum to 68.0\u00a2",
-      "price": 68,
-      "rationale": "Sum of 2 mutually exclusive contracts = 68.0\u00a2 (pays 100\u00a2). Net after fees: +28.9\u00a2",
-      "confidence": "high",
-      "kelly_frac": 0.05,
-      "fee_cents": 3.1402,
-      "priority": 1,
-      "contracts": [
-        "KXCONMEBOLLIBGAME-26MAY26LDUARE-ARE",
-        "KXCONMEBOLLIBGAME-26MAY26LDUARE-LDU"
-      ],
+      "type": "longshot_bias",
+      "direction": "BUY YES",
+      "ticker": "KXARTISTSTREAMSY-DRAKE26DEC31-22.5B",
+      "title": "Will Drake have 22500000000 Streams on Luminate during Janua",
+      "price": 98,
+      "rationale": "Favorite value: 98\u00a2 \u2014 market underprices certainty. Buy YES.",
+      "confidence": "low",
+      "kelly_frac": 0.0201,
+      "fee_cents": 0.1372,
+      "priority": 2,
       "rank": 1
-    },
-    {
-      "type": "bundle_arb",
-      "direction": "BUY ALL",
-      "ticker": "KXMLBRFI",
-      "title": "Bundle arb: 2 contracts sum to 88.0\u00a2",
-      "price": 88,
-      "rationale": "Sum of 2 mutually exclusive contracts = 88.0\u00a2 (pays 100\u00a2). Net after fees: +8.6\u00a2",
-      "confidence": "high",
-      "kelly_frac": 0.05,
-      "fee_cents": 3.3810000000000002,
-      "priority": 1,
-      "contracts": [
-        "KXMLBRFI-26MAY261835TBBAL",
-        "KXMLBRFI-26MAY261840LAADET"
-      ],
-      "rank": 2
-    },
-    {
-      "type": "bundle_arb",
-      "direction": "BUY ALL",
-      "ticker": "KXBTCD-26MAY2619",
-      "title": "Bundle arb: 2 contracts sum to 63.0\u00a2",
-      "price": 63,
-      "rationale": "Sum of 2 mutually exclusive contracts = 63.0\u00a2 (pays 100\u00a2). Net after fees: +34.4\u00a2",
-      "confidence": "high",
-      "kelly_frac": 0.05,
-      "fee_cents": 2.6397,
-      "priority": 1,
-      "contracts": [
-        "KXBTCD-26MAY2619-T75699.99",
-        "KXBTCD-26MAY2619-T75799.99"
-      ],
-      "rank": 3
     },
     {
       "type": "longshot_bias",
       "direction": "BUY NO",
-      "ticker": "KXNBACOY-26-JBIC",
-      "title": "Who will win Coach of the Year?",
-      "price": 4,
-      "rationale": "Longshot bias: 4\u00a2 YES contracts lose 60%+ historically. Buy NO.",
+      "ticker": "KXBTC15M-26MAY261900-00",
+      "title": "BTC price up in next 15 mins?",
+      "price": 6,
+      "rationale": "Longshot bias: 6\u00a2 YES contracts lose 60%+ historically. Buy NO.",
       "confidence": "medium",
-      "kelly_frac": 0.0019,
-      "fee_cents": 0.2688,
+      "kelly_frac": 0.027,
+      "fee_cents": 0.3948,
       "priority": 3,
-      "rank": 4
+      "rank": 2
     }
   ],
   "health": {
-    "run_minute": 40,
+    "run_minute": 52,
     "kalshi": "ok",
     "odds_api": "ok_0_games",
     "coingecko": "skipped_interval",
@@ -14094,14 +14100,14 @@
     "weather": "skipped_interval"
   },
   "demo_portfolio": {
-    "balance_cents": 10000,
+    "balance_cents": 100000,
     "open_orders": [],
     "closed_trades": [],
     "stats": {
       "total_trades": 0,
-      "bankroll_cents": 10000,
+      "bankroll_cents": 100000,
       "open_count": 0
     },
-    "last_run": "2026-05-26T22:40:37.450755+00:00"
+    "last_run": "2026-05-26T22:52:46.036329+00:00"
   }
 }
