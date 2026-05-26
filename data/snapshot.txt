@@ -1,102 +1,40 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 13:55 UTC
+# Generated: 2026-05-26 13:57 UTC
 ======================================================================
 
 ## Balance: unavailable
 
-## Open positions:
-  none
+## Open positions: none
 
 ======================================================================
 ## MOST ACTIVE RIGHT NOW
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXETH15M-26MAY261000-00                     97c   1c      14  2026-05-26  ETH price up in next 15 mins?
-  KXBTCD-26MAY2610-T77199.99                  22c  76c      14  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2610-T77099.99                  68c  31c      13  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTC15M-26MAY261000-00                     99c   1c      13  2026-05-26  BTC price up in next 15 mins?
-  KXATPCHALLENGERMATCH-26MAY26KOTONC-ONC      20c  78c      10  2026-06-09  Will Gauthier Onclin win the Kotov vs On
-  KXNBASPREAD-26MAY26SASOKC-OKC15             18c  80c      10  2026-06-10  Oklahoma City wins by over 15.5 points?
-  KXATPMATCH-26MAY24FAUVAC-FAU                 9c  89c       8  2026-06-07  Will Thomas Faurel win the Faurel vs Vac
-  KXBTCD-26MAY2610-T76799.99                  98c   1c       8  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXWTI-26MAY2614-T94.99                      31c  67c       7  2026-05-26  Will the WTI crude oil settlement price 
-  KXATPCHALLENGERMATCH-26MAY26VASTAB-TAB       9c  90c       6  2026-06-09  Will Giorgio Tabacco win the Vasami vs T
-  KXWTASETWINNER-26MAY24GAUTOW-1-GAU          70c  23c       6  2026-06-07  Will Coco Gauff win set 1 in the Coco Ga
-  KXATPMATCH-26MAY24FAUVAC-VAC                89c  10c       5  2026-06-07  Will Valentin Vacherot win the Faurel vs
-  KXATPMATCH-26MAY25GARTIE-TIE                71c  28c       5  2026-06-08  Will Learner Tien win the Garin vs Tien:
-  KXBTCD-26MAY2610-T76899.99                  96c   3c       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXTITLEDTUESDAY-26MAY26-MCAR                 2c  90c       4  2026-06-09  Will Magnus Carlsen win the Titled Tuesd
-  KXBTCD-26MAY2610-T76999.99                  92c   7c       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2610-T77299.99                   7c  92c       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXHYPE15M-26MAY261000-00                    95c   4c       4  2026-05-26  HYPE price up in next 15 mins?
-  KXATPCHALLENGERMATCH-26MAY26BECBIT-BIT      75c  24c       3  2026-06-09  Will Constantin Bittoun Kouzmine win the
-  KXMIDTERMMOV-AL07D-P27                      33c  59c       3  2027-11-03  Will the margin of victory for Democrats
+  KXATPMATCH-26MAY24FAUVAC-FAU                22c  77c      16  2026-06-07  Will Thomas Faurel win the Faurel vs Vac
+  KXBTCD-26MAY2610-T77099.99                  90c   9c      16  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2610-T77199.99                  57c  41c      16  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPMATCH-26MAY24FAUVAC-VAC                76c  22c      12  2026-06-07  Will Valentin Vacherot win the Faurel vs
+  KXBTCD-26MAY2610-T76999.99                  98c   1c      12  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXITFMATCH-26MAY26ZIENIJ-ZIE                92c   5c       9  2026-06-09  Will Marcel Zielinski win the Zielinski 
+  KXATPCHALLENGERMATCH-26MAY26KASRON-RON      39c  60c       7  2026-06-09  Will Franco Roncadelli win the Kasnikows
+  KXBTCD-26MAY2610-T77299.99                   5c  93c       6  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXHIGHCHI-26MAY26-B83.5                     17c  82c       6  2026-05-27  Will the high temp in Chicago be 83-84° 
+  KXATPMATCH-26MAY25GARTIE-GAR                30c  69c       5  2026-06-08  Will Cristian Garin win the Garin vs Tie
+  KXATPMATCH-26MAY25GARTIE-TIE                69c  30c       5  2026-06-08  Will Learner Tien win the Garin vs Tien:
+  KXIPLGAME-26MAY261000GTRCB-GT               47c  52c       4  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXATPMATCH-26MAY25KOPMOU-KOP                56c  43c       3  2026-06-08  Will Vit Kopriva win the Kopriva vs Mout
+  KXWTAMATCH-26MAY24GAUTOW-TOW                14c  84c       3  2026-06-07  Will Taylor Townsend win the Gauff vs To
+  KXATPMATCH-26MAY25BAEBUR-BAE                69c  30c       3  2026-06-08  Will Sebastian Baez win the Baez vs Burr
+  KXITFMATCH-26MAY26JONMOE-MOE                34c  65c       3  2026-06-09  Will Marvin Moeller win the Jong vs Moel
+  KXATPMATCH-26MAY25KOPMOU-MOU                43c  56c       3  2026-06-08  Will Corentin Moutet win the Kopriva vs 
+  KXBTCD-26MAY2610-T76799.99                  99c    ?       2  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXWTAMATCH-26MAY24GAUTOW-GAU                85c  14c       2  2026-06-07  Will Coco Gauff win the Gauff vs Townsen
+  KXATPMATCH-26MAY25BAEBUR-BUR                30c  69c       2  2026-06-08  Will Roman Andres Burruchaga win the Bae
 
 ======================================================================
 ## FIFA WORLD CUP 2026
 ======================================================================
 
-  No WC markets found after exhaustive search.
-  Scanned 100 events across 1 pages.
-  All unique series tickers found (sample):
-    KX48ETAXCREDIT
-    KXACTORSONNYCROCKETT
-    KXACTORTOMCRUZ
-    KXAFRICALEADEROUT
-    KXAGICO
-    KXAMAZONFTC
-    KXAPPLEUS
-    KXARTISTCOLLABDRAKEKENDRICK
-    KXARTISTCOLLABTHUGANDGUNNA
-    KXBEYONCEGENRE
-    KXBLUESPACEX
-    KXBOND
-    KXBRUVSEAT
-    KXBUSHBY
-    KXCANADACUP
-    KXCASECESSION
-    KXCHINAUSGDP
-    KXCO2LEVEL
-    KXCOLONIZEMARS
-    KXDATACENTER
-    KXDEELRIP
-    KXEARTHQUAKECALIFORNIA
-    KXEARTHQUAKEJAPAN
-    KXECCOMPACT
-    KXELONMARS
-    KXERUPTSUPER
-    KXEUCLIMATE
-    KXEUEXIT
-    KXEUEXITCOUNTRY
-    KXEUEXPANSION
-    KXEUREF
-    KXEVSHARE
-    KXF1RETIRE
-    KXFDAAPPROVE
-    KXFDATYPE1DIABETES
-    KXFUSION
-    KXFYREFESTPRICE
-    KXG7LEADEROUT
-    KXGTA6SONGS
-    KXGTAPRICE
-    KXINDIACLIMATE
-    KXINDIANAPOWELL
-    KXIPOAIRTABLE
-    KXJOHNNYDEPP
-    KXJPMCEONEW
-    KXLIPATURNERLOCATION
-    KXMARRIAGESTYLESKRAVITZ
-    KXMARSVRAIL
-    KXMEDIARELEASEPRISONBREAK
-    KXMLBDEBUT
-    KXMOONMAN
-    KXMUSKTRILLION
-    KXNBASEATTLE
-    KXNBATEAM
-    KXNETWORTHKAICENAT
-    KXNEWPOPE
-    KXNEWROLEGS
-    KXNEWROLEJP
-    KXNEXTISRAELPM
-    KXNEXTROMANIAPM
+  Searched 0 event pages, 0 unique series. Still nothing.
+  All series tickers found (sorted):
