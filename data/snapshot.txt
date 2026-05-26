@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 14:01 UTC
+# Generated: 2026-05-26 14:04 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,30 +11,83 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261015-15                     66c  33c      54  2026-05-26  BTC price up in next 15 mins?
-  KXBTCD-26MAY2611-T77099.99                  55c  43c      18  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2611-T77199.99                  45c  54c      14  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXETH15M-26MAY261015-15                     48c  49c      13  2026-05-26  ETH price up in next 15 mins?
-  KXBTCD-26MAY2611-T77499.99                  19c  80c       7  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXITFWMATCH-26MAY26STEZHE-ZHE               33c  64c       6  2026-06-09  Will Sonja Zhenikhova win the Steiner vs
-  KXWTI-26MAY2614-T95.99                      16c  82c       6  2026-05-26  Will the WTI crude oil settlement price 
-  KXATPMATCH-26MAY25KOPMOU-MOU                56c  43c       5  2026-06-08  Will Corentin Moutet win the Kopriva vs 
-  KXXRP15M-26MAY261015-15                     70c  29c       4  2026-05-26  XRP price up in next 15 mins?
-  KXATPMATCH-26MAY25GARTIE-TIE                71c  28c       4  2026-06-08  Will Learner Tien win the Garin vs Tien:
-  KXBTCD-26MAY2611-T76999.99                  66c  33c       4  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXHIGHTATL-26MAY26-B77.5                     2c  96c       4  2026-05-27  Will the maximum temperature be  77-78° 
-  KXDOTA2GAME-26MAY260950TSTUNDRA-TS          61c  37c       3  2026-06-09  Will Team Spirit win the Team Spirit vs.
-  KXBTCD-26MAY2611-T77599.99                  15c  84c       3  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXETHD-26MAY2611-T2139.99                    2c  75c       3  2026-05-26  Ethereum price at May 26, 2026 at 11am E
-  KXSOL15M-26MAY261015-15                     56c  37c       2  2026-05-26  SOL price up in next 15 mins?
-  KXATPMATCH-26MAY24FAUVAC-VAC                80c  19c       2  2026-06-07  Will Valentin Vacherot win the Faurel vs
-  KXSPOTIFYW-26MAY28-JAN                      84c  12c       2  2026-05-29  Top Song on Weekly Top Songs USA on May 
-  KXHIGHLAX-26MAY26-B66.5                     59c  40c       2  2026-05-27  Will the **high temp in LA** be 66-67° o
-  KXATPMATCH-26MAY25KOPMOU-KOP                43c  56c       1  2026-06-08  Will Vit Kopriva win the Kopriva vs Mout
+  KXBTC15M-26MAY261015-15                     56c  43c      52  2026-05-26  BTC price up in next 15 mins?
+  KXIPLGAME-26MAY261000GTRCB-RCB              53c  46c      16  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXWTAMATCH-26MAY24GAUTOW-TOW                 7c  92c       7  2026-06-07  Will Taylor Townsend win the Gauff vs To
+  KXITFMATCH-26MAY26SAKOVE-SAK                38c  58c       7  2026-06-09  Will Dimitris Sakellaridis win the Sakel
+  KXIPLGAME-26MAY261000GTRCB-GT               46c  53c       6  2026-05-28  Royal Challengers Bengaluru vs Gujarat T
+  KXATPMATCH-26MAY24LANPRA-PRA                 8c  91c       5  2026-06-07  Will Juan Carlos Prado Angelo win the La
+  KXTRUMPSAY-26JUN01-THUG                     50c  47c       5  2026-06-01  Will Trump say "Thug" before Jun 1, 2026
+  KXWTAMATCH-26MAY24GAUTOW-GAU                92c   7c       4  2026-06-07  Will Coco Gauff win the Gauff vs Townsen
+  KXATPMATCH-26MAY24FAUVAC-VAC                99c    ?       4  2026-06-07  Will Valentin Vacherot win the Faurel vs
+  KXATPCHALLENGERMATCH-26MAY26DUTBRO-BRO      95c   4c       4  2026-06-09  Will Liam Broady win the Dutra Da Silva 
+  KXWTAMATCH-26MAY24SIEOSA-OSA                85c  14c       3  2026-06-07  Will Naomi Osaka win the Siegemund vs Os
+  KXATPMATCH-26MAY25KOPMOU-MOU                56c  43c       3  2026-06-08  Will Corentin Moutet win the Kopriva vs 
+  KXATPCHALLENGERMATCH-26MAY26CLAKAR-CLA      96c   3c       3  2026-06-09  Will Jay Clarke win the Clarke vs Karol:
+  KXATPMATCH-26MAY25BAEBUR-BUR                21c  78c       3  2026-06-08  Will Roman Andres Burruchaga win the Bae
+  KXBTCD-26MAY2611-T76899.99                  74c  25c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPMATCH-26MAY25GARTIE-TIE                76c  21c       3  2026-06-08  Will Learner Tien win the Garin vs Tien:
+  KXPRIMARYMOV-TX33D26-CALL-P7                32c  67c       2  2027-05-26  Will the margin of victory for Colin All
+  KXMVESPORTSMULTIGAMEEXTENDED-S202666B39620   1c  99c       2  2026-06-10  yes Shai Gilgeous-Alexander: 8+,yes Isai
+  KXNBAGAME-26MAY26SASOKC-SAS                 38c  61c       2  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXWTAMATCH-26MAY24SIEOSA-SIE                14c  85c       2  2026-06-07  Will Laura Siegemund win the Siegemund v
 
 ======================================================================
-## FIFA WORLD CUP 2026
+## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
-  Series/event hits: none
-  Tried all variants. WC markets not accessible via this API key.
-  This may be a permissions issue or the markets use a private endpoint.
+
+### /series endpoint scan:
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/GERPOLLFIRST.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/GERPOLL
+
+### Direct event ticker fetch attempts:
+  miss: KXWC26
+  miss: KXWC2026
+  miss: KXFIFAWC26
+  miss: KXFIFAWC2026
+  miss: KXWC26FUTURES
+  miss: KXWC2026FUTURES
+  miss: KXFIFAWC26FUTURES
+  miss: KXWC26WINNER
+  miss: KXWC26CHAMP
+  miss: KXWC26CHAMPION
+  miss: KXWC26GROUPA
+  miss: KXWC26GROUPB
+  miss: KXWC26GROUPC
+  miss: KXWC26-GROUPA
+  miss: KXWC26-GROUPB
+  miss: KXWC26GROUPAWINNER
+  miss: KXWC26GROUPBWINNER
+  miss: KXWC26FURTHEST
+  miss: KXWC26ELIM
+  miss: KXWC26STAGE
+  miss: KXWC26HOST
+  miss: KXWC26USA
+  miss: KXWC26AWARDS
+  miss: KXWC26GOALS
+  miss: KXWC26TOURGOALS
+  miss: KXWC26SQUAD
+  miss: KXWC26SPEC
+  miss: KXWC26SPECIAL
+  miss: KXSOCWC26
+  miss: KXSOC26
+  miss: KXSOCCERWC26
+  miss: WC26FUTURES
+  miss: FIFAWC26
+
+### Series tickers found in trades feed:
+  KXATPCHALLENGERMATCH
+  KXATPMATCH
+  KXBTC15M
+  KXBTCD
+  KXETH15M
+  KXIPLGAME
+  KXITFMATCH
+  KXMLBGAME
+  KXMVECROSSCATEGORY
+  KXMVESPORTSMULTIGAMEEXTENDED
+  KXNBAGAME
+  KXPRIMARYMOV
+  KXSOL15M
+  KXTRUMPSAY
+  KXWTAMATCH
+  KXWTASETWINNER
