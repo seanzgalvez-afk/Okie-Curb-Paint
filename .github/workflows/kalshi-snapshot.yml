@@ -15,6 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: claude/kalshi-bot-setup-4xG92
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -30,8 +31,12 @@ jobs:
           KALSHI_ENV: prod
         run: python scripts/snapshot.py -o data/snapshot.txt
 
-      - name: Commit snapshot
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update kalshi snapshot [skip ci]"
-          file_pattern: data/snapshot.txt
+      - name: Commit and push snapshot
+        run: |
+          git config user.name  "kalshi-bot"
+          git config user.email "bot@kalshi"
+          git add data/snapshot.txt
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore: update kalshi snapshot [skip ci]"
+          git pull --rebase origin claude/kalshi-bot-setup-4xG92
+          git push origin claude/kalshi-bot-setup-4xG92
