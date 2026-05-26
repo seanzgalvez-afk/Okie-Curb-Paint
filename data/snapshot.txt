@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 21:53 UTC
+# Generated: 2026-05-26 22:21 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261800-00                     18c  80c      35  2026-05-26  BTC price up in next 15 mins?
-  KXHIGHTSATX-26MAY26-B87.5                    2c  97c      15  2026-05-27  Will the maximum temperature be  87-88° 
-  KXVALORANTMAP-26MAY261600DNMD1-2-DNM        16c  13c      13  2026-06-09  Will Dynamo Esports win map 2 in the Dyn
-  KXITFWMATCH-26MAY26FERBOH-FER               25c  74c       8  2026-06-09  Will Bianca Jolie Fernandez win the Fern
-  KXBTCD-26MAY2618-T75999.99                   1c  98c       6  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2618-T75899.99                  30c  69c       5  2026-05-26  Bitcoin price  on May 26, 2026?
-  KXNBAGAME-26MAY26SASOKC-OKC                 59c  40c       5  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY      37c  61c       5  2026-06-09  Will Aidan Mayo win the Mayo vs Butvilas
-  KXBNB15M-26MAY261800-00                     50c  45c       4  2026-05-26  BNB price up in next 15 mins?
-  KXHIGHTPHX-26MAY26-B96.5                    84c  12c       4  2026-05-27  Will the maximum temperature be  96-97° 
-  KXVALORANTGAME-26MAY261600DNMD1-DNM         31c  67c       3  2026-06-09  Will Dynamo Esports win the Dynamo Espor
-  KXITFWMATCH-26MAY26FERBOH-BOH               73c  24c       3  2026-06-09  Will Carolina Bohrer Martins win the Fer
-  KXATPCHALLENGERMATCH-26MAY26SEAMEJ-MEJ      59c  37c       3  2026-06-09  Will Nicolas Mejia win the Searle vs Mej
-  KXNBACOY-26-JBIC                             5c  93c       3  2027-04-12  Who will win Coach of the Year?
-  KXSOL15M-26MAY261800-00                      7c  88c       3  2026-05-26  SOL price up in next 15 mins?
-  KXMLBGAME-26MAY261810WSHCLE-CLE             54c  45c       3  2026-05-29  Washington vs Cleveland Winner?
-  KXMLBF5-26MAY261810WSHCLE-WSH               41c  58c       2  2026-05-29  Washington vs Cleveland first 5 innings 
-  KXNBAGAME-26MAY28OKCSAS-OKC                 43c  55c       2  2026-06-12  Game 6: Oklahoma City at San Antonio Win
-  KXHYPE15M-26MAY261800-00                    20c  75c       2  2026-05-26  HYPE price up in next 15 mins?
-  KXBTC-26MAY2618-B75850                      67c  32c       2  2026-05-26  Bitcoin price range  on May 26, 2026?
+  KXBTC15M-26MAY261830-30                     45c  54c      27  2026-05-26  BTC price up in next 15 mins?
+  KXCONMEBOLLIBGAME-26MAY26LANMIR-LAN         50c  47c      14  2026-06-09  Lanus vs Mirassol Winner?
+  KXNBAGAME-26MAY26SASOKC-SAS                 41c  58c       9  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXHIGHDEN-26MAY26-B79.5                     89c   1c       8  2026-05-27  Will the **high temp in Denver** be 79-8
+  KXLOLMAP-26MAY261600PNGAEST-3-EST           69c  13c       7  2026-06-09  Will Estral Esports win map 3 in the pai
+  KXCONMEBOLLIBGAME-26MAY26LANMIR-TIE         17c  82c       6  2026-06-09  Lanus vs Mirassol Winner?
+  KXMLBTOTAL-26MAY261810WSHCLE-8              44c  55c       5  2026-05-29  Washington vs Cleveland Total Runs?
+  KXMLBGAME-26MAY261810WSHCLE-WSH             43c  54c       5  2026-05-29  Washington vs Cleveland Winner?
+  KXETH15M-26MAY261830-30                     25c  72c       4  2026-05-26  ETH price up in next 15 mins?
+  KXVALORANTGAME-26MAY261600DNMD1-D1          77c  20c       4  2026-06-09  Will Division One win the Dynamo Esports
+  KXMVESPORTSMULTIGAMEEXTENDED-S20266B12BDBE   8c  91c       3  2026-05-29  yes New York Y,yes Milwaukee,yes San Ant
+  KXMLBGAME-26MAY261835TBBAL-TB               51c  48c       3  2026-05-29  Tampa Bay vs Baltimore Winner?
+  KXMLBGAME-26MAY261810WSHCLE-CLE             55c  44c       3  2026-05-29  Washington vs Cleveland Winner?
+  KXBTCD-26MAY2619-T75599.99                  73c  26c       3  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBNB15M-26MAY261830-30                     69c  25c       3  2026-05-26  BNB price up in next 15 mins?
+  KXNBASPREAD-26MAY26SASOKC-OKC3              51c  48c       3  2026-06-10  Oklahoma City wins by over 3.5 points?
+  KXLOLMAP-26MAY261600PNGAEST-3-PNGA          18c  76c       3  2026-06-09  Will paiN Gaming Academy win map 3 in th
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026E2419408  16c  84c       3  2026-05-29  yes Tampa Bay,yes Atlanta,yes Milwaukee
+  KXMLBF5SPREAD-26MAY261835TBBAL-TB2          31c  67c       2  2026-05-29  Tampa Bay wins first 5 innings by over 1
+  KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT      60c  37c       2  2026-06-09  Will Edas Butvilas win the Mayo vs Butvi
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Entertainment', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/ARTISTWEEKSNUM1.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.', 'Any candidate currently listed as a market within this event'], 'category': 'Elections', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/ELECTION.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-e
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,31 +75,25 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
+  KXAAAGASM
   KXATPCHALLENGERMATCH
   KXBNB15M
-  KXBTC
   KXBTC15M
   KXBTCD
+  KXCONMEBOLLIBGAME
+  KXCONMEBOLSUDGAME
   KXETH15M
-  KXHIGHTPHX
-  KXHIGHTSATX
-  KXHYPE15M
-  KXITFWMATCH
-  KXMLBF5
+  KXHIGHDEN
+  KXLOLMAP
+  KXLOWTSFO
+  KXMLBALROTY
+  KXMLBF5SPREAD
   KXMLBGAME
-  KXMLBHIT
   KXMLBTOTAL
   KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
-  KXNBA1HSPREAD
-  KXNBACOY
+  KXNBA
   KXNBAGAME
-  KXNBAMENTION
   KXNBASPREAD
-  KXNBATOTAL
-  KXNHLGAME
-  KXPSAKIMENTION
   KXSOL15M
   KXVALORANTGAME
-  KXVALORANTMAP
-  KXXRP15M
