@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261645-45                     37c  62c      58  2026-05-26  BTC price up in next 15 mins?
-  KXATPMATCH-26MAY25AUGALT-AUG                20c  79c      12  2026-06-08  Will Felix Auger-Aliassime win the Auger
-  KXATPMATCH-26MAY25AUGALT-ALT                78c  21c      11  2026-06-08  Will Daniel Altmaier win the Auger-Alias
-  KXITFMATCH-26MAY26SANZAM-SAN                11c  87c       7  2026-06-09  Will Roshan Santhosh win the Santhosh vs
-  KXLIGUE1GAME-26MAY26STENIC-TIE              81c  18c       4  2026-06-09  Saint-Etienne vs Nice Winner?
-  KXLOLGAME-26MAY261600PNGAEST-PNGA           20c  79c       4  2026-06-09  Will paiN Gaming Academy win the paiN Ga
-  KXETH15M-26MAY261645-45                     33c  64c       4  2026-05-26  ETH price up in next 15 mins?
-  KXITFWMATCH-26MAY26CAYIYE-IYE               27c  71c       4  2026-06-09  Will Maya Iyengar win the Cayetano vs Iy
-  KXBNB15M-26MAY261645-45                     52c  43c       3  2026-05-26  BNB price up in next 15 mins?
-  KXLOLMAP-26MAY261600PNGAEST-1-PNGA          50c  46c       3  2026-06-09  Will paiN Gaming Academy win map 1 in th
-  KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI      23c  75c       3  2026-06-09  Will Braden Shick win the Monday vs Shic
-  KXHIGHAUS-26MAY26-B91.5                      2c  97c       2  2026-05-27  Will the **high temp in Austin** be 91-9
-  KXGOLDD-26MAY2617-T4515                      8c  85c       2  2026-05-26  Will the gold close price be above 4515 
-  KXMLBF5-26MAY262145AZSF-AZ                  44c  55c       2  2026-05-30  Arizona vs San Francisco first 5 innings
+  KXBTC15M-26MAY261645-45                     19c  80c      88  2026-05-26  BTC price up in next 15 mins?
+  KXATPMATCH-26MAY25AUGALT-ALT                77c  22c      18  2026-06-08  Will Daniel Altmaier win the Auger-Alias
+  KXATPCHALLENGERMATCH-26MAY26SEAMEJ-SEA      44c  55c       7  2026-06-09  Will Henry Searle win the Searle vs Meji
+  KXLOLGAME-26MAY261600PNGAEST-EST            76c  23c       7  2026-06-09  Will Estral Esports win the paiN Gaming 
+  KXATPMATCH-26MAY25AUGALT-AUG                21c  77c       6  2026-06-08  Will Felix Auger-Aliassime win the Auger
+  KXNBAGAME-26MAY26SASOKC-SAS                 39c  60c       6  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXLIGUE1GAME-26MAY26STENIC-NIC               7c  92c       5  2026-06-09  Saint-Etienne vs Nice Winner?
+  KXATPCHALLENGERMATCH-26MAY26SEAMEJ-MEJ      54c  45c       5  2026-06-09  Will Nicolas Mejia win the Searle vs Mej
+  KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY      38c  56c       5  2026-06-09  Will Aidan Mayo win the Mayo vs Butvilas
+  KXBTCD-26MAY2617-T75999.99                  47c  52c       4  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXLOLGAME-26MAY261600PNGAEST-PNGA           24c  75c       3  2026-06-09  Will paiN Gaming Academy win the paiN Ga
+  KXHIGHLAX-26MAY27-B66.5                     52c  47c       3  2026-05-28  Will the **high temp in LA** be 66-67° o
+  KXNBA1HTOTAL-26MAY26SASOKC-100              79c  15c       2  2026-06-10  San Antonio vs Oklahoma City: First Half
+  KXNBAGAME-26MAY26SASOKC-OKC                 59c  40c       2  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXHIGHAUS-26MAY26-B87.5                     85c   9c       2  2026-05-27  Will the **high temp in Austin** be 87-8
   KXITFWMATCH-26MAY26RAPSHO-SHO               61c  38c       2  2026-06-09  Will Maria Sholokhova win the Rapolu vs 
-  KXLOLGAME-26MAY261600PNGAEST-EST            78c  21c       2  2026-06-09  Will Estral Esports win the paiN Gaming 
-  KXMLBF5TOTAL-26MAY261810WSHCLE-4            55c  44c       2  2026-05-29  Washington vs Cleveland first 5 innings 
-  KXMLBHIT-26MAY261845ATLBOS-ATLMOLSON28-1    64c  34c       2  2026-05-29  Matt Olson: 1+ hits?
-  KXLIGUE1GAME-26MAY26STENIC-NIC               9c  90c       2  2026-06-09  Saint-Etienne vs Nice Winner?
-  KXBTCD-26MAY2617-T75999.99                  61c  38c       2  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXMAYORLA-26-SPRA                           26c  73c       1  2027-06-02  Who will win Los Angeles Mayoral Electio
+  KXAAAGASM-26MAY31-4.50                       5c  94c       1  2026-05-31  Will average **gas prices** be above $4.
+  KXNHLWEST-26-VGK                            89c  10c       1  2026-07-15  Western Conference Finals Winner?
+  KXHYPE15M-26MAY261645-45                    41c  53c       1  2026-05-26  HYPE price up in next 15 mins?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'World', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/ARGCENTRALBANK.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/ARGCENTR
+  /series returned: {'series': [{'additional_prohibitions': ['Current and former players, coaches, and staff of the league, association, or organization(s) governing the event. For college leagues/associations specifically, or where otherwise appropriate (as identified by the Exchange), this applies to current and former players/coaches/staff of the specific teams in <event> rather than the league/association as a whole (e.g., if the Division I Gonzaga Men’s Basketball Team is playing in <event>, this prohibition w
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,29 +75,25 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
-  KXACBGAME
+  KXAAAGASM
   KXATPCHALLENGERMATCH
+  KXATPGTOTAL
   KXATPMATCH
-  KXBNB15M
   KXBTC15M
   KXBTCD
-  KXETH15M
-  KXGOLDD
   KXHIGHAUS
-  KXITFMATCH
+  KXHIGHLAX
+  KXHYPE15M
   KXITFWMATCH
   KXLIGUE1GAME
-  KXLIGUE1TOTAL
   KXLOLGAME
-  KXLOLMAP
-  KXMLB
-  KXMLBF5
-  KXMLBF5TOTAL
-  KXMLBGAME
-  KXMLBHIT
+  KXMAYORLA
+  KXMLBKS
+  KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
+  KXNATGASD
   KXNBA
+  KXNBA1HTOTAL
   KXNBAGAME
-  KXSOL15M
-  KXUSTESTSREADING
-  KXVALORANTGAME
+  KXNBATEAMTOTAL
+  KXNHLWEST
