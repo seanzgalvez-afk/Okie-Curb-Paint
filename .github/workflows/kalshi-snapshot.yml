@@ -25,9 +25,8 @@ jobs:
 
       - name: Fetch snapshot
         env:
-          KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
-          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
-          KALSHI_ENV: prod
+          KALSHI_EMAIL: ${{ secrets.KALSHI_EMAIL }}
+          KALSHI_PASSWORD: ${{ secrets.KALSHI_PASSWORD }}
         run: python scripts/snapshot.py -o data/snapshot.txt
 
       - name: Commit and push
