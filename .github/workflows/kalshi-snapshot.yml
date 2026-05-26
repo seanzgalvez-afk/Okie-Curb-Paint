@@ -25,6 +25,7 @@ jobs:
         run: pip install httpx cryptography
 
       - name: Debug auth
+        continue-on-error: true
         env:
           KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
           KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
