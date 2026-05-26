@@ -1,0 +1,38 @@
+name: Kalshi Snapshot
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # every 15 minutes
+  workflow_dispatch:          # manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install httpx cryptography python-dotenv
+
+      - name: Fetch Kalshi snapshot
+        env:
+          KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
+          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
+          KALSHI_ENV: prod
+        run: python scripts/snapshot.py -o data/snapshot.txt
+
+      - name: Commit snapshot
+        run: |
+          git config user.name  "kalshi-bot"
+          git config user.email "bot@kalshi"
+          git add data/snapshot.txt
+          git diff --cached --quiet && echo "No changes" || \
+            git commit -m "chore: update kalshi snapshot [skip ci]" && \
+            git push

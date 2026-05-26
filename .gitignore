@@ -4,10 +4,11 @@
 *_private_key*
 *_rsa_key*
 
-# Data files
-data/
-*.db
-*.sqlite
+# Data files — keep the folder, ignore large files
+data/*.db
+data/*.sqlite
+!data/snapshot.txt
+!data/.gitkeep
 
 # Python
 __pycache__/
