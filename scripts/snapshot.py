@@ -480,26 +480,59 @@ def fetch_all_espn_data():
 # ═══════════════════════════════════════════════════════════════════════════════
 # CoinGecko — BTC/ETH/SOL prices
 # ═══════════════════════════════════════════════════════════════════════════════
+# Free tier: no key needed, 30 calls/min
+# Pro tier:  set COINGECKO_API_KEY secret → uses pro.api.coingecko.com
+#            higher rate limits + more data (OHLCV, market depth, etc.)
+COINGECKO_API_KEY = os.environ.get("COINGECKO_API_KEY", "")
 
 def fetch_crypto_prices():
-    """Fetch BTC and ETH prices from CoinGecko (free, no key)."""
+    """Fetch BTC/ETH/SOL prices from CoinGecko. Uses Pro API if key is set."""
     try:
-        r = httpx.get(
-            "https://api.coingecko.com/api/v3/simple/price",
-            params={"ids": "bitcoin,ethereum,solana", "vs_currencies": "usd",
-                    "include_24hr_change": "true"},
-            timeout=10
-        )
+        if COINGECKO_API_KEY:
+            # Pro endpoint — higher rate limits, more data
+            base_url = "https://pro-api.coingecko.com/api/v3/simple/price"
+            headers  = {"x-cg-pro-api-key": COINGECKO_API_KEY}
+            log("CoinGecko: using Pro API")
+        else:
+            # Free public endpoint — no key needed
+            base_url = "https://api.coingecko.com/api/v3/simple/price"
+            headers  = {}
+            log("CoinGecko: using free API")
+
+        r = httpx.get(base_url,
+            params={"ids": "bitcoin,ethereum,solana,sui,avalanche-2,chainlink",
+                    "vs_currencies": "usd",
+                    "include_24hr_change": "true",
+                    "include_market_cap": "true"},
+            headers=headers, timeout=10)
+
         if r.status_code != 200:
+            log(f"CoinGecko {r.status_code}: {r.text[:100]}")
             return {}
         data = r.json()
+
+        def coin(key):
+            c = data.get(key, {})
+            return {
+                "usd":        c.get("usd"),
+                "change_24h": round(c.get("usd_24h_change") or 0, 2),
+                "market_cap": c.get("usd_market_cap"),
+            }
+
         return {
-            "btc_usd": data.get("bitcoin", {}).get("usd"),
-            "btc_24h_change": round(data.get("bitcoin", {}).get("usd_24h_change", 0), 2),
-            "eth_usd": data.get("ethereum", {}).get("usd"),
-            "eth_24h_change": round(data.get("ethereum", {}).get("usd_24h_change", 0), 2),
-            "sol_usd": data.get("solana", {}).get("usd"),
-            "sol_24h_change": round(data.get("solana", {}).get("usd_24h_change", 0), 2),
+            "btc": coin("bitcoin"),
+            "eth": coin("ethereum"),
+            "sol": coin("solana"),
+            "sui": coin("sui"),
+            "avax": coin("avalanche-2"),
+            "link": coin("chainlink"),
+            # Legacy flat keys for dashboard backward compatibility
+            "btc_usd": data.get("bitcoin",{}).get("usd"),
+            "btc_24h_change": round(data.get("bitcoin",{}).get("usd_24h_change") or 0, 2),
+            "eth_usd": data.get("ethereum",{}).get("usd"),
+            "eth_24h_change": round(data.get("ethereum",{}).get("usd_24h_change") or 0, 2),
+            "sol_usd": data.get("solana",{}).get("usd"),
+            "sol_24h_change": round(data.get("solana",{}).get("usd_24h_change") or 0, 2),
         }
     except Exception as e:
         log(f"CoinGecko error: {e}")
