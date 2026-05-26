@@ -1,115 +1,79 @@
 {
-  "generated": "2026-05-26 21:04 UTC",
+  "generated": "2026-05-26 21:17 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 14,
-      "no_bid": 85,
-      "yes_ask": 15,
-      "no_ask": 86,
-      "last_price": 14,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTC15M-26MAY261715-15",
+      "ticker": "KXBTC15M-26MAY261730-30",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 13,
-      "no_bid": 86,
-      "yes_ask": 14,
-      "no_ask": 87,
-      "last_price": 14,
+      "yes_bid": 75,
+      "no_bid": 24,
+      "yes_ask": 76,
+      "no_ask": 25,
+      "last_price": 75,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
     },
     {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
-      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-MAY",
+      "title": "Will Aidan Mayo win the Mayo vs Butvilas: Round Of 32 match?",
+      "yes_bid": 39,
+      "no_bid": 58,
+      "yes_ask": 42,
+      "no_ask": 61,
+      "last_price": 42,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT",
+      "title": "Will Edas Butvilas win the Mayo vs Butvilas: Round Of 32 match?",
+      "yes_bid": 57,
+      "no_bid": 40,
+      "yes_ask": 60,
+      "no_ask": 43,
+      "last_price": 57,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXVALORANTGAME-26MAY261600ADGNBG-ADG",
+      "title": "Will Azure Dragon Gaming win the Azure Dragon Gaming vs. Nightblood Gaming Valorant match?",
+      "yes_bid": 38,
+      "no_bid": 60,
+      "yes_ask": 40,
+      "no_ask": 62,
+      "last_price": 38,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXITFMATCH-26MAY26KUHJOH-JOH",
+      "title": "Will Noah Johnston win the Kuhar vs Johnston: M15 Lakewood CA Round of 32 match?",
       "yes_bid": 83,
       "no_bid": 16,
       "yes_ask": 84,
       "no_ask": 17,
       "last_price": 84,
       "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 30,
-      "no_bid": 69,
-      "yes_ask": 31,
-      "no_ask": 70,
-      "last_price": 29,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXITFMATCH-26MAY26SANZAM-SAN",
-      "title": "Will Roshan Santhosh win the Santhosh vs Zamora: M15 Lakewood CA Round of 32 match?",
-      "yes_bid": 5,
-      "no_bid": 93,
-      "yes_ask": 7,
-      "no_ask": 95,
-      "last_price": 7,
-      "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXBTCD-26MAY2618-T75899.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 55,
-      "no_bid": 43,
-      "yes_ask": 57,
-      "no_ask": 45,
-      "last_price": 57,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR",
-      "title": "Gremio vs Montevideo City Winner?",
-      "yes_bid": 13,
-      "no_bid": 86,
-      "yes_ask": 14,
-      "no_ask": 87,
-      "last_price": 14,
+      "ticker": "KXVALORANTGAME-26MAY261600ADGNBG-NBG",
+      "title": "Will Nightblood Gaming win the Azure Dragon Gaming vs. Nightblood Gaming Valorant match?",
+      "yes_bid": 60,
+      "no_bid": 39,
+      "yes_ask": 61,
+      "no_ask": 40,
+      "last_price": 62,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Sports"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T75799.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 78,
-      "no_bid": 20,
-      "yes_ask": 80,
-      "no_ask": 22,
-      "last_price": 78,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXHIGHAUS-26MAY26-B87.5",
-      "title": "Will the **high temp in Austin** be 87-88\u00b0 on May 26, 2026?",
-      "yes_bid": 48,
-      "no_bid": 51,
-      "yes_ask": 49,
-      "no_ask": 52,
-      "last_price": 49,
-      "volume": 0,
-      "close_time": "2026-05-27",
-      "category": "Other"
     },
     {
       "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
@@ -124,156 +88,184 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXHIGHTSFO-26MAY26-B64.5",
-      "title": "Will the maximum temperature be  64-65\u00b0 on May 26, 2026?",
-      "yes_bid": 91,
-      "no_bid": 7,
-      "yes_ask": 93,
-      "no_ask": 9,
-      "last_price": 93,
+      "ticker": "KXLOLGAME-26MAY261600PNGAEST-EST",
+      "title": "Will Estral Esports win the paiN Gaming Academy vs. Estral Esports League of Legends match?",
+      "yes_bid": 47,
+      "no_bid": 52,
+      "yes_ask": 48,
+      "no_ask": 53,
+      "last_price": 48,
       "volume": 0,
-      "close_time": "2026-05-27",
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26NGUSIN-SIN",
+      "title": "Will Juliana Nicole Singeorzan win the Nguyen vs Singeorzan: W15 Lakewood CA Round of 16 match?",
+      "yes_bid": 45,
+      "no_bid": 54,
+      "yes_ask": 46,
+      "no_ask": 55,
+      "last_price": 46,
+      "volume": 0,
+      "close_time": "2026-06-09",
       "category": "Other"
     },
     {
-      "ticker": "KXETH15M-26MAY261715-15",
-      "title": "ETH price up in next 15 mins?",
-      "yes_bid": 11,
-      "no_bid": 87,
-      "yes_ask": 13,
-      "no_ask": 89,
-      "last_price": 12,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T75599.99",
+      "ticker": "KXBTCD-26MAY2618-T75699.99",
       "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 96,
-      "no_bid": 3,
-      "yes_ask": 97,
-      "no_ask": 4,
-      "last_price": 97,
+      "yes_bid": 82,
+      "no_bid": 17,
+      "yes_ask": 83,
+      "no_ask": 18,
+      "last_price": 82,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
     },
     {
-      "ticker": "KXSOLD-26MAY2618-T82.9999",
-      "title": "SOL price  on May 26, 2026?",
+      "ticker": "KXBTCD-26MAY2618-T75799.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 65,
+      "no_bid": 34,
+      "yes_ask": 66,
+      "no_ask": 35,
+      "last_price": 66,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXETH15M-26MAY261730-30",
+      "title": "ETH price up in next 15 mins?",
+      "yes_bid": 74,
+      "no_bid": 25,
+      "yes_ask": 75,
+      "no_ask": 26,
+      "last_price": 74,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
+      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
       "yes_bid": 99,
       "no_bid": 0,
       "yes_ask": 100,
       "no_ask": 1,
       "last_price": 99,
       "volume": 0,
-      "close_time": "2026-05-26",
+      "close_time": "2026-06-08",
       "category": "Other"
     },
     {
-      "ticker": "KXNEWSOMENDORSE-26JUN02-XBEC",
-      "title": "Will Gavin Newsom endorse Xavier Becerra in the 2026 California gubernatorial race before Jun 2, 2026?",
-      "yes_bid": 5,
-      "no_bid": 90,
-      "yes_ask": 10,
-      "no_ask": 95,
+      "ticker": "KXBTCD-26MAY2618-T75899.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 41,
+      "no_bid": 58,
+      "yes_ask": 42,
+      "no_ask": 59,
+      "last_price": 41,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26GAREWI-EWI",
+      "title": "Will Salma Ewing win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 10,
+      "no_bid": 86,
+      "yes_ask": 14,
+      "no_ask": 90,
+      "last_price": 14,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26GAREWI-GAR",
+      "title": "Will Julia Garcia win the Garcia vs Ewing: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 84,
+      "no_bid": 9,
+      "yes_ask": 91,
+      "no_ask": 16,
+      "last_price": 88,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26NGUSIN-NGU",
+      "title": "Will Avery Nguyen win the Nguyen vs Singeorzan: W15 Lakewood CA Round of 16 match?",
+      "yes_bid": 56,
+      "no_bid": 43,
+      "yes_ask": 57,
+      "no_ask": 44,
+      "last_price": 57,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXNBAGAME-26MAY26SASOKC-OKC",
+      "title": "Game 5: San Antonio at Oklahoma City Winner?",
+      "yes_bid": 59,
+      "no_bid": 40,
+      "yes_ask": 60,
+      "no_ask": 41,
+      "last_price": 60,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBHR-26MAY261835TBBAL-BALLTAVERAS30-1",
+      "title": "Leody Taveras: 1+ home runs?",
+      "yes_bid": 8,
+      "no_bid": 91,
+      "yes_ask": 9,
+      "no_ask": 92,
       "last_price": 9,
       "volume": 0,
-      "close_time": "2026-06-02",
-      "category": "Other"
+      "close_time": "2026-05-29",
+      "category": "Sports"
     },
     {
-      "ticker": "KXHIGHLAX-26MAY27-B68.5",
-      "title": "Will the **high temp in LA** be 68-69\u00b0 on May 27, 2026?",
-      "yes_bid": 30,
-      "no_bid": 69,
-      "yes_ask": 31,
-      "no_ask": 70,
-      "last_price": 31,
-      "volume": 0,
-      "close_time": "2026-05-28",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026B0C208366EB-1E76DA97AC5",
-      "title": "yes Milwaukee,yes San Antonio,yes COL Avalanche",
+      "ticker": "KXITFWMATCH-26MAY26AYTMIR-AYT",
+      "title": "Will Maria Aytoyan win the Aytoyan vs Miroshnichenko: W15 Lakewood CA Round of 32 match?",
       "yes_bid": 12,
       "no_bid": 87,
       "yes_ask": 13,
       "no_ask": 88,
       "last_price": 13,
       "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXNBAPTS-26MAY26SASOKC-SASSCASTLE5-20",
-      "title": "Stephon Castle: 20+ points",
-      "yes_bid": 34,
-      "no_bid": 65,
-      "yes_ask": 35,
-      "no_ask": 66,
-      "last_price": 35,
-      "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T76099.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 16,
-      "no_bid": 83,
-      "yes_ask": 17,
-      "no_ask": 84,
-      "last_price": 14,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T75699.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 90,
-      "no_bid": 9,
-      "yes_ask": 91,
-      "no_ask": 10,
-      "last_price": 91,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
+      "close_time": "2026-06-09",
+      "category": "Other"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXBTCD-26MAY2618-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "side": "YES",
-      "price": 30,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
-    },
-    {
-      "ticker": "KXHIGHLAX-26MAY27-B68.5",
-      "title": "Will the **high temp in LA** be 68-69\u00b0 on May 27, 2026?",
-      "side": "YES",
-      "price": 30,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
-    },
-    {
-      "ticker": "KXBTCD-26MAY2618-T76099.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "side": "YES",
-      "price": 16,
-      "reason": "Underdog value zone + Expiring soon",
-      "edge_score": 5.0
-    },
-    {
       "ticker": "KXBTCD-26MAY2618-T75899.99",
       "title": "Bitcoin price  on May 26, 2026?",
+      "side": "YES",
+      "price": 41,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
+    },
+    {
+      "ticker": "KXBTC15M-26MAY261730-30",
+      "title": "BTC price up in next 15 mins?",
       "side": "NO",
-      "price": 45,
+      "price": 25,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXBTCD-26MAY2618-T75699.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "side": "NO",
+      "price": 18,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     },
@@ -281,7 +273,15 @@
       "ticker": "KXBTCD-26MAY2618-T75799.99",
       "title": "Bitcoin price  on May 26, 2026?",
       "side": "NO",
-      "price": 22,
+      "price": 35,
+      "reason": "Strong favorite zone + Expiring soon",
+      "edge_score": 4.5
+    },
+    {
+      "ticker": "KXETH15M-26MAY261730-30",
+      "title": "ETH price up in next 15 mins?",
+      "side": "NO",
+      "price": 26,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     }
@@ -304,7 +304,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "OKC -3.5",
           "home_fav": true,
           "home_moneyline": -162,
@@ -332,7 +332,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "SEA -3.5",
           "home_fav": true,
           "home_moneyline": -205,
@@ -360,7 +360,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "LAR -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -388,7 +388,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "CIN -3.5",
           "home_fav": true,
           "home_moneyline": -198,
@@ -416,7 +416,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "DET -7",
           "home_fav": true,
           "home_moneyline": -325,
@@ -444,7 +444,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "TEN -3",
           "home_fav": true,
           "home_moneyline": -166,
@@ -472,7 +472,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "BAL -3.5",
           "home_fav": false,
           "home_moneyline": 160,
@@ -500,7 +500,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "PIT -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -528,7 +528,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "CHI -2.5",
           "home_fav": false,
           "home_moneyline": 114,
@@ -556,7 +556,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "JAX -7",
           "home_fav": true,
           "home_moneyline": -298,
@@ -584,7 +584,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "BUF -1.5",
           "home_fav": false,
           "home_moneyline": -108,
@@ -612,7 +612,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "LV -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -640,7 +640,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "GB -1.5",
           "home_fav": false,
           "home_moneyline": 105,
@@ -668,7 +668,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "PHI -5.5",
           "home_fav": true,
           "home_moneyline": -238,
@@ -696,7 +696,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "LAC -11.5",
           "home_fav": true,
           "home_moneyline": -650,
@@ -724,7 +724,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "DAL -2.5",
           "home_fav": false,
           "home_moneyline": 110,
@@ -752,7 +752,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "KC -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -1200,7 +1200,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "Draft Kings",
+          "provider": "DraftKings",
           "details": "COL -115",
           "home_fav": false,
           "home_moneyline": -105,
@@ -9989,7 +9989,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Soreness",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-27"
     },
     {
       "player": "Heston Kjerstad",
@@ -10124,7 +10124,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Fracture",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-27"
     },
     {
       "player": "Roman Anthony",
@@ -12293,7 +12293,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Not Specified",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-29"
     },
     {
       "player": "Ryan Pepiot",
@@ -12311,7 +12311,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Not Specified",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-27"
     },
     {
       "player": "Alfredo Zarraga",
@@ -13826,7 +13826,7 @@
       "headline": "2027 NFL draft quarterback class: Top prospects to know",
       "sport": "football",
       "league": "nfl",
-      "published": "2026-05-26T21:00:48Z",
+      "published": "2026-05-26T21:04:24Z",
       "is_alert": false,
       "url": "https://www.espn.com/nfl/draft2027/story/_/id/48828988/2027-nfl-draft-quarterback-class-top-prospects-manning-moore-carr"
     },
@@ -13834,7 +13834,7 @@
       "headline": "Texans give star WR Nico Collins raise in reworked deal",
       "sport": "football",
       "league": "nfl",
-      "published": "2026-05-26T20:52:06Z",
+      "published": "2026-05-26T21:13:54Z",
       "is_alert": false,
       "url": "https://www.espn.com/nfl/story/_/id/48883953/texans-give-star-wr-nico-collins-raise-reworked-deal"
     },
@@ -13943,6 +13943,14 @@
       "url": "https://www.espn.com/espn/betting/story/_/id/44686270/2026-nhl-stanley-cup-playoffs-championship-odds"
     },
     {
+      "headline": "World Cup 2026: Which players from your Premier League team are going?",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T21:01:28Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48709856/world-cup-2026-which-players-your-premier-league-team-going"
+    },
+    {
       "headline": "Pulisic 'feeling great' ahead of World Cup with the USMNT",
       "sport": "soccer",
       "league": "fifa.world",
@@ -13973,14 +13981,6 @@
       "published": "2026-05-26T20:24:09Z",
       "is_alert": false,
       "url": "https://www.espn.com/soccer/story/_/id/48838557/live-updates-united-states-national-team-2026-fifa-world-cup-roster-reveal"
-    },
-    {
-      "headline": "FIFA World Cup squads for African teams - South Africa, Ghana, Ivory Coast, Morocco, and more",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:27:29Z",
-      "is_alert": true,
-      "url": "https://www.espn.com/espn/story/_/id/48806568/fifa-world-cup-squads-african-teams-south-africa-ghana-ivory-coast-morocco-more"
     }
   ],
   "crypto": {},
