@@ -25,6 +25,10 @@ _BASE = {
     "prod": "https://trading-api.kalshi.com/trade-api/v2",
     "demo": "https://demo-api.kalshi.co/trade-api/v2",
 }
+_PREFIX = {
+    "prod": "/trade-api/v2",
+    "demo": "/trade-api/v2",
+}
 
 
 def _load_private_key():
@@ -54,6 +58,7 @@ class KalshiClient:
     def __init__(self, env: str | None = None):
         env = env or os.getenv("KALSHI_ENV", "demo")
         self.base_url = _BASE[env]
+        self._api_prefix = _PREFIX[env]
         self.api_key_id = os.getenv("KALSHI_API_KEY_ID", "")
         self._private_key = _load_private_key()
         self._http = httpx.Client(base_url=self.base_url, timeout=15)
@@ -61,7 +66,9 @@ class KalshiClient:
     # ── Auth ───────────────────────────────────────────────────────────────────
     def _auth_headers(self, method: str, path: str) -> dict[str, str]:
         ts = int(time.time() * 1000)
-        sig = _sign(self._private_key, ts, method, path)
+        # Kalshi expects the full path including the /trade-api/v2 prefix
+        full_path = self._api_prefix + path
+        sig = _sign(self._private_key, ts, method, full_path)
         return {
             "KALSHI-ACCESS-KEY": self.api_key_id,
             "KALSHI-ACCESS-TIMESTAMP": str(ts),
