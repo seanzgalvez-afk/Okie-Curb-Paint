@@ -1,290 +1,1338 @@
 {
-  "generated": "2026-05-26 20:07 UTC",
+  "generated": "2026-05-26 20:33 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
-      "ticker": "KXWTAMATCH-26MAY24BIRPEG-PEG",
-      "title": "Will Jessica Pegula win the Birrell vs Pegula: Round Of 128 match?",
-      "yes_bid": 35,
-      "no_bid": 64,
-      "yes_ask": 36,
-      "no_ask": 65,
-      "last_price": 40,
-      "volume": 0,
-      "close_time": "2026-06-07",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXBTC15M-26MAY261615-15",
+      "ticker": "KXBTC15M-26MAY261645-45",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 82,
-      "no_bid": 17,
-      "yes_ask": 83,
-      "no_ask": 18,
-      "last_price": 82,
+      "yes_bid": 37,
+      "no_bid": 62,
+      "yes_ask": 38,
+      "no_ask": 63,
+      "last_price": 37,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Crypto"
-    },
-    {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 44,
-      "no_bid": 55,
-      "yes_ask": 45,
-      "no_ask": 56,
-      "last_price": 46,
-      "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
-    },
-    {
-      "ticker": "KXT20MATCH-26MAY261400ESSHAM-ESS",
-      "title": "Hampshire vs Essex Winner?",
-      "yes_bid": 1,
-      "no_bid": 98,
-      "yes_ask": 2,
-      "no_ask": 99,
-      "last_price": 2,
-      "volume": 0,
-      "close_time": "2026-05-28",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXWTAMATCH-26MAY24BIRPEG-BIR",
-      "title": "Will Kimberly Birrell win the Birrell vs Pegula: Round Of 128 match?",
-      "yes_bid": 66,
-      "no_bid": 32,
-      "yes_ask": 68,
-      "no_ask": 34,
-      "last_price": 69,
-      "volume": 0,
-      "close_time": "2026-06-07",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXCS2GAME-26MAY261300BWKOL-KOL",
-      "title": "Will KOLESIE win the Bushido Wildcats vs. KOLESIE CS2 match?",
-      "yes_bid": 53,
-      "no_bid": 44,
-      "yes_ask": 56,
-      "no_ask": 47,
-      "last_price": 53,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 33,
-      "no_bid": 66,
-      "yes_ask": 34,
-      "no_ask": 67,
-      "last_price": 34,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXTXPRIMARY-35R26-JLUJ",
-      "title": "Will John Lujan be the Republican nominee for TX-35?",
-      "yes_bid": 10,
-      "no_bid": 83,
-      "yes_ask": 17,
-      "no_ask": 90,
-      "last_price": 16,
-      "volume": 0,
-      "close_time": "2027-11-03",
-      "category": "Other"
     },
     {
       "ticker": "KXATPMATCH-26MAY25AUGALT-AUG",
       "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "yes_bid": 66,
-      "no_bid": 33,
-      "yes_ask": 67,
-      "no_ask": 34,
-      "last_price": 67,
+      "yes_bid": 20,
+      "no_bid": 79,
+      "yes_ask": 21,
+      "no_ask": 80,
+      "last_price": 21,
       "volume": 0,
       "close_time": "2026-06-08",
       "category": "Other"
     },
     {
-      "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
-      "title": "Game 5: San Antonio at Oklahoma City Winner?",
-      "yes_bid": 39,
-      "no_bid": 60,
-      "yes_ask": 40,
-      "no_ask": 61,
-      "last_price": 40,
+      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
+      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
+      "yes_bid": 78,
+      "no_bid": 21,
+      "yes_ask": 79,
+      "no_ask": 22,
+      "last_price": 79,
       "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
+      "close_time": "2026-06-08",
+      "category": "Other"
     },
     {
-      "ticker": "KXHYPE15M-26MAY261615-15",
-      "title": "HYPE price up in next 15 mins?",
-      "yes_bid": 5,
-      "no_bid": 81,
-      "yes_ask": 19,
-      "no_ask": 95,
-      "last_price": 6,
+      "ticker": "KXITFMATCH-26MAY26SANZAM-SAN",
+      "title": "Will Roshan Santhosh win the Santhosh vs Zamora: M15 Lakewood CA Round of 32 match?",
+      "yes_bid": 11,
+      "no_bid": 87,
+      "yes_ask": 13,
+      "no_ask": 89,
+      "last_price": 15,
       "volume": 0,
-      "close_time": "2026-05-26",
+      "close_time": "2026-06-09",
       "category": "Other"
     },
     {
       "ticker": "KXLIGUE1GAME-26MAY26STENIC-TIE",
       "title": "Saint-Etienne vs Nice Winner?",
-      "yes_bid": 52,
-      "no_bid": 46,
-      "yes_ask": 54,
-      "no_ask": 48,
-      "last_price": 53,
+      "yes_bid": 81,
+      "no_bid": 18,
+      "yes_ask": 82,
+      "no_ask": 19,
+      "last_price": 82,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Sports"
     },
     {
-      "ticker": "KXNBATOTAL-26MAY26SASOKC-224",
-      "title": "Game 5: San Antonio at Oklahoma City: Total Points",
-      "yes_bid": 35,
+      "ticker": "KXLOLGAME-26MAY261600PNGAEST-PNGA",
+      "title": "Will paiN Gaming Academy win the paiN Gaming Academy vs. Estral Esports League of Legends match?",
+      "yes_bid": 20,
+      "no_bid": 79,
+      "yes_ask": 21,
+      "no_ask": 80,
+      "last_price": 21,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXETH15M-26MAY261645-45",
+      "title": "ETH price up in next 15 mins?",
+      "yes_bid": 33,
       "no_bid": 64,
       "yes_ask": 36,
-      "no_ask": 65,
-      "last_price": 36,
+      "no_ask": 67,
+      "last_price": 33,
       "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXINXU-26MAY27H1600-T7499.9999",
-      "title": "Will the S&P 500 be above 7499.9999 on May 27, 2026 at 4pm EDT?",
-      "yes_bid": 58,
-      "no_bid": 32,
-      "yes_ask": 68,
-      "no_ask": 42,
-      "last_price": 67,
-      "volume": 0,
-      "close_time": "2026-05-27",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S202645EDC8BDEC5-A054F59DA8B",
-      "title": "yes Chet Holmgren: 1+,yes Shai Gilgeous-Alexander: 1+,yes De'Aaron Fox: 1+,yes Stephon Castle: 1+,yes Victor Wembanyama: 1+,yes Shai Gilgeous-Alexander: 8+,yes De'Aaron Fox: 4+,yes Stephon Castle: 6+,yes Victor Wembanyama: 2+,yes Chet Holmgren: 10+,yes Shai Gilgeous-Alexander: 20+,yes Devin Vassell: 10+,yes Chet Holmgren: 4+,yes Isaiah Hartenstein: 4+,yes Shai Gilgeous-Alexander: 2+,yes De'Aaron Fox: 4+,yes Stephon Castle: 2+,yes Shai Gilgeous-Alexander: 1+,yes Stephon Castle: 1+,yes Victor Wembanyama: 1+",
-      "yes_bid": 1,
-      "no_bid": 99,
-      "yes_ask": 1,
-      "no_ask": 100,
-      "last_price": 1,
-      "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXCS2GAME-26MAY261300BWKOL-BW",
-      "title": "Will Bushido Wildcats win the Bushido Wildcats vs. KOLESIE CS2 match?",
-      "yes_bid": 43,
-      "no_bid": 53,
-      "yes_ask": 47,
-      "no_ask": 57,
-      "last_price": 45,
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
+      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 27,
+      "no_bid": 71,
+      "yes_ask": 29,
+      "no_ask": 73,
+      "last_price": 29,
       "volume": 0,
       "close_time": "2026-06-09",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXPGATOUR-CHSC26-MMCC",
-      "title": "Will Matthew McCarty win the Charles Schwab Challenge?",
-      "yes_bid": 1,
-      "no_bid": 97,
-      "yes_ask": 3,
-      "no_ask": 99,
-      "last_price": 3,
-      "volume": 0,
-      "close_time": "2026-06-14",
       "category": "Other"
     },
     {
-      "ticker": "KXMVESPORTSMULTIGAMEEXTENDED-S2026988319EEA3A-F95EC6EC279",
-      "title": "yes Felix Auger-Aliassime,yes Kimberly Birrell",
-      "yes_bid": 45,
-      "no_bid": 55,
-      "yes_ask": 45,
-      "no_ask": 100,
-      "last_price": 45,
-      "volume": 0,
-      "close_time": "2026-06-08",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXBRENTD-26MAY2617-T96.50",
-      "title": "Will the brent crude oil close price be above 96.50  USD/Bbl on May 26, 2026 at 5:00 PM EDT?",
-      "yes_bid": 54,
+      "ticker": "KXBNB15M-26MAY261645-45",
+      "title": "BNB price up in next 15 mins?",
+      "yes_bid": 52,
       "no_bid": 43,
       "yes_ask": 57,
-      "no_ask": 46,
-      "last_price": 48,
+      "no_ask": 48,
+      "last_price": 54,
       "volume": 0,
       "close_time": "2026-05-26",
       "category": "Other"
     },
     {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-MON",
-      "title": "Will Johannus Monday win the Monday vs Shick: Round Of 32 match?",
-      "yes_bid": 55,
-      "no_bid": 43,
-      "yes_ask": 57,
-      "no_ask": 45,
-      "last_price": 58,
+      "ticker": "KXLOLMAP-26MAY261600PNGAEST-1-PNGA",
+      "title": "Will paiN Gaming Academy win map 1 in the paiN Gaming Academy vs. Estral Esports match?",
+      "yes_bid": 50,
+      "no_bid": 46,
+      "yes_ask": 54,
+      "no_ask": 50,
+      "last_price": 49,
       "volume": 0,
       "close_time": "2026-06-09",
       "category": "Other"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
+      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
+      "yes_bid": 23,
+      "no_bid": 75,
+      "yes_ask": 25,
+      "no_ask": 77,
+      "last_price": 23,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXHIGHAUS-26MAY26-B91.5",
+      "title": "Will the **high temp in Austin** be 91-92\u00b0 on May 26, 2026?",
+      "yes_bid": 2,
+      "no_bid": 97,
+      "yes_ask": 3,
+      "no_ask": 98,
+      "last_price": 1,
+      "volume": 0,
+      "close_time": "2026-05-27",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXGOLDD-26MAY2617-T4515",
+      "title": "Will the gold close price be above 4515  USD/t.oz on May 26, 2026 at 5:00 PM EDT?",
+      "yes_bid": 8,
+      "no_bid": 85,
+      "yes_ask": 15,
+      "no_ask": 92,
+      "last_price": 8,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMLBF5-26MAY262145AZSF-AZ",
+      "title": "Arizona vs San Francisco first 5 innings winner?",
+      "yes_bid": 44,
+      "no_bid": 55,
+      "yes_ask": 45,
+      "no_ask": 56,
+      "last_price": 45,
+      "volume": 0,
+      "close_time": "2026-05-30",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26RAPSHO-SHO",
+      "title": "Will Maria Sholokhova win the Rapolu vs Sholokhova: W35 Wichita KS Round of 32 match?",
+      "yes_bid": 61,
+      "no_bid": 38,
+      "yes_ask": 62,
+      "no_ask": 39,
+      "last_price": 62,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXLOLGAME-26MAY261600PNGAEST-EST",
+      "title": "Will Estral Esports win the paiN Gaming Academy vs. Estral Esports League of Legends match?",
+      "yes_bid": 78,
+      "no_bid": 21,
+      "yes_ask": 79,
+      "no_ask": 22,
+      "last_price": 79,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBF5TOTAL-26MAY261810WSHCLE-4",
+      "title": "Washington vs Cleveland first 5 innings runs?",
+      "yes_bid": 55,
+      "no_bid": 44,
+      "yes_ask": 56,
+      "no_ask": 45,
+      "last_price": 56,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBHIT-26MAY261845ATLBOS-ATLMOLSON28-1",
+      "title": "Matt Olson: 1+ hits?",
+      "yes_bid": 64,
+      "no_bid": 34,
+      "yes_ask": 66,
+      "no_ask": 36,
+      "last_price": 66,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXLIGUE1GAME-26MAY26STENIC-NIC",
+      "title": "Saint-Etienne vs Nice Winner?",
+      "yes_bid": 9,
+      "no_bid": 90,
+      "yes_ask": 10,
+      "no_ask": 91,
+      "last_price": 10,
+      "volume": 0,
+      "close_time": "2026-06-09",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2617-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 61,
+      "no_bid": 38,
+      "yes_ask": 62,
+      "no_ask": 39,
+      "last_price": 61,
+      "volume": 0,
+      "close_time": "2026-05-26",
+      "category": "Crypto"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXBTCD-26MAY2617-T75999.99",
-      "title": "Bitcoin price  on May 26, 2026?",
+      "ticker": "KXBTC15M-26MAY261645-45",
+      "title": "BTC price up in next 15 mins?",
+      "side": "YES",
+      "price": 37,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
+    },
+    {
+      "ticker": "KXETH15M-26MAY261645-45",
+      "title": "ETH price up in next 15 mins?",
+      "side": "YES",
+      "price": 33,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
+    },
+    {
+      "ticker": "KXMLBF5-26MAY262145AZSF-AZ",
+      "title": "Arizona vs San Francisco first 5 innings winner?",
       "side": "YES",
       "price": 44,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXBTC15M-26MAY261615-15",
-      "title": "BTC price up in next 15 mins?",
+      "ticker": "KXMLBF5TOTAL-26MAY261810WSHCLE-4",
+      "title": "Washington vs Cleveland first 5 innings runs?",
       "side": "NO",
-      "price": 18,
+      "price": 45,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
     },
     {
-      "ticker": "KXINXU-26MAY27H1600-T7499.9999",
-      "title": "Will the S&P 500 be above 7499.9999 on May 27, 2026 at 4pm EDT?",
+      "ticker": "KXMLBHIT-26MAY261845ATLBOS-ATLMOLSON28-1",
+      "title": "Matt Olson: 1+ hits?",
       "side": "NO",
-      "price": 42,
+      "price": 36,
       "reason": "Strong favorite zone + Expiring soon",
       "edge_score": 4.5
-    },
-    {
-      "ticker": "KXWTAMATCH-26MAY24BIRPEG-PEG",
-      "title": "Will Jessica Pegula win the Birrell vs Pegula: Round Of 128 match?",
-      "side": "YES",
-      "price": 35,
-      "reason": "Underdog value zone + Expiring within 2 weeks",
-      "edge_score": 4.0
-    },
-    {
-      "ticker": "KXATPMATCH-26MAY25AUGALT-ALT",
-      "title": "Will Daniel Altmaier win the Auger-Aliassime vs Altmaier: Round Of 128 match?",
-      "side": "YES",
-      "price": 33,
-      "reason": "Underdog value zone + Expiring within 2 weeks",
-      "edge_score": 4.0
     }
   ],
-  "edges": []
+  "edges": [
+    {
+      "ticker": "KXLIGUE1GAME-26MAY26STENIC-NIC",
+      "title": "Saint-Etienne vs Nice Winner?",
+      "kalshi_price": 9,
+      "vegas_prob": 81.0,
+      "gap": 72.0,
+      "direction": "BUY YES",
+      "game": "Las Vegas Raiders @ New England Patriots",
+      "game_time": "2026-10-11T17:00:00Z",
+      "books": [
+        "DraftKings: -425"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXLIGUE1GAME-26MAY26STENIC-NIC",
+      "title": "Saint-Etienne vs Nice Winner?",
+      "kalshi_price": 9,
+      "vegas_prob": 69.7,
+      "gap": 60.7,
+      "direction": "BUY YES",
+      "game": "Pittsburgh Steelers @ New England Patriots",
+      "game_time": "2026-09-20T17:00:00Z",
+      "books": [
+        "DraftKings: -230"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXLOLGAME-26MAY261600PNGAEST-PNGA",
+      "title": "Will paiN Gaming Academy win the paiN Gaming Academy vs. Estral Esports League of Legends match?",
+      "kalshi_price": 20,
+      "vegas_prob": 78.9,
+      "gap": 58.9,
+      "direction": "BUY YES",
+      "game": "Miami Dolphins @ Minnesota Vikings",
+      "game_time": "2026-10-04T20:05:00Z",
+      "books": [
+        "DraftKings: -375"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
+      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
+      "kalshi_price": 23,
+      "vegas_prob": 81.0,
+      "gap": 58.0,
+      "direction": "BUY YES",
+      "game": "Las Vegas Raiders @ New England Patriots",
+      "game_time": "2026-10-11T17:00:00Z",
+      "books": [
+        "DraftKings: -425"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
+      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
+      "kalshi_price": 27,
+      "vegas_prob": 81.0,
+      "gap": 54.0,
+      "direction": "BUY YES",
+      "game": "Las Vegas Raiders @ New England Patriots",
+      "game_time": "2026-10-11T17:00:00Z",
+      "books": [
+        "DraftKings: -425"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXLIGUE1GAME-26MAY26STENIC-NIC",
+      "title": "Saint-Etienne vs Nice Winner?",
+      "kalshi_price": 9,
+      "vegas_prob": 62.9,
+      "gap": 53.9,
+      "direction": "BUY YES",
+      "game": "New York Knicks @ San Antonio Spurs",
+      "game_time": "2026-06-04T00:40:00Z",
+      "books": [
+        "FanDuel: -164",
+        "DraftKings: -175"
+      ],
+      "sport": "basketball_nba"
+    },
+    {
+      "ticker": "KXITFWMATCH-26MAY26CAYIYE-IYE",
+      "title": "Will Maya Iyengar win the Cayetano vs Iyengar: W35 Wichita KS Round of 32 match?",
+      "kalshi_price": 27,
+      "vegas_prob": 79.2,
+      "gap": 52.2,
+      "direction": "BUY YES",
+      "game": "New York Jets @ Chicago Bears",
+      "game_time": "2026-10-04T17:00:00Z",
+      "books": [
+        "DraftKings: -380"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXITFMATCH-26MAY26SANZAM-SAN",
+      "title": "Will Roshan Santhosh win the Santhosh vs Zamora: M15 Lakewood CA Round of 32 match?",
+      "kalshi_price": 11,
+      "vegas_prob": 62.9,
+      "gap": 51.9,
+      "direction": "BUY YES",
+      "game": "New York Knicks @ San Antonio Spurs",
+      "game_time": "2026-06-04T00:40:00Z",
+      "books": [
+        "FanDuel: -164",
+        "DraftKings: -175"
+      ],
+      "sport": "basketball_nba"
+    },
+    {
+      "ticker": "KXETH15M-26MAY261645-45",
+      "title": "ETH price up in next 15 mins?",
+      "kalshi_price": 33,
+      "vegas_prob": 81.0,
+      "gap": 48.0,
+      "direction": "BUY YES",
+      "game": "Las Vegas Raiders @ New England Patriots",
+      "game_time": "2026-10-11T17:00:00Z",
+      "books": [
+        "DraftKings: -425"
+      ],
+      "sport": "americanfootball_nfl"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
+      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
+      "kalshi_price": 23,
+      "vegas_prob": 69.7,
+      "gap": 46.7,
+      "direction": "BUY YES",
+      "game": "Pittsburgh Steelers @ New England Patriots",
+      "game_time": "2026-09-20T17:00:00Z",
+      "books": [
+        "DraftKings: -230"
+      ],
+      "sport": "americanfootball_nfl"
+    }
+  ],
+  "espn_injuries": [
+    {
+      "player": "Keshon Gilbert",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-07-02"
+    },
+    {
+      "player": "Jock Landale",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jayson Tatum",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Nolan Traore",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Nic Claxton",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ziaire Williams",
+      "team": "",
+      "status": "Out",
+      "detail": "Inflammation",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Noah Clowney",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Terance Mann",
+      "team": "",
+      "status": "Out",
+      "detail": "Tendinitis",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Josh Minott",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Michael Porter Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Danny Wolf",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Egor Demin",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Day'Ron Sharpe",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Brandon Miller",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "PJ Hall",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Josh Giddey",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Rob Dillingham",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Isaac Okoro",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Matas Buzelis",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Anfernee Simons",
+      "team": "",
+      "status": "Out",
+      "detail": "Fracture",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Guerschon Yabusele",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Nick Richards",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jalen Smith",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Zach Collins",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Noa Essengue",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Dennis Schroder",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Cooper Flagg",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Brandon Williams",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Marvin Bagley III",
+      "team": "",
+      "status": "Out",
+      "detail": "Pinched Nerve",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "P.J. Washington",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Caleb Martin",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Naji Marshall",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kyrie Irving",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Dereck Lively II",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Aaron Gordon",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Peyton Watson",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Quinten Post",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "LJ Cryer",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-07-02"
+    },
+    {
+      "player": "Moses Moody",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-12-01"
+    },
+    {
+      "player": "Jimmy Butler III",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-12-01"
+    },
+    {
+      "player": "Kevin Durant",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Steven Adams",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Fred VanVleet",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ben Sheppard",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jarace Walker",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Andrew Nembhard",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Aaron Nesmith",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Pascal Siakam",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "T.J. McConnell",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Tyrese Haliburton",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ivica Zubac",
+      "team": "",
+      "status": "Out",
+      "detail": "Fracture",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Johnny Furphy",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2027-01-01"
+    },
+    {
+      "player": "Yanic Konan Niederhauser",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Bradley Beal",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Luka Doncic",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Walter Clayton Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Pinched Nerve",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Adama Bal",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Cedric Coward",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Cam Spencer",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "GG Jackson",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Taylor Hendricks",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ty Jerome",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jaylen Wells",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Zach Edey",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ja Morant",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Santi Aldama",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Scotty Pippen Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kentavious Caldwell-Pope",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Tyler Herro",
+      "team": "",
+      "status": "Out",
+      "detail": "",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Bam Adebayo",
+      "team": "",
+      "status": "Out",
+      "detail": "",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Dru Smith",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Nikola Jovic",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Giannis Antetokounmpo",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Pete Nance",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Gary Harris",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Myles Turner",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Gary Trent Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Ryan Rollins",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Bobby Portis",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kyle Kuzma",
+      "team": "",
+      "status": "Out",
+      "detail": "Tendinitis",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kevin Porter Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Donte DiVincenzo",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2027-04-01"
+    },
+    {
+      "player": "Trey Murphy III",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Dejounte Murray",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Bryce McGowens",
+      "team": "",
+      "status": "Out",
+      "detail": "Fracture",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Yves Missi",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Karlo Matkovic",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Zion Williamson",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jalen Williams",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-05-26"
+    },
+    {
+      "player": "Ajay Mitchell",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-05-28"
+    },
+    {
+      "player": "Thomas Sorber",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jonathan Isaac",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Franz Wagner",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jordan Goodwin",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Mark Williams",
+      "team": "",
+      "status": "Out",
+      "detail": "Fracture",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Damian Lillard",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Keegan Murray",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Isaiah Stevens",
+      "team": "",
+      "status": "Out",
+      "detail": "Soreness",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "DeMar DeRozan",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Malik Monk",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Russell Westbrook",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Drew Eubanks",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "De'Andre Hunter",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Domantas Sabonis",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Zach LaVine",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "David Jones Garcia",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-07-02"
+    },
+    {
+      "player": "Brandon Ingram",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Immanuel Quickley",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Chucky Hepburn",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-07-02"
+    },
+    {
+      "player": "Isaiah Collier",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kyle Filipowski",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Elijah Harkless",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Keyonte George",
+      "team": "",
+      "status": "Out",
+      "detail": "Strain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Lauri Markkanen",
+      "team": "",
+      "status": "Out",
+      "detail": "Pinched Nerve",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jusuf Nurkic",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Jaren Jackson Jr.",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Walker Kessler",
+      "team": "",
+      "status": "Out",
+      "detail": "Surgery",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Tristan Vukcevic",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Alex Sarr",
+      "team": "",
+      "status": "Out",
+      "detail": "Inflammation",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Bilal Coulibaly",
+      "team": "",
+      "status": "Out",
+      "detail": "Inflammation",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Tre Johnson",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Anthony Davis",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Trae Young",
+      "team": "",
+      "status": "Out",
+      "detail": "Bruise",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Kyshawn George",
+      "team": "",
+      "status": "Out",
+      "detail": "Sprain",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "D'Angelo Russell",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    },
+    {
+      "player": "Cam Whitmore",
+      "team": "",
+      "status": "Out",
+      "detail": "Not Specified",
+      "return_date": "2026-10-01"
+    }
+  ],
+  "espn_games": [
+    {
+      "game_id": "401873201",
+      "name": "San Antonio Spurs at Oklahoma City Thunder",
+      "date": "2026-05-27T00:30Z",
+      "status": "Scheduled",
+      "home_team": "Oklahoma City Thunder",
+      "away_team": "San Antonio Spurs",
+      "home_score": "0",
+      "away_score": "0"
+    }
+  ],
+  "crypto": {
+    "btc_usd": 76037,
+    "btc_24h_change": -1.75,
+    "eth_usd": 2074.19,
+    "eth_24h_change": -2.05,
+    "sol_usd": 83.77,
+    "sol_24h_change": -2.13
+  },
+  "metaculus": []
 }
