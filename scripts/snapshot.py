@@ -228,67 +228,180 @@ def score_market(m, all_volumes, today):
     return round(score, 2), (" + ".join(reasons) if reasons else "Liquid market")
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# ESPN — NBA injury reports and today's games
+# ESPN — multi-sport data: injuries, scoreboard, odds, news, win probability
+# Free, no API key required.
+# Docs: github.com/pseudo-r/Public-ESPN-API
 # ═══════════════════════════════════════════════════════════════════════════════
-ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports"
+ESPN_SITE   = "https://site.api.espn.com/apis/site/v2/sports"
+ESPN_CORE   = "https://sports.core.api.espn.com/v2/sports"
+ESPN_NOW    = "https://now.core.api.espn.com/v1/sports"
+
+# Sports/leagues to monitor — covers every Kalshi sports category
+ESPN_SPORTS = [
+    ("basketball", "nba"),
+    ("football",   "nfl"),
+    ("baseball",   "mlb"),
+    ("hockey",     "nhl"),
+    ("soccer",     "fifa.world"),   # FIFA World Cup 2026
+    ("soccer",     "usa.1"),        # MLS
+    ("tennis",     "atp"),          # ATP
+    ("golf",       "pga"),          # PGA Tour
+    ("mma",        "ufc"),          # UFC
+]
+
+def _espn_get(url, params=None):
+    """Simple ESPN GET with timeout, returns json or None."""
+    try:
+        r = httpx.get(url, params=params or {}, timeout=10,
+                      headers={"User-Agent": "Mozilla/5.0"})
+        return r.json() if r.status_code == 200 else None
+    except Exception:
+        return None
+
+def fetch_espn_scoreboard():
+    """Fetch today's games across all sports. Returns list of game dicts with event IDs."""
+    all_games = []
+    for sport, league in ESPN_SPORTS:
+        data = _espn_get(f"{ESPN_SITE}/{sport}/{league}/scoreboard")
+        if not data:
+            continue
+        for event in data.get("events", []):
+            comp  = event.get("competitions", [{}])[0]
+            teams = comp.get("competitors", [])
+            game  = {
+                "event_id":   event.get("id", ""),
+                "sport":      sport,
+                "league":     league,
+                "name":       event.get("name", ""),
+                "short_name": event.get("shortName", ""),
+                "date":       event.get("date", ""),
+                "status":     event.get("status", {}).get("type", {}).get("description", ""),
+                "home_team":  "", "away_team": "",
+                "home_score": None, "away_score": None,
+                "home_win_pct": None, "away_win_pct": None,
+            }
+            for t in teams:
+                side = "home" if t.get("homeAway") == "home" else "away"
+                game[f"{side}_team"]  = t.get("team", {}).get("displayName", "")
+                game[f"{side}_score"] = t.get("score")
+                # Win probability sometimes embedded in scoreboard
+                wp = t.get("statistics", [])
+                for stat in wp:
+                    if stat.get("name") == "winProbability":
+                        game[f"{side}_win_pct"] = stat.get("displayValue")
+            all_games.append(game)
+        log(f"ESPN {sport}/{league} scoreboard -> {len(data.get('events',[]))} games")
+    return all_games
 
 def fetch_espn_injuries():
-    """Fetch NBA injury report from ESPN. Returns list of injury dicts."""
-    try:
-        r = httpx.get(f"{ESPN_BASE}/basketball/nba/injuries", timeout=10)
-        if r.status_code != 200:
-            return []
-        data = r.json()
-        injuries = []
+    """Fetch injury reports across all sports. Returns combined list."""
+    all_injuries = []
+    for sport, league in ESPN_SPORTS:
+        data = _espn_get(f"{ESPN_SITE}/{sport}/{league}/injuries")
+        if not data:
+            continue
         for team in data.get("injuries", []):
             team_name = team.get("team", {}).get("displayName", "")
             for inj in team.get("injuries", []):
                 athlete = inj.get("athlete", {})
-                injuries.append({
-                    "player": athlete.get("displayName", ""),
-                    "team": team_name,
-                    "status": inj.get("status", ""),  # "Out", "Questionable", "Doubtful"
-                    "detail": inj.get("details", {}).get("detail", ""),
+                all_injuries.append({
+                    "player":      athlete.get("displayName", ""),
+                    "team":        team_name,
+                    "sport":       sport,
+                    "league":      league,
+                    "status":      inj.get("status", ""),
+                    "detail":      inj.get("details", {}).get("detail", ""),
                     "return_date": inj.get("details", {}).get("returnDate", ""),
                 })
-        return injuries
-    except Exception as e:
-        log(f"ESPN injuries error: {e}")
-        return []
+    log(f"ESPN injuries total: {len(all_injuries)}")
+    return all_injuries
 
-def fetch_espn_games():
-    """Fetch today's NBA games from ESPN."""
-    try:
-        r = httpx.get(f"{ESPN_BASE}/basketball/nba/scoreboard", timeout=10)
-        if r.status_code != 200:
-            return []
-        data = r.json()
-        games = []
-        for event in data.get("events", []):
-            comp = event.get("competitions", [{}])[0]
-            teams = comp.get("competitors", [])
-            game = {
-                "game_id": event.get("id", ""),
-                "name": event.get("name", ""),
-                "date": event.get("date", ""),
-                "status": event.get("status", {}).get("type", {}).get("description", ""),
-                "home_team": "",
-                "away_team": "",
-                "home_score": None,
-                "away_score": None,
-            }
-            for t in teams:
-                if t.get("homeAway") == "home":
-                    game["home_team"] = t.get("team", {}).get("displayName", "")
-                    game["home_score"] = t.get("score")
-                else:
-                    game["away_team"] = t.get("team", {}).get("displayName", "")
-                    game["away_score"] = t.get("score")
-            games.append(game)
-        return games
-    except Exception as e:
-        log(f"ESPN games error: {e}")
+def fetch_espn_news():
+    """Fetch breaking news headlines across all sports (real-time injury/lineup alerts)."""
+    all_news = []
+    # Only fetch news for major sports to save API credits
+    for sport, league in [("basketball","nba"),("football","nfl"),("baseball","mlb"),
+                           ("hockey","nhl"),("soccer","fifa.world")]:
+        data = _espn_get(f"{ESPN_SITE}/{sport}/{league}/news", {"limit": 5})
+        if not data:
+            continue
+        for article in data.get("articles", []):
+            headline = article.get("headline", "")
+            # Flag injury/lineup relevant headlines
+            keywords = ["injured","injury","questionable","doubtful","out","ruled out",
+                        "inactive","starting","lineup","suspended","trade","waived"]
+            is_alert = any(kw in headline.lower() for kw in keywords)
+            all_news.append({
+                "headline":   headline,
+                "sport":      sport,
+                "league":     league,
+                "published":  article.get("published", ""),
+                "is_alert":   is_alert,
+                "url":        article.get("links", {}).get("web", {}).get("href", ""),
+            })
+    log(f"ESPN news total: {len(all_news)} articles")
+    return all_news
+
+def fetch_espn_game_odds(sport, league, event_id):
+    """Fetch ESPN's own betting odds for a specific game. Free, no key needed."""
+    data = _espn_get(
+        f"{ESPN_CORE}/{sport}/leagues/{league}/events/{event_id}"
+        f"/competitions/{event_id}/odds"
+    )
+    if not data:
         return []
+    odds_list = []
+    for item in data.get("items", []):
+        provider = item.get("provider", {}).get("name", "ESPN")
+        details  = item.get("details", "")
+        home_odds = item.get("homeTeamOdds", {})
+        away_odds = item.get("awayTeamOdds", {})
+        odds_list.append({
+            "provider":      provider,
+            "details":       details,
+            "home_fav":      home_odds.get("favorite", False),
+            "home_moneyline": home_odds.get("moneyLine"),
+            "away_moneyline": away_odds.get("moneyLine"),
+            "home_win_pct":  home_odds.get("winPercentage"),
+            "away_win_pct":  away_odds.get("winPercentage"),
+            "spread":        item.get("spread"),
+            "over_under":    item.get("overUnder"),
+        })
+    return odds_list
+
+def fetch_espn_win_probability(sport, league, event_id):
+    """Fetch live in-game win probability for an ongoing game."""
+    data = _espn_get(
+        f"{ESPN_CORE}/{sport}/leagues/{league}/events/{event_id}"
+        f"/competitions/{event_id}/probabilities"
+    )
+    if not data:
+        return None
+    items = data.get("items", [])
+    if not items:
+        return None
+    latest = items[-1]  # most recent probability
+    return {
+        "home_win_pct": latest.get("homeWinPercentage"),
+        "away_win_pct": latest.get("awayWinPercentage"),
+        "tie_pct":      latest.get("tiePercentage"),
+    }
+
+def fetch_all_espn_data():
+    """Fetch scoreboard, injuries, news. Fetch odds for each game found."""
+    scoreboard = fetch_espn_scoreboard()
+    injuries   = fetch_espn_injuries()
+    news       = fetch_espn_news()
+
+    # Enrich scoreboard with ESPN odds for each game
+    for game in scoreboard:
+        if game["event_id"] and game["sport"] in ("basketball","football","baseball","hockey"):
+            odds = fetch_espn_game_odds(game["sport"], game["league"], game["event_id"])
+            game["espn_odds"] = odds
+        else:
+            game["espn_odds"] = []
+
+    return scoreboard, injuries, news
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # CoinGecko — BTC/ETH/SOL prices
@@ -565,22 +678,17 @@ for (score, reason), m in scored[:5]:
                         "reason": reason, "edge_score": score})
 
 # ── External data feeds ───────────────────────────────────────────────────────
-espn_injuries = []
 espn_games    = []
+espn_injuries = []
+espn_news     = []
 crypto_prices = {}
 metaculus_qs  = []
 
 try:
-    espn_injuries = fetch_espn_injuries()
-    log(f"ESPN injuries: {len(espn_injuries)}")
+    espn_games, espn_injuries, espn_news = fetch_all_espn_data()
+    log(f"ESPN: {len(espn_games)} games, {len(espn_injuries)} injuries, {len(espn_news)} news")
 except Exception as e:
-    log(f"ESPN injuries error: {e}")
-
-try:
-    espn_games = fetch_espn_games()
-    log(f"ESPN games today: {len(espn_games)}")
-except Exception as e:
-    log(f"ESPN games error: {e}")
+    log(f"ESPN error: {e}")
 
 try:
     crypto_prices = fetch_crypto_prices()
@@ -621,8 +729,9 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "markets":       clean_markets,
     "best_picks":    best_picks,
     "edges":         edges,
-    "espn_injuries": espn_injuries,
     "espn_games":    espn_games,
+    "espn_injuries": espn_injuries,
+    "espn_news":     espn_news,
     "crypto":        crypto_prices,
     "metaculus":     metaculus_qs,
 }, indent=2))
