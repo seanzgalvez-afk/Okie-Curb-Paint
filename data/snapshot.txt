@@ -1,89 +1,49 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 10:30 UTC
+# Generated: 2026-05-26 10:34 UTC
 ======================================================================
 
 ## Balance: unavailable
 
-## Active markets (from recent trades feed, 40 markets):
-  Ticker                                  Yes   No     Volume  Closes
-  ---------------------------------------------------------------------------
-  KXBTCD-26MAY2607-T77299.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXBTC15M-26MAY260645-45                  ?c   ?c          0  2026-05-26
-    BTC price up in next 15 mins?
-  KXBTCD-26MAY2607-T77099.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25CILKOU-CIL             ?c   ?c          0  2026-06-08
-    Will Marin Cilic win the Cilic vs Kouame: Round Of 128 match?
-  KXBTCD-26MAY2607-T76899.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25CILKOU-KOU             ?c   ?c          0  2026-06-08
-    Will Moise Kouame win the Cilic vs Kouame: Round Of 128 match?
-  KXGOVWINOMD-26-MBAR                      ?c   ?c          0  2026-11-03
-    Will Mandela Barnes be the Democratic nominee for Governor in Wisconsi
-  KXSOL15M-26MAY260645-45                  ?c   ?c          0  2026-05-26
-    SOL price up in next 15 mins?
-  KXWTAMATCH-26MAY27ANDBAS-AND             ?c   ?c          0  2026-06-10
-    Will Mirra Andreeva win the Andreeva vs Bassols Ribera: Round Of 64 ma
-  KXBTCD-26MAY2617-T76499.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXITFMATCH-26MAY26GIRTOP-TOP             ?c   ?c          0  2026-06-09
-    Will Mihailo Topic win the Giraldi vs Topic: M25 Kursumlijska Banja Ro
-  KXBTCD-26MAY2607-T76299.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXBTCD-26MAY2607-T77199.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXETHD-26MAY2607-T2119.99                ?c   ?c          0  2026-05-26
-    Ethereum price at May 26, 2026 at 7am EDT?
-  KXSOLD-26MAY2617-T86.9999                ?c   ?c          0  2026-05-26
-    SOL price  on May 26, 2026?
-  KXBTCD-26MAY2607-T76999.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXSOLD-26MAY2917-T82.9999                ?c   ?c          0  2026-05-29
-    SOL price  on May 29, 2026?
-  KXBTCD-26MAY2607-T76799.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXATPMATCH-26MAY25WALMED-WAL             ?c   ?c          0  2026-06-08
-    Will Adam Walton win the Walton vs Medvedev: Round Of 128 match?
-  KXATPCHALLENGERMATCH-26MAY26BERECH-ECH   ?c   ?c          0  2026-06-09
-    Will Moez Echargui win the Bertola vs Echargui: Round Of 32 match?
-  KXATPCHALLENGERMATCH-26MAY26TRAMOR-MOR   ?c   ?c          0  2026-06-09
-    Will Alejandro Moro Canas win the Travaglia vs Moro Canas: Round Of 32
-  KXATPMATCH-26MAY25TABMAJ-TAB             ?c   ?c          0  2026-06-08
-    Will Alejandro Tabilo win the Tabilo vs Majchrzak: Round Of 128 match?
-  KXDOTA2GAME-26MAY260730OGFLC-OG          ?c   ?c          0  2026-06-09
-    Will OG win the OG vs. Team Falcons Dota 2 match?
-  KXBRENTD-26MAY2617-T94                   ?c   ?c          0  2026-05-26
-    Will the brent crude oil close price be above 94  USD/Bbl on May 26, 2
-  KXWNBASPREAD-26MAY27ATLMIN-ATL5          ?c   ?c          0  2026-06-11
-    Atlanta wins by over 4.5 points?
-  KXNBAGAME-26MAY26SASOKC-SAS              ?c   ?c          0  2026-06-10
-    Game 5: San Antonio at Oklahoma City Winner?
-  KXBTCD-26MAY2607-T77399.99               ?c   ?c          0  2026-05-26
-    Bitcoin price  on May 26, 2026?
-  KXATPCHALLENGERMATCH-26MAY26BERECH-BER   ?c   ?c          0  2026-06-09
-    Will Remy Bertola win the Bertola vs Echargui: Round Of 32 match?
-  KXDOTA2GAME-26MAY260620AURTUNDRA-AUR     ?c   ?c          0  2026-06-09
-    Will Aurora win the Aurora vs. Tundra Esports Dota 2 match?
-  KXMLBGAME-26MAY261840CHCPIT-CHC          ?c   ?c          0  2026-05-29
-    Chicago C vs Pittsburgh Winner?
-  KXNPBGAME-26MAY260500CHIHIR-HIR          ?c   ?c          0  2026-05-29
-    Chiba Lotte Marines vs Hiroshima Toyo Carp winner?
-  KXWTI-26MAY2614-T90.99                   ?c   ?c          0  2026-05-26
-    Will the WTI crude oil settlement price be above 90.99 USD/Bbl on May 
-  KXCS2GAME-26MAY260400TNCLC-TNC           ?c   ?c          0  2026-06-09
-    Will TNC win the TNC vs. Lazer Cats CS2 match?
-  KXATPMATCH-26MAY25POPSVA-POP             ?c   ?c          0  2026-06-08
-    Will Alexei Popyrin win the Popyrin vs Svajda: Round Of 128 match?
-  KXMVECROSSCATEGORY-S20262B537DC4158-25   ?c   ?c          0  2026-06-10
-    yes Victor Wembanyama: 1+,yes Victor Wembanyama: 3+,yes Shai Gilgeous-
-  KXCONMEBOLLIBGAME-26MAY26FLACUS-TIE      ?c   ?c          0  2026-06-10
-    Flamengo vs Cusco Winner?
-  KXMLBKS-26MAY261845ATLBOS-BOSRSUREZ55-   ?c   ?c          0  2026-05-29
-    Ranger Suárez: 5+ strikeouts?
-  KXETH-26MAY2607-B2110                    ?c   ?c          0  2026-05-26
-    Ethereum price at May 26, 2026 at 7am EDT?
-  KXETHD-26MAY2607-T2099.99                ?c   ?c          0  2026-05-26
-    Ethereum price at May 26, 2026 at 7am EDT?
-  KXATPMATCH-26MAY25GRIARN-GRI             ?c   ?c          0  2026-06-08
-    Will Tallon Griekspoor win the Griekspoor vs Arnaldi: Round Of 128 mat
+## Active markets — 40 recently traded:
+  Ticker                                    Price      Vol  Trades  Closes    Title
+  --------------------------------------------------------------------------------------------------------------
+  KXBTC15M-26MAY260645-45                      ?c        0      58  2026-05-26  BTC price up in next 15 mins?
+  KXBTCD-26MAY2607-T77099.99                   ?c        0      14  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXVALORANTGAME-26MAY260500NOVAJDG-JDG        ?c        0      13  2026-06-09  Will JD Gaming win the Nova Esports vs. JD Gaming Valor
+  KXSOL15M-26MAY260645-45                      ?c        0      10  2026-05-26  SOL price up in next 15 mins?
+  KXBTCD-26MAY2607-T77199.99                   ?c        0       8  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXITFMATCH-26MAY26RECLIV-LIV                 ?c        0       7  2026-06-09  Will Ferdinand Livet Novkirichka win the Reco vs Livet 
+  KXATPMATCH-26MAY25CILKOU-KOU                 ?c        0       6  2026-06-08  Will Moise Kouame win the Cilic vs Kouame: Round Of 128
+  KXWTAMATCH-26MAY24SABBOU-BOU                 ?c        0       6  2026-06-07  Will Jessica Bouzas Maneiro win the Sabalenka vs Bouzas
+  KXBTCD-26MAY2607-T77299.99                   ?c        0       6  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPCHALLENGERMATCH-26MAY26NAGFOM-FOM       ?c        0       5  2026-06-09  Will Sergey Fomin win the Nagal vs Fomin: Round Of 32 m
+  KXITFMATCH-26MAY26RECLIV-REC                 ?c        0       5  2026-06-09  Will Alexandre Reco win the Reco vs Livet Novkirichka: 
+  KXWTAMATCH-26MAY24LIUUCH-LIU                 ?c        0       4  2026-06-07  Will Claire Liu win the Liu vs Uchijima: Round Of 128 m
+  KXBTCD-26MAY2607-T76999.99                   ?c        0       4  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXATPMATCH-26MAY25CILKOU-CIL                 ?c        0       4  2026-06-08  Will Marin Cilic win the Cilic vs Kouame: Round Of 128 
+  KXATPMATCH-26MAY25WALMED-WAL                 ?c        0       3  2026-06-08  Will Adam Walton win the Walton vs Medvedev: Round Of 1
+  KXATPCHALLENGERMATCH-26MAY26SAKDOS-SAK       ?c        0       3  2026-06-09  Will Pedro Sakamoto win the Sakamoto vs Dostanic: Round
+  KXATPCHALLENGERMATCH-26MAY26NAGFOM-NAG       ?c        0       2  2026-06-09  Will Sumit Nagal win the Nagal vs Fomin: Round Of 32 ma
+  KXATPMATCH-26MAY25GRIARN-GRI                 ?c        0       2  2026-06-08  Will Tallon Griekspoor win the Griekspoor vs Arnaldi: R
+  KXHIGHLAX-26MAY26-B62.5                      ?c        0       2  2026-05-27  Will the **high temp in LA** be 62-63° on May 26, 2026?
+  KXHYPE15M-26MAY260645-45                     ?c        0       2  2026-05-26  HYPE price up in next 15 mins?
+  KXVALORANTGAME-26MAY260500NOVAJDG-NOVA       ?c        0       2  2026-06-09  Will Nova Esports win the Nova Esports vs. JD Gaming Va
+  KXDOGE15M-26MAY260645-45                     ?c        0       2  2026-05-26  DOGE price up in next 15 mins?
+  KXETH15M-26MAY260645-45                      ?c        0       2  2026-05-26  ETH price up in next 15 mins?
+  KXBTCD-26MAY2617-T76999.99                   ?c        0       2  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXWTI-26MAY2614-T89.99                       ?c        0       2  2026-05-26  Will the WTI crude oil settlement price be above 89.99 
+  KXNBAGAME-26MAY26SASOKC-SAS                  ?c        0       1  2026-06-10  Game 5: San Antonio at Oklahoma City Winner?
+  KXIPLGAME-26MAY261000GTRCB-GT                ?c        0       1  2026-05-28  Royal Challengers Bengaluru vs Gujarat Titans Winner?
+  KXMVESPORTSMULTIGAMEEXTENDED-S20265E3131     ?c        0       1  2026-06-08  yes Marin Cilic,yes Alexei Popyrin,yes Iva Jovic,yes Em
+  KXATPMATCH-26MAY25GRIARN-ARN                 ?c        0       1  2026-06-08  Will Matteo Arnaldi win the Griekspoor vs Arnaldi: Roun
+  KXITFMATCH-26MAY26AUBBER-AUB                 ?c        0       1  2026-06-09  Will Alexandre Aubriot win the Aubriot vs BERARD: M25 C
+  KXITFWMATCH-26MAY26COPKOP-KOP                ?c        0       1  2026-06-09  Will Nikola Koprivova win the Coppez vs Koprivova: W15 
+  KXITFWMATCH-26MAY26COPKOP-COP                ?c        0       1  2026-06-09  Will Kaat Coppez win the Coppez vs Koprivova: W15 Szent
+  KXHIGHLAX-26MAY26-B64.5                      ?c        0       1  2026-05-27  Will the **high temp in LA** be 64-65° on May 26, 2026?
+  KXSOLD-26MAY2617-T84.9999                    ?c        0       1  2026-05-26  SOL price  on May 26, 2026?
+  KXMVESPORTSMULTIGAMEEXTENDED-S2026DAA38D     ?c        0       1  2026-06-07  yes Jaime Faria,yes Sebastian Baez,yes Corentin Moutet,
+  KXATPMATCH-26MAY25POPSVA-SVA                 ?c        0       1  2026-06-08  Will Zachary Svajda win the Popyrin vs Svajda: Round Of
+  KXMLBGAME-26MAY261810WSHCLE-CLE              ?c        0       1  2026-05-29  Washington vs Cleveland Winner?
+  KXMVECROSSCATEGORY-S20260B284E7CEAB-9FB3     ?c        0       1  2026-06-07  yes Valentin Vacherot,yes Marin Cilic,yes Tallon Grieks
+  KXBTCD-26MAY2617-T78749.99                   ?c        0       1  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXWTAMATCH-26MAY24SABBOU-SAB                 ?c        0       1  2026-06-07  Will Aryna Sabalenka win the Sabalenka vs Bouzas Maneir
