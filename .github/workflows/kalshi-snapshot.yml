@@ -5,7 +5,7 @@ on:
     branches:
       - claude/kalshi-bot-setup-4xG92
   schedule:
-    - cron: '*/15 * * * *'
+    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -44,4 +44,45 @@ jobs:
             git commit -m "chore: update kalshi snapshot [skip ci]"
             git pull --rebase origin claude/kalshi-bot-setup-4xG92
             git push origin claude/kalshi-bot-setup-4xG92
+          fi
+
+      - name: Send push notification if edges found
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: |
+          if [ -z "$NTFY_TOPIC" ]; then
+            echo "No NTFY_TOPIC set, skipping notification"
+            exit 0
+          fi
+          # Count edges in data.json
+          EDGE_COUNT=$(python3 -c "
+          import json, sys
+          try:
+              data = json.load(open('docs/data.json'))
+              edges = data.get('edges', [])
+              big = [e for e in edges if abs(e.get('gap',0)) >= 10]
+              print(len(big))
+          except:
+              print(0)
+          ")
+          if [ "$EDGE_COUNT" -gt "0" ]; then
+            # Get top edge details
+            TOP_EDGE=$(python3 -c "
+          import json
+          try:
+              data = json.load(open('docs/data.json'))
+              edges = sorted(data.get('edges',[]), key=lambda x: abs(x.get('gap',0)), reverse=True)
+              big = [e for e in edges if abs(e.get('gap',0)) >= 10]
+              if big:
+                  e = big[0]
+                  print(f\"{e['direction']} {e['ticker'][:20]} | Kalshi {e['kalshi_price']}c vs Vegas {e['vegas_prob']}c | Gap: {e['gap']:+.0f}c\")
+          except Exception as ex:
+              print('Edge detected')
+            ")
+            curl -s \
+              -H "Title: 🚨 Kalshi Edge Alert" \
+              -H "Priority: high" \
+              -H "Tags: chart_increasing" \
+              -d "$TOP_EDGE" \
+              "https://ntfy.sh/$NTFY_TOPIC" || true
           fi

@@ -227,6 +227,138 @@ def score_market(m, all_volumes, today):
 
     return round(score, 2), (" + ".join(reasons) if reasons else "Liquid market")
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# ESPN — NBA injury reports and today's games
+# ═══════════════════════════════════════════════════════════════════════════════
+ESPN_BASE = "https://site.api.espn.com/apis/site/v2/sports"
+
+def fetch_espn_injuries():
+    """Fetch NBA injury report from ESPN. Returns list of injury dicts."""
+    try:
+        r = httpx.get(f"{ESPN_BASE}/basketball/nba/injuries", timeout=10)
+        if r.status_code != 200:
+            return []
+        data = r.json()
+        injuries = []
+        for team in data.get("injuries", []):
+            team_name = team.get("team", {}).get("displayName", "")
+            for inj in team.get("injuries", []):
+                athlete = inj.get("athlete", {})
+                injuries.append({
+                    "player": athlete.get("displayName", ""),
+                    "team": team_name,
+                    "status": inj.get("status", ""),  # "Out", "Questionable", "Doubtful"
+                    "detail": inj.get("details", {}).get("detail", ""),
+                    "return_date": inj.get("details", {}).get("returnDate", ""),
+                })
+        return injuries
+    except Exception as e:
+        log(f"ESPN injuries error: {e}")
+        return []
+
+def fetch_espn_games():
+    """Fetch today's NBA games from ESPN."""
+    try:
+        r = httpx.get(f"{ESPN_BASE}/basketball/nba/scoreboard", timeout=10)
+        if r.status_code != 200:
+            return []
+        data = r.json()
+        games = []
+        for event in data.get("events", []):
+            comp = event.get("competitions", [{}])[0]
+            teams = comp.get("competitors", [])
+            game = {
+                "game_id": event.get("id", ""),
+                "name": event.get("name", ""),
+                "date": event.get("date", ""),
+                "status": event.get("status", {}).get("type", {}).get("description", ""),
+                "home_team": "",
+                "away_team": "",
+                "home_score": None,
+                "away_score": None,
+            }
+            for t in teams:
+                if t.get("homeAway") == "home":
+                    game["home_team"] = t.get("team", {}).get("displayName", "")
+                    game["home_score"] = t.get("score")
+                else:
+                    game["away_team"] = t.get("team", {}).get("displayName", "")
+                    game["away_score"] = t.get("score")
+            games.append(game)
+        return games
+    except Exception as e:
+        log(f"ESPN games error: {e}")
+        return []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# CoinGecko — BTC/ETH/SOL prices
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_crypto_prices():
+    """Fetch BTC and ETH prices from CoinGecko (free, no key)."""
+    try:
+        r = httpx.get(
+            "https://api.coingecko.com/api/v3/simple/price",
+            params={"ids": "bitcoin,ethereum,solana", "vs_currencies": "usd",
+                    "include_24hr_change": "true"},
+            timeout=10
+        )
+        if r.status_code != 200:
+            return {}
+        data = r.json()
+        return {
+            "btc_usd": data.get("bitcoin", {}).get("usd"),
+            "btc_24h_change": round(data.get("bitcoin", {}).get("usd_24h_change", 0), 2),
+            "eth_usd": data.get("ethereum", {}).get("usd"),
+            "eth_24h_change": round(data.get("ethereum", {}).get("usd_24h_change", 0), 2),
+            "sol_usd": data.get("solana", {}).get("usd"),
+            "sol_24h_change": round(data.get("solana", {}).get("usd_24h_change", 0), 2),
+        }
+    except Exception as e:
+        log(f"CoinGecko error: {e}")
+        return {}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Metaculus — cross-market probability comparison
+# ═══════════════════════════════════════════════════════════════════════════════
+
+def fetch_metaculus_questions(search_terms=None):
+    """Fetch top active Metaculus questions for cross-market comparison."""
+    try:
+        params = {
+            "status": "open",
+            "order_by": "-activity",
+            "limit": 20,
+            "type": "forecast",
+        }
+        if search_terms:
+            params["search"] = search_terms
+        r = httpx.get("https://www.metaculus.com/api2/questions/", params=params, timeout=10)
+        if r.status_code != 200:
+            return []
+        results = r.json().get("results", [])
+        questions = []
+        for q in results:
+            # community_prediction is a float 0-1 or None
+            cp = q.get("community_prediction", {})
+            if isinstance(cp, dict):
+                prob = cp.get("full", {}).get("q2")  # median
+            elif isinstance(cp, (int, float)):
+                prob = cp
+            else:
+                prob = None
+            questions.append({
+                "id": q.get("id"),
+                "title": q.get("title", ""),
+                "prob": round(prob * 100, 1) if prob is not None else None,
+                "close_time": str(q.get("close_time", ""))[:10],
+                "url": f"https://www.metaculus.com/questions/{q.get('id')}/",
+            })
+        return questions
+    except Exception as e:
+        log(f"Metaculus error: {e}")
+        return []
+
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 
@@ -432,6 +564,36 @@ for (score, reason), m in scored[:5]:
                         "side": side, "price": price,
                         "reason": reason, "edge_score": score})
 
+# ── External data feeds ───────────────────────────────────────────────────────
+espn_injuries = []
+espn_games    = []
+crypto_prices = {}
+metaculus_qs  = []
+
+try:
+    espn_injuries = fetch_espn_injuries()
+    log(f"ESPN injuries: {len(espn_injuries)}")
+except Exception as e:
+    log(f"ESPN injuries error: {e}")
+
+try:
+    espn_games = fetch_espn_games()
+    log(f"ESPN games today: {len(espn_games)}")
+except Exception as e:
+    log(f"ESPN games error: {e}")
+
+try:
+    crypto_prices = fetch_crypto_prices()
+    log(f"Crypto: BTC=${crypto_prices.get('btc_usd','?')}")
+except Exception as e:
+    log(f"Crypto error: {e}")
+
+try:
+    metaculus_qs = fetch_metaculus_questions()
+    log(f"Metaculus questions: {len(metaculus_qs)}")
+except Exception as e:
+    log(f"Metaculus error: {e}")
+
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
 try:
@@ -459,5 +621,9 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "markets":       clean_markets,
     "best_picks":    best_picks,
     "edges":         edges,
+    "espn_injuries": espn_injuries,
+    "espn_games":    espn_games,
+    "crypto":        crypto_prices,
+    "metaculus":     metaculus_qs,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
