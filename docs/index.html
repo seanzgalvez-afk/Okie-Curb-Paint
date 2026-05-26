@@ -214,6 +214,28 @@
       <p id="edges-empty" class="hidden text-slate-500 text-sm mt-2">No significant gaps detected right now. Add <code class="bg-slate-700 px-1 rounded">ODDS_API_KEY</code> GitHub secret to enable Vegas comparison.</p>
     </section>
 
+    <!-- ── Economic Indicators ── -->
+    <section class="mb-10" id="econ-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span style="color:#a78bfa;">📈</span> Economic Indicators
+        <span class="text-xs font-normal text-slate-500 ml-1">— FRED data, updated hourly</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-4">Key Fed & economic stats. When these surprise the market, Kalshi economics markets misprice.</p>
+      <div id="fred-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+      <p id="fred-empty" class="hidden text-slate-500 text-sm mt-2">Add <code class="bg-slate-700 px-1 rounded">FRED_API_KEY</code> GitHub secret to enable economic indicators. Free at fred.stlouisfed.org</p>
+    </section>
+
+    <!-- ── Cross-Market Arb ── -->
+    <section class="mb-10" id="arb-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span style="color:#f59e0b;">🔄</span> Cross-Market Arb
+        <span class="text-xs font-normal text-slate-500 ml-1">— Kalshi vs PolyMarket vs PredictIt</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-4">Same event priced differently across platforms. Buy the cheaper side, profit regardless of outcome.</p>
+      <div id="arb-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      <p id="arb-empty" class="hidden text-slate-500 text-sm mt-2">No cross-platform gaps detected right now. Gaps appear when platforms disagree on the same event.</p>
+    </section>
+
     <!-- ── Charts row ── -->
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-4" style="color:#22d3ee;">Charts</h2>
@@ -382,6 +404,8 @@ function render(data) {
   renderHeader(data);
   renderBestPicks(data.best_picks || []);
   renderEdges(data.edges || []);
+  renderFred(data.fred || {});
+  renderCrossArb(data.cross_arb || []);
   allMarkets = data.markets || [];
   renderTable();
   renderCharts(allMarkets);
@@ -577,6 +601,88 @@ function renderLiveFeed(data) {
       </span>`;
     }).join('');
   }
+}
+
+// ── Economic Indicators ────────────────────────────────────────────────────
+function renderFred(fred) {
+  const grid  = document.getElementById('fred-grid');
+  const empty = document.getElementById('fred-empty');
+  if (!fred || !Object.keys(fred).length) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  const order = ['fed_rate','cpi','unemployment','treasury_10y','treasury_2y','payrolls','gdp','sentiment'];
+  const items = order.filter(k => fred[k]).map(k => fred[k])
+    .concat(Object.values(fred).filter(v => !order.includes(Object.keys(fred).find(k=>fred[k]===v))));
+  grid.innerHTML = Object.entries(fred).map(([key, d]) => {
+    const val    = d.value !== null && d.value !== undefined ? d.value : '—';
+    const change = d.change;
+    const chgCol = change === null ? '' : change > 0 ? 'text-green-400' : change < 0 ? 'text-red-400' : 'text-slate-400';
+    const arrow  = change === null ? '' : change > 0 ? '▲' : change < 0 ? '▼' : '→';
+    const chgStr = change !== null ? `${arrow}${Math.abs(change).toFixed(2)}${d.unit||''}` : '';
+    return `
+      <div class="card rounded-xl p-3 flex flex-col gap-1">
+        <p class="text-xs text-slate-500 leading-tight">${escHtml(d.label)}</p>
+        <p class="text-xl font-black text-slate-100">${val}${d.unit === '%' ? '%' : ''}</p>
+        <div class="flex items-center justify-between">
+          <span class="text-xs ${chgCol} font-semibold">${escHtml(chgStr)}</span>
+          <span class="text-xs text-slate-600">${escHtml(d.date||'')}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Cross-Market Arb ───────────────────────────────────────────────────────
+function renderCrossArb(arb) {
+  const grid  = document.getElementById('arb-grid');
+  const empty = document.getElementById('arb-empty');
+  if (!arb || !arb.length) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  grid.innerHTML = arb.map(a => {
+    const isBuyKalshi = a.direction.includes('YES on Kalshi');
+    const gapAbs  = Math.abs(a.gap);
+    const gapCol  = gapAbs >= 15 ? 'text-red-400' : gapAbs >= 10 ? 'text-yellow-400' : 'text-cyan-400';
+    const platCol = a.platform === 'PolyMarket' ? 'text-purple-400' : 'text-blue-400';
+    const badge   = isBuyKalshi ? 'bg-green-500 text-slate-900' : 'bg-orange-500 text-slate-900';
+    return `
+      <div class="card rounded-2xl p-5 pick-card flex flex-col gap-3 border border-yellow-500/20">
+        <div class="flex items-start justify-between gap-2">
+          <span class="${platCol} text-xs font-bold">${escHtml(a.platform)}</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-bold ${badge} shrink-0">${isBuyKalshi ? 'BUY KALSHI' : 'BUY OTHER'}</span>
+        </div>
+        <p class="text-sm font-semibold text-slate-200 leading-snug">${escHtml(a.kalshi_title)}</p>
+        <div class="flex items-center justify-between gap-2">
+          <div class="text-center">
+            <p class="text-xs text-slate-500 mb-0.5">Kalshi</p>
+            <p class="text-xl font-bold text-slate-300">${a.kalshi_price}¢</p>
+          </div>
+          <div class="text-center flex-1">
+            <p class="${gapCol} text-3xl font-black">${a.gap > 0 ? '+' : ''}${a.gap}¢</p>
+            <p class="text-xs text-slate-500">gap</p>
+          </div>
+          <div class="text-center">
+            <p class="text-xs text-slate-500 mb-0.5">${escHtml(a.platform)}</p>
+            <p class="text-xl font-bold ${platCol}">${a.platform_price}¢</p>
+          </div>
+        </div>
+        <div class="flex gap-2 mt-auto">
+          <a href="https://kalshi.com/markets/${encodeURIComponent(a.kalshi_ticker)}" target="_blank" rel="noopener"
+             class="flex-1 text-center py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-cyan-500 hover:text-slate-900 transition text-cyan-400">
+            Kalshi ↗
+          </a>
+          <a href="${escHtml(a.platform_url)}" target="_blank" rel="noopener"
+             class="flex-1 text-center py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-purple-500 hover:text-slate-100 transition ${platCol}">
+            ${escHtml(a.platform)} ↗
+          </a>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ── Live Edges ─────────────────────────────────────────────────────────────

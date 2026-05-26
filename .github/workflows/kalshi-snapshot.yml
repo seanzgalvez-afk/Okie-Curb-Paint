@@ -32,6 +32,7 @@ jobs:
           KALSHI_PRIVATE_KEY_PATH: .keys/pk.pem
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           COINGECKO_API_KEY: ${{ secrets.COINGECKO_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python scripts/snapshot.py -o data/snapshot.txt
 
       - name: Commit and push

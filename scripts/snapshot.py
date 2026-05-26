@@ -688,6 +688,226 @@ def fetch_metaculus_questions(search_terms=None):
         log(f"Metaculus error: {e}")
         return []
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# FRED — Federal Reserve Economic Data
+# ═══════════════════════════════════════════════════════════════════════════════
+# Free API key at fred.stlouisfed.org → add as FRED_API_KEY secret
+# Runs every 60 min (data updates daily/monthly — no point calling more often)
+FRED_API_KEY = os.environ.get("FRED_API_KEY", "")
+FRED_BASE    = "https://api.stlouisfed.org/fred"
+
+FRED_SERIES = {
+    "cpi":          ("CPIAUCSL", "CPI Inflation",        "%"),
+    "unemployment": ("UNRATE",   "Unemployment Rate",    "%"),
+    "fed_rate":     ("FEDFUNDS", "Fed Funds Rate",       "%"),
+    "treasury_10y": ("DGS10",    "10-Year Treasury",     "%"),
+    "treasury_2y":  ("DGS2",     "2-Year Treasury",      "%"),
+    "payrolls":     ("PAYEMS",   "Nonfarm Payrolls",     "K"),
+    "gdp":          ("GDPC1",    "Real GDP",             "B"),
+    "sentiment":    ("UMCSENT",  "Consumer Sentiment",   ""),
+}
+
+def fetch_fred_data():
+    """Fetch latest values for key economic indicators from FRED.
+    Runs every 60 min = 720 credits/month (free, unlimited on FRED)."""
+    if not FRED_API_KEY:
+        log("FRED_API_KEY not set — skipping economic data")
+        return {}
+    if not _on_interval(60):
+        log("FRED: skipping (not 60-min mark)")
+        return {}
+    result = {}
+    for key, (series_id, label, unit) in FRED_SERIES.items():
+        try:
+            r = httpx.get(f"{FRED_BASE}/series/observations",
+                params={"series_id": series_id, "api_key": FRED_API_KEY,
+                        "sort_order": "desc", "limit": 2,
+                        "file_type": "json"},
+                timeout=10)
+            if r.status_code != 200:
+                log(f"FRED {series_id} -> {r.status_code}")
+                continue
+            obs = r.json().get("observations", [])
+            if not obs:
+                continue
+            latest = obs[0]
+            prev   = obs[1] if len(obs) > 1 else {}
+            val_str  = latest.get("value", ".")
+            prev_str = prev.get("value", ".")
+            try:
+                val  = float(val_str)
+                prev_val = float(prev_str) if prev_str != "." else None
+                change   = round(val - prev_val, 3) if prev_val is not None else None
+            except (ValueError, TypeError):
+                val, change = None, None
+            result[key] = {
+                "label":  label,
+                "value":  val,
+                "unit":   unit,
+                "date":   latest.get("date", ""),
+                "prev":   prev_val if "prev_val" in dir() else None,
+                "change": change,
+            }
+            log(f"FRED {series_id}: {val} ({latest.get('date','')})")
+        except Exception as e:
+            log(f"FRED {series_id} error: {e}")
+    return result
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PolyMarket — crypto prediction market (free, no key)
+# ═══════════════════════════════════════════════════════════════════════════════
+def fetch_polymarket_markets():
+    """Fetch active PolyMarket markets for cross-platform price comparison.
+    No API key needed. Every 15 min."""
+    if not _on_interval(15):
+        log("PolyMarket: skipping")
+        return []
+    try:
+        r = httpx.get("https://gamma-api.polymarket.com/markets",
+            params={"active": "true", "closed": "false", "limit": 100},
+            timeout=15)
+        if r.status_code != 200:
+            log(f"PolyMarket -> {r.status_code}")
+            return []
+        markets = r.json()
+        result = []
+        for m in markets:
+            try:
+                prices_raw   = m.get("outcomePrices", "[]")
+                outcomes_raw = m.get("outcomes", '["Yes","No"]')
+                prices   = json.loads(prices_raw)   if isinstance(prices_raw,   str) else prices_raw
+                outcomes = json.loads(outcomes_raw) if isinstance(outcomes_raw, str) else outcomes_raw
+                yes_price = None
+                for i, outcome in enumerate(outcomes):
+                    if str(outcome).lower() in ("yes", "true") and i < len(prices):
+                        try: yes_price = round(float(prices[i]) * 100, 1)
+                        except: pass
+                vol = m.get("volume") or m.get("volumeNum") or 0
+                try: vol = float(vol)
+                except: vol = 0
+                result.append({
+                    "id":        str(m.get("id", "")),
+                    "question":  m.get("question", ""),
+                    "yes_price": yes_price,
+                    "volume":    vol,
+                    "end_date":  str(m.get("endDate", ""))[:10],
+                    "url":       f"https://polymarket.com/event/{m.get('slug', m.get('id',''))}",
+                })
+            except Exception:
+                continue
+        log(f"PolyMarket: {len(result)} markets")
+        return result
+    except Exception as e:
+        log(f"PolyMarket error: {e}")
+        return []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# PredictIt — US political prediction market (free, no key)
+# ═══════════════════════════════════════════════════════════════════════════════
+def fetch_predictit_markets():
+    """Fetch PredictIt political markets for cross-platform arb. Every 15 min."""
+    if not _on_interval(15):
+        log("PredictIt: skipping")
+        return []
+    try:
+        r = httpx.get("https://www.predictit.org/api/marketdata/all/",
+            headers={"Accept": "application/json"}, timeout=15)
+        if r.status_code != 200:
+            log(f"PredictIt -> {r.status_code}")
+            return []
+        markets_raw = r.json().get("markets", [])
+        result = []
+        for m in markets_raw:
+            contracts = []
+            for c in m.get("contracts", []):
+                yp = c.get("bestBuyYesCost") or c.get("lastTradePrice") or 0
+                np_ = c.get("bestBuyNoCost") or 0
+                contracts.append({
+                    "name":       c.get("shortName") or c.get("name", ""),
+                    "yes_price":  round(float(yp) * 100, 1),
+                    "no_price":   round(float(np_) * 100, 1),
+                    "last_price": round(float(c.get("lastTradePrice") or 0) * 100, 1),
+                })
+            result.append({
+                "id":        m.get("id"),
+                "name":      m.get("name", ""),
+                "url":       m.get("url", ""),
+                "contracts": contracts,
+            })
+        log(f"PredictIt: {len(result)} markets")
+        return result
+    except Exception as e:
+        log(f"PredictIt error: {e}")
+        return []
+
+def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
+    """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt."""
+    arb = []
+
+    # Index PolyMarket by question words
+    poly_idx = [(set(m["question"].lower().split()), m)
+                for m in poly_markets if m.get("yes_price") is not None]
+
+    # Index PredictIt contracts by name words
+    pi_idx = []
+    for m in pi_markets:
+        for c in m.get("contracts", []):
+            price = c.get("yes_price") or c.get("last_price")
+            if price:
+                words = set((m["name"] + " " + c["name"]).lower().split())
+                pi_idx.append((words, m, c, price))
+
+    for km in kalshi_markets:
+        kp = km.get("yes_bid") or km.get("last_price")
+        if kp is None:
+            continue
+        kwords = set(km.get("title", "").lower().split())
+
+        # vs PolyMarket
+        for pwords, pm in poly_idx:
+            common = len(kwords & pwords)
+            total  = len(kwords | pwords)
+            if total == 0 or common / total < 0.35:
+                continue
+            gap = round(pm["yes_price"] - kp, 1)
+            if abs(gap) < 5:
+                continue
+            arb.append({
+                "kalshi_ticker":  km["ticker"],
+                "kalshi_title":   km["title"],
+                "kalshi_price":   kp,
+                "platform":       "PolyMarket",
+                "platform_price": pm["yes_price"],
+                "gap":            gap,
+                "direction":      "BUY YES on Kalshi" if gap > 0 else "BUY NO on Kalshi",
+                "platform_url":   pm["url"],
+                "similarity":     round(common / total, 2),
+            })
+
+        # vs PredictIt
+        for piwords, pm, c, pi_price in pi_idx:
+            common = len(kwords & piwords)
+            total  = len(kwords | piwords)
+            if total == 0 or common / total < 0.3:
+                continue
+            gap = round(pi_price - kp, 1)
+            if abs(gap) < 5:
+                continue
+            arb.append({
+                "kalshi_ticker":  km["ticker"],
+                "kalshi_title":   km["title"],
+                "kalshi_price":   kp,
+                "platform":       "PredictIt",
+                "platform_price": pi_price,
+                "gap":            gap,
+                "direction":      "BUY YES on Kalshi" if gap > 0 else "BUY NO on Kalshi",
+                "platform_url":   pm.get("url", ""),
+                "similarity":     round(common / total, 2),
+            })
+
+    arb.sort(key=lambda x: abs(x["gap"]), reverse=True)
+    return arb[:15]
+
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
 
@@ -948,6 +1168,35 @@ try:
 except Exception as e:
     log(f"Metaculus error: {e}")
 
+fred_data        = {}
+poly_markets     = []
+pi_markets       = []
+cross_market_arb = []
+
+try:
+    fred_data = fetch_fred_data()
+    log(f"FRED: {len(fred_data)} indicators")
+except Exception as e:
+    log(f"FRED error: {e}")
+
+try:
+    poly_markets = fetch_polymarket_markets()
+    log(f"PolyMarket: {len(poly_markets)} markets")
+except Exception as e:
+    log(f"PolyMarket error: {e}")
+
+try:
+    pi_markets = fetch_predictit_markets()
+    log(f"PredictIt: {len(pi_markets)} markets")
+except Exception as e:
+    log(f"PredictIt error: {e}")
+
+try:
+    cross_market_arb = find_cross_market_arb(markets_list, poly_markets, pi_markets)
+    log(f"Cross-market arb: {len(cross_market_arb)} opportunities")
+except Exception as e:
+    log(f"Cross-market arb error: {e}")
+
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
 try:
@@ -984,5 +1233,9 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "sparklines":    crypto_sparklines,
     "fear_greed":    fear_greed,
     "metaculus":     metaculus_qs,
+    "fred":           fred_data,
+    "polymarket":     poly_markets,
+    "predictit":      pi_markets,
+    "cross_arb":      cross_market_arb,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
