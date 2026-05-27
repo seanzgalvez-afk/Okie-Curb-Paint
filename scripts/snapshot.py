@@ -1738,8 +1738,27 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
                 pass  # can't parse — keep the signal
         live_signals.append(s)
 
-    # Sort by priority (1=highest), then by kelly_frac descending
-    live_signals.sort(key=lambda x: (x.get("priority", 9), -x.get("kelly_frac", 0)))
+    # Adjust kelly_frac by liquidity quality (volume-weighted)
+    for s in live_signals:
+        # Find the market for this signal
+        ticker = s.get("ticker", "")
+        mkt = next((m for m in markets if m.get("ticker") == ticker), None)
+        if mkt:
+            vol = mkt.get("volume", 0) or 0
+            # Volume multiplier: 1.0x at 0 volume, up to 1.5x at 1000+ volume
+            vol_mult = min(1.5, 1.0 + vol / 2000.0)
+            # Spread tightness: tighter spread = higher quality
+            yb = mkt.get("yes_bid") or 0
+            ya = mkt.get("yes_ask") or 99
+            spread = ya - yb
+            spread_mult = max(0.5, 1.0 - spread / 20.0)  # penalize wide spreads
+            s["quality_score"] = round(vol_mult * spread_mult, 3)
+            s["spread_cents"]  = spread
+        else:
+            s["quality_score"] = 0.5  # unknown liquidity
+
+    # Sort by priority (1=highest), then by kelly_frac * quality_score descending
+    live_signals.sort(key=lambda x: (x.get("priority", 9), -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))))
 
     # Add rank
     for i, s in enumerate(live_signals):
@@ -1747,6 +1766,53 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
 
     log(f"Strategy engine: {len(live_signals)} live signals (filtered {len(all_signals)-len(live_signals)} expired)")
     return live_signals[:20]  # top 20
+
+def fetch_supplemental_markets():
+    """
+    Fetch markets from key categories not covered by recent trades.
+    Returns a list of additional market dicts to augment markets_list.
+    """
+    extra = []
+
+    # Fetch markets by querying /markets with various filters
+    # Focus on markets with volume > 0 that close within next 90 days
+    filters = [
+        # Political: Senate, House, President
+        {"event_ticker": "KXSENATE", "limit": 10},
+        {"event_ticker": "KXHOUSE",  "limit": 10},
+        # Economic: Fed, CPI, Jobs
+        {"event_ticker": "KXFED",    "limit": 10},
+        {"event_ticker": "KXCPI",    "limit": 10},
+        {"event_ticker": "KXJOBS",   "limit": 10},
+    ]
+
+    seen = set()
+    for params in filters:
+        try:
+            resp = get("/markets", params)
+            if not resp:
+                continue
+            mkts = resp.get("markets", [])
+            for m in mkts[:5]:  # max 5 per filter
+                ticker = m.get("ticker", "")
+                if not ticker or ticker in seen:
+                    continue
+                seen.add(ticker)
+
+                # Get detailed market data
+                detail = get(f"/markets/{ticker}")
+                if not detail:
+                    continue
+                md = detail.get("market", detail) if isinstance(detail, dict) else detail
+                if not isinstance(md, dict):
+                    continue
+                extra.append(md)
+        except Exception as e:
+            log(f"Supplemental market fetch error ({params}): {e}")
+
+    log(f"Supplemental markets: {len(extra)} fetched")
+    return extra
+
 
 def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
     """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt."""
@@ -1929,66 +1995,103 @@ try:
 except Exception as e:
     lines.append(f"\n## Active markets ERROR: {e}")
 
+# Fetch supplemental political/economic markets (for deeper strategy coverage)
+if _on_interval(30):  # Only every 30 minutes to save API credits
+    try:
+        supp_markets = fetch_supplemental_markets()
+        existing_tickers = {m["ticker"] for m in markets_list}
+        for m in supp_markets:
+            try:
+                yes_bid  = cents(m.get("yes_bid_dollars"))
+                no_bid   = cents(m.get("no_bid_dollars"))
+                yes_ask  = cents(m.get("yes_ask_dollars"))
+                no_ask   = cents(m.get("no_ask_dollars"))
+                last_p   = cents(m.get("last_price_dollars"))
+                yes_price = yes_bid or yes_ask or last_p
+                ticker_str = m.get("ticker", "")
+                if not ticker_str or ticker_str in existing_tickers:
+                    continue
+                existing_tickers.add(ticker_str)
+                close_raw = str(m.get("close_time", ""))
+                markets_list.append({
+                    "ticker":      ticker_str,
+                    "title":       m.get("title", ""),
+                    "yes_bid":     yes_bid,
+                    "no_bid":      no_bid,
+                    "yes_ask":     yes_ask,
+                    "no_ask":      no_ask,
+                    "last_price":  last_p,
+                    "volume":      m.get("volume", 0) or 0,
+                    "close_time":  close_raw,
+                    "category":    "Politics" if any(x in ticker_str.upper() for x in ["SENATE","HOUSE","PRES","POL","GOV"]) else "Economics",
+                    "_yes_price":  yes_price,
+                    "_trade_count": 0,
+                    "_supplemental": True,
+                })
+            except Exception:
+                continue
+        log(f"Markets list after supplemental: {len(markets_list)}")
+    except Exception as e:
+        log(f"Supplemental market fetch block error: {e}")
+
 # ================================================================
-# SECTION 2: World Cup discovery
+# SECTION 2: World Cup discovery (once per hour to save API credits)
 # ================================================================
 lines.append("\n" + "="*70)
 lines.append("## FIFA WORLD CUP 2026 — DISCOVERY")
 lines.append("="*70)
 
-try:
-    # Step 1: Try the /series endpoint to list all series
-    lines.append("\n### /series endpoint scan:")
-    for series_path in ["/series", "/series/?limit=100", "/series?limit=100"]:
-        resp = get(series_path)
-        if resp:
-            lines.append(f"  /series returned: {str(resp)[:500]}")
-            break
-    else:
-        lines.append("  /series endpoint: no response")
-
-    # Step 2: Brute-force specific event tickers
-    # Based on known Kalshi patterns like KXNBAGAME-DATE-MATCHUP
-    # WC futures might be just the series name as event ticker
-    lines.append("\n### Direct event ticker fetch attempts:")
-    GUESSES = [
-        "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC2026",
-        "KXWC26FUTURES", "KXWC2026FUTURES", "KXFIFAWC26FUTURES",
-        "KXWC26WINNER", "KXWC26CHAMP", "KXWC26CHAMPION",
-        "KXWC26GROUPA", "KXWC26GROUPB", "KXWC26GROUPC",
-        "KXWC26-GROUPA", "KXWC26-GROUPB",
-        "KXWC26GROUPAWINNER", "KXWC26GROUPBWINNER",
-        "KXWC26FURTHEST", "KXWC26ELIM", "KXWC26STAGE",
-        "KXWC26HOST", "KXWC26USA", "KXWC26AWARDS",
-        "KXWC26GOALS", "KXWC26TOURGOALS", "KXWC26SQUAD",
-        "KXWC26SPEC", "KXWC26SPECIAL",
-        "KXSOCWC26", "KXSOC26", "KXSOCCERWC26",
-        # Try without KX prefix
-        "WC26FUTURES", "FIFAWC26",
-    ]
-    found_events = []
-    for et in GUESSES:
-        resp = get(f"/events/{et}")
-        if resp:
-            lines.append(f"  HIT: /events/{et} -> {str(resp)[:200]}")
-            found_events.append(et)
+if not _on_interval(60):
+    lines.append("  [Skipped — runs every 60 min to conserve API credits]")
+else:
+    try:
+        # Step 1: Try the /series endpoint to list all series
+        lines.append("\n### /series endpoint scan:")
+        for series_path in ["/series", "/series/?limit=100", "/series?limit=100"]:
+            resp = get(series_path)
+            if resp:
+                lines.append(f"  /series returned: {str(resp)[:500]}")
+                break
         else:
-            lines.append(f"  miss: {et}")
+            lines.append("  /series endpoint: no response")
 
-    # Step 3: Use known series tickers from trades to find WC pattern
-    # Extract series from known active tickers
-    lines.append("\n### Series tickers found in trades feed:")
-    known_series = set()
-    for ticker in ordered[:40]:
-        # Extract series by taking everything before the date pattern
-        parts = ticker.split("-")
-        if parts:
-            known_series.add(parts[0])
-    for s in sorted(known_series):
-        lines.append(f"  {s}")
+        # Step 2: Brute-force specific event tickers
+        lines.append("\n### Direct event ticker fetch attempts:")
+        GUESSES = [
+            "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC2026",
+            "KXWC26FUTURES", "KXWC2026FUTURES", "KXFIFAWC26FUTURES",
+            "KXWC26WINNER", "KXWC26CHAMP", "KXWC26CHAMPION",
+            "KXWC26GROUPA", "KXWC26GROUPB", "KXWC26GROUPC",
+            "KXWC26-GROUPA", "KXWC26-GROUPB",
+            "KXWC26GROUPAWINNER", "KXWC26GROUPBWINNER",
+            "KXWC26FURTHEST", "KXWC26ELIM", "KXWC26STAGE",
+            "KXWC26HOST", "KXWC26USA", "KXWC26AWARDS",
+            "KXWC26GOALS", "KXWC26TOURGOALS", "KXWC26SQUAD",
+            "KXWC26SPEC", "KXWC26SPECIAL",
+            "KXSOCWC26", "KXSOC26", "KXSOCCERWC26",
+            "WC26FUTURES", "FIFAWC26",
+        ]
+        found_events = []
+        for et in GUESSES:
+            resp = get(f"/events/{et}")
+            if resp:
+                lines.append(f"  HIT: /events/{et} -> {str(resp)[:200]}")
+                found_events.append(et)
+            else:
+                lines.append(f"  miss: {et}")
 
-except Exception as e:
-    lines.append(f"  ERROR: {e}")
+        # Step 3: Use known series tickers from trades to find WC pattern
+        lines.append("\n### Series tickers found in trades feed:")
+        known_series = set()
+        for ticker in ordered[:40]:
+            parts = ticker.split("-")
+            if parts:
+                known_series.add(parts[0])
+        for s in sorted(known_series):
+            lines.append(f"  {s}")
+
+    except Exception as e:
+        lines.append(f"  ERROR: {e}")
     traceback.print_exc(file=sys.stderr)
 
 snapshot = "\n".join(lines)

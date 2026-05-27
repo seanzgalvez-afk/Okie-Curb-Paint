@@ -961,6 +961,7 @@ function renderSignals(signals) {
       <div class="flex gap-3 text-xs text-slate-400 mb-3">
         <span>📐 Kelly: <strong class="text-white">${kellyPct}%</strong></span>
         <span>💸 Fee: <strong class="text-slate-300">${feeCents}¢</strong></span>
+        ${s.spread_cents != null ? `<span>↔ Spread: <strong class="text-slate-300">${s.spread_cents}¢</strong></span>` : ''}
         ${s.net_profit ? `<span>💰 Net: <strong class="text-green-400">+${s.net_profit}¢</strong></span>` : ''}
       </div>
       ${s.warning ? `<p class="text-xs text-amber-400 mt-1">⚠️ ${s.warning}</p>` : ''}
