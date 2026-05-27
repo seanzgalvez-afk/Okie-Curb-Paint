@@ -1150,6 +1150,7 @@ def analyze_bundle_arb(markets):
                 "confidence": "high",
                 "kelly_frac": 0.05,  # conservative fixed size for arb
                 "fee_cents":  total_fee,
+                "net_profit": round(net_profit, 1),
                 "priority":   1,
                 "contracts":  [c.get("ticker") for c in contracts],
             })
@@ -1555,6 +1556,88 @@ def analyze_espn_odds_edge(espn_games, markets):
     return signals[:5]
 
 
+def analyze_fear_greed_edge(markets, fear_greed_data):
+    """
+    Extreme fear/greed creates predictable mispricings in crypto Kalshi markets.
+
+    Research: crypto retail follows sentiment with a 24-48h lag.
+    - Extreme Fear (≤20): crypto markets priced too bearish → BUY YES on UP contracts
+    - Extreme Greed (≥80): crypto markets priced too bullish → BUY NO on UP contracts
+
+    Only targets BTC/ETH/crypto price direction markets.
+    """
+    signals = []
+    if not fear_greed_data or not markets:
+        return signals
+
+    fg_value = fear_greed_data.get("value")
+    if fg_value is None:
+        return signals
+
+    try:
+        fg = int(fg_value)
+    except (ValueError, TypeError):
+        return signals
+
+    if 20 < fg < 80:
+        return signals  # neutral — no edge
+
+    is_fear = fg <= 20
+    fg_label = fear_greed_data.get("label", "")
+
+    crypto_kws = ["BTC", "ETH", "SOL", "CRYPTO", "KXBTC", "KXETH", "KXSOL"]
+    direction_kws = ["UP", "ABOVE", "HIGH", "PRICE"]
+
+    for m in markets:
+        ticker = m.get("ticker", "").upper()
+        title  = m.get("title", "").upper()
+
+        # Only target crypto direction markets
+        if not any(kw in ticker for kw in crypto_kws):
+            continue
+        is_direction = any(kw in ticker or kw in title for kw in direction_kws)
+        if not is_direction:
+            continue
+
+        price = m.get("_yes_price")
+        if price is None or not (5 <= price <= 95):
+            continue
+
+        if is_fear:
+            # Extreme fear → price action likely to recover → buy YES on up markets
+            direction = "BUY YES"
+            prob = min(75, price + 15)  # sentiment edge: ~15% adjustment
+            kelly = kelly_size(prob, price, maker=True)
+            rationale = f"Fear & Greed = {fg} ({fg_label}). Extreme fear → sentiment reversal edge. Crypto markets priced too bearish."
+        else:
+            # Extreme greed → likely to cool → fade the move
+            direction = "BUY NO"
+            prob = min(75, (100 - price) + 15)
+            kelly = kelly_size(prob, 100 - price, maker=True)
+            rationale = f"Fear & Greed = {fg} ({fg_label}). Extreme greed → distribution phase. Crypto markets priced too bullish."
+
+        if kelly <= 0:
+            continue
+
+        signals.append({
+            "type":        "fear_greed_edge",
+            "direction":   direction,
+            "ticker":      m.get("ticker", ""),
+            "title":       m.get("title", ""),
+            "price":       price,
+            "rationale":   rationale,
+            "confidence":  "high" if (fg <= 10 or fg >= 90) else "medium",
+            "kelly_frac":  kelly * 0.4,
+            "fee_cents":   kalshi_fee(price),
+            "priority":    2,
+            "fear_greed":  fg,
+        })
+
+    signals.sort(key=lambda x: x.get("kelly_frac", 0), reverse=True)
+    log(f"Fear/Greed edge: {len(signals)} signals (F&G={fg})")
+    return signals[:3]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None):
     """
     Run all strategy modules and return unified ranked signal list.
@@ -1606,6 +1689,34 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_espn_odds_edge(espn_games, markets)
     except Exception as e:
         log(f"Strategy ESPN odds error: {e}")
+
+    # 8. Fear & Greed sentiment edge
+    try:
+        if fear_greed:
+            all_signals += analyze_fear_greed_edge(markets, fear_greed)
+    except Exception as e:
+        log(f"Strategy fear_greed error: {e}")
+
+    # Deduplicate: keep highest-priority signal per ticker
+    seen_tickers = {}
+    deduped = []
+    for s in all_signals:
+        ticker = s.get("ticker", "")
+        if not ticker:
+            deduped.append(s)
+            continue
+        if ticker not in seen_tickers:
+            seen_tickers[ticker] = s
+            deduped.append(s)
+        else:
+            # Keep the one with lower priority number (higher priority)
+            existing = seen_tickers[ticker]
+            if s.get("priority", 9) < existing.get("priority", 9):
+                # Replace existing with this higher-priority signal
+                deduped = [x for x in deduped if x.get("ticker") != ticker]
+                seen_tickers[ticker] = s
+                deduped.append(s)
+    all_signals = deduped
 
     # Filter out expired / closing-soon markets (need > 2 hours to place & fill)
     now_utc = datetime.now(timezone.utc)

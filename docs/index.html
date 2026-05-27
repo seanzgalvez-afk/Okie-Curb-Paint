@@ -809,11 +809,17 @@ function renderDemoPortfolio(portfolio) {
   const orders = portfolio.open_orders  || [];
   const closed = portfolio.closed_trades|| [];
 
+  const rs = portfolio.run_summary || {};
   // Stats cards
+  const winRate = stats.win_rate != null ? (stats.win_rate * 100).toFixed(0) + '%' : '—';
+  const roi     = stats.roi_pct   != null ? stats.roi_pct.toFixed(1) + '%' : '—';
+  const clv     = stats.avg_clv   != null ? (stats.avg_clv > 0 ? '+' : '') + stats.avg_clv.toFixed(1) + '¢' : '—';
   const statCards = [
     { label: 'Demo Balance',   value: `$${(bal/100).toFixed(2)}`,          color: '#34d399' },
     { label: 'Open Orders',    value: orders.length,                        color: '#22d3ee' },
-    { label: 'Closed Trades',  value: stats.total_trades || 0,              color: '#a78bfa' },
+    { label: 'Win Rate',       value: winRate,                              color: '#a78bfa' },
+    { label: 'ROI',            value: roi,                                  color: '#fb923c' },
+    { label: 'Avg CLV',        value: clv,                                  color: '#fbbf24' },
     { label: 'Last Run',       value: portfolio.last_run ? portfolio.last_run.slice(11,16)+' UTC' : '—', color: '#94a3b8' },
   ];
   statsEl.innerHTML = statCards.map(s => `
@@ -821,6 +827,18 @@ function renderDemoPortfolio(portfolio) {
       <p class="text-xs text-slate-500 mb-1">${s.label}</p>
       <p class="text-xl font-bold" style="color:${s.color};">${s.value}</p>
     </div>`).join('');
+
+  // Run summary diagnostics (if available)
+  if (rs.api_errors && rs.api_errors.length > 0) {
+    const errHtml = rs.api_errors.map(e =>
+      `<div class="text-xs text-red-400 font-mono mt-1">⚠ ${e.path} → ${e.status || e.error}: ${(e.body || '').slice(0,80)}</div>`
+    ).join('');
+    statsEl.innerHTML += `<div class="col-span-full rounded-lg p-3 bg-red-900/20 border border-red-800 mt-2">
+      <p class="text-xs text-red-300 font-semibold mb-1">🔴 API Errors (last run)</p>${errHtml}</div>`;
+  } else if (rs.orders_placed === 0 && rs.signals_evaluated > 0) {
+    statsEl.innerHTML += `<div class="col-span-full rounded-lg p-3 bg-yellow-900/20 border border-yellow-800 mt-2 text-xs text-yellow-300">
+      ⚡ ${rs.signals_evaluated} signal(s) evaluated, 0 orders placed — check demo API credentials</div>`;
+  }
 
   // Open orders
   if (orders.length === 0) {
@@ -902,6 +920,7 @@ function renderSignals(signals) {
     longshot_bias:     '#f87171',  // red
     volume_spike:      '#fb923c',  // orange
     espn_odds_edge:    '#60a5fa',  // blue
+    fear_greed_edge:   '#e879f9',  // fuchsia
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -911,6 +930,7 @@ function renderSignals(signals) {
     longshot_bias:     '📊 Bias Edge',
     volume_spike:      '📊 Volume Spike',
     espn_odds_edge:    '🏆 ESPN Edge',
+    fear_greed_edge:   '😱 F&G Edge',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',
