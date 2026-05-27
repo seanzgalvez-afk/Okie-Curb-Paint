@@ -2026,10 +2026,11 @@ def analyze_fred_edge(markets, fred_data):
     Use FRED economic data to find mispriced economic/political Kalshi markets.
 
     Key relationships:
-    - Fed Funds Rate (FEDFUNDS): affects "Fed rate hike/cut" markets
-    - CPI/CPILFESL: affects "inflation" markets
-    - UNRATE: affects "unemployment" markets
-    - 10Y Treasury (GS10): affects "yield" markets
+    - Fed Funds Rate (fed_rate): affects "Fed rate hike/cut/hold" markets (KXFED)
+    - CPI (cpi): affects "inflation above/below X%" markets (KXCPI)
+    - Unemployment (unemployment): affects "jobless rate" markets (KXJOBS)
+    - 10Y Treasury (treasury_10y): affects "yield above/below X" markets
+    - Payrolls (payrolls): affects nonfarm payroll markets
 
     Strategy: when FRED data strongly suggests a direction and Kalshi price
     disagrees, that's an edge.
@@ -2038,30 +2039,22 @@ def analyze_fred_edge(markets, fred_data):
     if not fred_data or not markets:
         return signals
 
-    # Get current values
-    fed_rate = None
-    cpi      = None
-    unrate   = None
+    # Extract key values using FRED_SERIES keys directly (not series IDs)
+    def get_val(key):
+        info = fred_data.get(key, {})
+        if isinstance(info, dict):
+            return info.get("value")
+        try: return float(info)
+        except: return None
 
-    for series_id, info in fred_data.items():
-        val = info.get("value") if isinstance(info, dict) else None
-        if val is None:
-            try:
-                val = float(info)
-            except (TypeError, ValueError):
-                pass
-        if val is None:
-            continue
-        sid = series_id.upper()
-        if "FEDFUNDS" in sid or "FEDRATE" in sid or sid == "FED_RATE":
-            try: fed_rate = float(val)
-            except: pass
-        elif "CPILFE" in sid or ("CPI" in sid and "CORE" in sid):
-            try: cpi = float(val)
-            except: pass
-        elif "UNRATE" in sid or sid == "UNEMPLOYMENT":
-            try: unrate = float(val)
-            except: pass
+    fed_rate    = get_val("fed_rate")      # FEDFUNDS: e.g. 4.33% in Jan 2025
+    cpi         = get_val("cpi")           # CPIAUCSL: level e.g. 319.1 in Dec 2024
+    unrate      = get_val("unemployment")  # UNRATE: e.g. 4.1%
+    t10y        = get_val("treasury_10y")  # DGS10: e.g. 4.60%
+    t2y         = get_val("treasury_2y")   # DGS2: e.g. 4.25%
+    payrolls    = get_val("payrolls")      # PAYEMS in thousands, e.g. 159,400
+
+    import re as _re
 
     # Cross-reference with Kalshi markets
     for m in markets:
@@ -2071,50 +2064,143 @@ def analyze_fred_edge(markets, fred_data):
         if yp is None:
             continue
 
-        # Fed rate markets
-        if ("FED" in ticker or "RATE" in ticker) and fed_rate is not None:
-            if "HIKE" in title or "RAISE" in title or "INCREASE" in title:
-                # Fed unlikely to hike if rate already high (>5.5%)
-                if fed_rate > 5.5 and yp > 40:
+        # ── Fed rate markets (KXFED) ──────────────────────────────────────────
+        is_fed_mkt = "KXFED" in ticker or (
+            "FED" in ticker and any(x in title for x in
+            ("CUT", "HIKE", "HOLD", "RAISE", "PAUSE", "PIVOT", "LOWER", "RAISE", "RATE")))
+
+        if is_fed_mkt and fed_rate is not None:
+            if any(x in title for x in ("HIKE", "RAISE", "INCREASE")) and yp > 20:
+                # Fed in cutting cycle (2024+); another hike is very unlikely
+                no_price = 100 - yp
+                if no_price > 50:
                     signals.append({
                         "type":              "fred_edge",
                         "direction":         "BUY NO",
                         "ticker":            m.get("ticker", ""),
                         "title":             m.get("title", ""),
                         "price":             yp,
-                        "rationale":         f"FRED: Fed Funds Rate = {fed_rate:.2f}%. Rate hike unlikely at this level. Kalshi prices {yp}¢.",
+                        "rationale":         f"FRED: Fed Funds = {fed_rate:.2f}%. Fed in cutting cycle — rate hike market at {yp}¢ overpriced.",
                         "confidence":        "medium",
-                        "kelly_frac":        0.01,
-                        "fee_cents":         kalshi_fee(100 - yp),
+                        "kelly_frac":        0.02,
+                        "fee_cents":         kalshi_fee(no_price),
                         "priority":          2,
-                        "entry_limit_cents": max(1, yp - 2),
-                        "take_profit_cents": min(99, yp + 5),
+                        "entry_limit_cents": max(1, no_price - 2),
+                        "take_profit_cents": min(99, no_price + 8),
                         "stop_loss_pct":     0.4,
                     })
+            elif any(x in title for x in ("CUT", "LOWER", "REDUCE")) and fed_rate > 3.0 and yp < 35:
+                # Rates still elevated; more cuts expected by Fed
+                signals.append({
+                    "type":              "fred_edge",
+                    "direction":         "BUY YES",
+                    "ticker":            m.get("ticker", ""),
+                    "title":             m.get("title", ""),
+                    "price":             yp,
+                    "rationale":         f"FRED: Fed Funds = {fed_rate:.2f}%. Rate still elevated — cut market at {yp}¢ may be underpriced.",
+                    "confidence":        "medium",
+                    "kelly_frac":        0.015,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          2,
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(99, yp + 8),
+                    "stop_loss_pct":     0.4,
+                })
 
-        # Unemployment markets
-        if "UNEMP" in ticker or "UNRATE" in ticker or "JOBLESS" in ticker:
-            if unrate is not None:
-                # High unrate > 5% usually means "will unemployment stay above X?" YES
-                if unrate > 5.0 and "ABOVE" in title and yp < 40:
+        # ── CPI / inflation markets (KXCPI) ───────────────────────────────────
+        is_cpi_mkt = "KXCPI" in ticker or any(
+            x in title for x in ("CPI", "INFLATION", "PRICE INDEX"))
+
+        if is_cpi_mkt and cpi is not None:
+            # CPIAUCSL: Jan 2020 base=258, Dec 2024 ≈319 → ~3.5% above 2% target
+            # If level >313, inflation has been running above 2.5% target for years
+            if cpi > 313:
+                if any(x in title for x in ("ABOVE", "HIGHER", "EXCEED", "OVER")) and yp < 45:
                     signals.append({
                         "type":              "fred_edge",
                         "direction":         "BUY YES",
                         "ticker":            m.get("ticker", ""),
                         "title":             m.get("title", ""),
                         "price":             yp,
-                        "rationale":         f"FRED: Unemployment = {unrate:.1f}%. Historical persistence suggests above-threshold likely.",
+                        "rationale":         f"FRED: CPI = {cpi:.1f} (well above pre-2021 trend). Above-threshold inflation market at {yp}¢ looks underpriced.",
                         "confidence":        "low",
                         "kelly_frac":        0.01,
                         "fee_cents":         kalshi_fee(yp),
                         "priority":          3,
                         "entry_limit_cents": max(1, yp - 2),
-                        "take_profit_cents": min(99, yp + 5),
+                        "take_profit_cents": min(99, yp + 6),
                         "stop_loss_pct":     0.4,
                     })
 
-    log(f"FRED edge: {len(signals)} signals")
-    return signals[:3]
+        # ── Unemployment / jobs markets (KXJOBS) ──────────────────────────────
+        is_jobs_mkt = "KXJOBS" in ticker or any(
+            x in ticker for x in ("UNEMP", "JOBLESS")) or "UNEMPLOYMENT" in title
+
+        if is_jobs_mkt and unrate is not None:
+            if unrate > 4.5 and any(x in title for x in ("ABOVE", "HIGHER", "EXCEED")) and yp < 40:
+                signals.append({
+                    "type":              "fred_edge",
+                    "direction":         "BUY YES",
+                    "ticker":            m.get("ticker", ""),
+                    "title":             m.get("title", ""),
+                    "price":             yp,
+                    "rationale":         f"FRED: Unemployment = {unrate:.1f}%. Rate elevated — above-threshold market at {yp}¢ looks underpriced.",
+                    "confidence":        "low",
+                    "kelly_frac":        0.01,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          3,
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(99, yp + 5),
+                    "stop_loss_pct":     0.4,
+                })
+
+        # ── Treasury yield markets ────────────────────────────────────────────
+        is_yield_mkt = any(x in ticker for x in ("RATE", "YIELD", "DGS", "TREASURY")) or \
+                       any(x in title for x in ("TREASURY", "10-YEAR", "10 YEAR", "YIELD", "T-NOTE"))
+
+        if is_yield_mkt and t10y is not None:
+            # Try to extract numeric threshold from title (e.g., "above 4.00%")
+            m_thresh = _re.search(r"ABOVE\s+([\d.]+)\s*%", title)
+            if m_thresh and yp is not None:
+                thresh = float(m_thresh.group(1))
+                if t10y > thresh + 0.3 and yp < 55:
+                    signals.append({
+                        "type":              "fred_edge",
+                        "direction":         "BUY YES",
+                        "ticker":            m.get("ticker", ""),
+                        "title":             m.get("title", ""),
+                        "price":             yp,
+                        "rationale":         f"FRED: 10Y Treasury = {t10y:.2f}%. Threshold {thresh}% — currently {t10y - thresh:.2f}pts above. {yp}¢ looks underpriced.",
+                        "confidence":        "medium" if t10y > thresh + 0.5 else "low",
+                        "kelly_frac":        0.015,
+                        "fee_cents":         kalshi_fee(yp),
+                        "priority":          2,
+                        "entry_limit_cents": max(1, yp - 2),
+                        "take_profit_cents": min(99, yp + 8),
+                        "stop_loss_pct":     0.35,
+                    })
+            m_thresh_below = _re.search(r"BELOW\s+([\d.]+)\s*%", title)
+            if m_thresh_below and yp is not None:
+                thresh = float(m_thresh_below.group(1))
+                if t10y < thresh - 0.3 and yp < 55:
+                    signals.append({
+                        "type":              "fred_edge",
+                        "direction":         "BUY YES",
+                        "ticker":            m.get("ticker", ""),
+                        "title":             m.get("title", ""),
+                        "price":             yp,
+                        "rationale":         f"FRED: 10Y Treasury = {t10y:.2f}%. Threshold {thresh}% — currently {thresh - t10y:.2f}pts below. {yp}¢ looks underpriced.",
+                        "confidence":        "medium" if t10y < thresh - 0.5 else "low",
+                        "kelly_frac":        0.015,
+                        "fee_cents":         kalshi_fee(yp),
+                        "priority":          2,
+                        "entry_limit_cents": max(1, yp - 2),
+                        "take_profit_cents": min(99, yp + 8),
+                        "stop_loss_pct":     0.35,
+                    })
+
+    log(f"FRED edge: {len(signals)} signals (fed={fed_rate}, cpi={cpi}, unrate={unrate}, 10y={t10y})")
+    return signals[:5]
 
 
 def analyze_momentum_edge(markets):
@@ -2640,8 +2726,139 @@ def analyze_price_trend(markets, price_moves):
     return signals[:5]
 
 
+def analyze_worldcup_edge(markets, vegas_games):
+    """
+    FIFA World Cup 2026 Edge — Compare KXMENWORLDCUP Kalshi markets against
+    Vegas sportsbook consensus for World Cup matches.
+
+    World Cup 2026: June 11 – July 19, 2026.
+    48 teams, 3-team groups, played in USA/Canada/Mexico.
+
+    Strategy: when Vegas consensus for a World Cup game diverges ≥5¢ from Kalshi
+    price, that's a structural edge (same as espn_odds_edge but for soccer WC).
+    """
+    signals = []
+
+    # FIFA World Cup team name keywords → Kalshi ticker abbreviations
+    WC_TEAMS = {
+        "united states": "USA",  "usa": "USA",
+        "mexico": "MEX",         "brazil": "BRA",     "argentina": "ARG",
+        "france": "FRA",         "england": "ENG",    "spain": "ESP",
+        "germany": "GER",        "portugal": "POR",   "netherlands": "NED",
+        "uruguay": "URU",        "colombia": "COL",   "ecuador": "ECU",
+        "canada": "CAN",         "australia": "AUS",  "japan": "JPN",
+        "south korea": "KOR",    "korea republic": "KOR",
+        "morocco": "MAR",        "senegal": "SEN",    "nigeria": "NGA",
+        "ghana": "GHA",          "cameroon": "CMR",   "ivory coast": "CIV",
+        "switzerland": "SUI",    "poland": "POL",     "croatia": "CRO",
+        "denmark": "DEN",        "austria": "AUT",    "belgium": "BEL",
+        "italy": "ITA",          "sweden": "SWE",     "norway": "NOR",
+        "chile": "CHI",          "peru": "PER",       "paraguay": "PAR",
+        "bolivia": "BOL",        "venezuela": "VEN",
+        "iran": "IRN",           "saudi arabia": "KSA", "qatar": "QAT",
+        "iraq": "IRQ",           "ukraine": "UKR",    "serbia": "SRB",
+        "turkey": "TUR",         "slovenia": "SVN",   "slovakia": "SVK",
+        "new zealand": "NZL",    "indonesia": "IDN",
+        "costa rica": "CRC",     "panama": "PAN",     "honduras": "HON",
+        "el salvador": "SLV",    "guatemala": "GUA",
+    }
+
+    # Only consider World Cup Vegas games
+    wc_games = [g for g in (vegas_games or [])
+                if g.get("_sport") == "soccer_fifa_world_cup"]
+    if not wc_games:
+        log("World Cup edge: no World Cup Vegas games found")
+        return []
+
+    # Filter: only KXMENWORLDCUP markets (or "WORLD CUP" in title)
+    wc_markets = [m for m in markets if (
+        "WORLDCUP" in m.get("ticker", "").upper() or
+        "WORLD CUP" in (m.get("title") or "").upper()
+    )]
+    if not wc_markets:
+        log("World Cup edge: no KXMENWORLDCUP Kalshi markets found")
+        return []
+
+    # Build suffix map: abbreviation → market (from last ticker segment)
+    suffix_map = {}
+    for m in wc_markets:
+        ticker = m.get("ticker", "").upper()
+        parts = ticker.rsplit("-", 1)
+        if len(parts) == 2:
+            suf = parts[1]
+            suffix_map[suf] = m
+        # Also index full ticker
+        suffix_map[ticker] = m
+
+    log(f"World Cup edge: {len(wc_games)} WC games, {len(wc_markets)} WC markets, "
+        f"{len(suffix_map)} suffixes")
+
+    for game in wc_games:
+        home = game.get("home_team", "").lower()
+        away = game.get("away_team", "").lower()
+
+        for team_name, abbrev in WC_TEAMS.items():
+            # Check if this team is in this game
+            if team_name not in home and team_name not in away:
+                continue
+
+            # Get Vegas consensus for this team
+            vp = game_consensus_prob(game, team_name)
+            if vp is None:
+                continue
+
+            # Look for matching Kalshi market
+            mkt = suffix_map.get(abbrev)
+            if not mkt:
+                # Also try country code variations
+                for alt in [abbrev[:2], abbrev + "S"]:
+                    if alt in suffix_map:
+                        mkt = suffix_map[alt]
+                        break
+            if not mkt:
+                continue
+
+            kp = mkt.get("_yes_price") or mkt.get("yes_bid") or mkt.get("last_price")
+            if kp is None:
+                continue
+
+            gap = vp - kp
+            if abs(gap) < 5:
+                continue
+
+            direction  = "BUY YES" if gap > 0 else "BUY NO"
+            side_price = kp if gap > 0 else (100 - kp)
+            vp_side    = vp if gap > 0 else (100 - vp)
+            kelly = kelly_size(vp_side, side_price, maker=True)
+            if kelly <= 0:
+                continue
+
+            signals.append({
+                "type":              "worldcup_edge",
+                "direction":         direction,
+                "ticker":            mkt.get("ticker", ""),
+                "title":             mkt.get("title", ""),
+                "price":             round(kp, 1),
+                "rationale":         (f"WC 2026: {team_name.title()} Vegas {vp:.0f}¢ vs "
+                                      f"Kalshi {kp:.0f}¢. Gap: {gap:+.1f}¢ | "
+                                      f"{game.get('away_team','')} @ {game.get('home_team','')}"),
+                "confidence":        "high" if abs(gap) >= 12 else "medium",
+                "kelly_frac":        kelly * 0.5,
+                "fee_cents":         kalshi_fee(side_price),
+                "priority":          1 if abs(gap) >= 10 else 2,
+                "gap":               round(gap, 1),
+                "entry_limit_cents": max(1, side_price - 3),
+                "take_profit_cents": min(99, int(vp)),
+                "stop_loss_pct":     0.35,
+            })
+
+    signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
+    log(f"World Cup edge: {len(signals)} signals")
+    return signals[:5]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
-                        metaculus_qs=None, price_moves=None):
+                        metaculus_qs=None, price_moves=None, vegas_games=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -2740,6 +2957,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_price_trend(markets, price_moves)
     except Exception as e:
         log(f"Strategy price trend error: {e}")
+
+    # 15. World Cup 2026 edge (Vegas vs Kalshi KXMENWORLDCUP markets)
+    try:
+        if vegas_games:
+            all_signals += analyze_worldcup_edge(markets, vegas_games)
+    except Exception as e:
+        log(f"Strategy world cup error: {e}")
 
     # Consensus detection: count how many strategies agree per ticker+direction
     from collections import defaultdict
@@ -3406,6 +3630,7 @@ except Exception as e:
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
 line_movements = []
+vegas_games = []  # always defined — needed for World Cup strategy
 vegas_games_count = 0
 odds_status = "no_key"
 try:
@@ -3435,7 +3660,8 @@ strategy_signals = []
 try:
     strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data,
                                             espn_games=espn_games, metaculus_qs=metaculus_qs,
-                                            price_moves=kalshi_price_moves)
+                                            price_moves=kalshi_price_moves,
+                                            vegas_games=(vegas_games if ODDS_API_KEY else []))
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")
