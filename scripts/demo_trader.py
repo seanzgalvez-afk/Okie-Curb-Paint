@@ -15,7 +15,7 @@ Required env vars (GitHub Secrets):
   KALSHI_DEMO_BANKROLL      — starting bankroll in cents (default: 100000 = $1,000)
 """
 
-import base64, json, os, sys, time, traceback
+import base64, json, os, sys, time, traceback, uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -90,10 +90,9 @@ def api_post(path, body):
     try:
         r = httpx.post(f"{DEMO_BASE}{path}", headers=auth_headers("POST", path),
                        json=body, timeout=15)
-        log(f"POST {path} -> {r.status_code}")
+        log(f"POST {path} -> {r.status_code} | {r.text[:400]}")
         if r.is_success:
             return r.json()
-        log(f"  body: {r.text[:300]}")
         return None
     except Exception as e:
         log(f"POST {path} error: {e}")
@@ -154,18 +153,22 @@ def place_limit_order(ticker, side, price_cents, quantity, signal_type, rational
     quantity: number of contracts
     Returns order dict or None.
     """
+    # Kalshi requires client_order_id (unique per order)
+    client_id = str(uuid.uuid4())
     body = {
-        "action":   "buy",
-        "ticker":   ticker,
-        "type":     "limit",
-        "side":     side,
-        "count":    quantity,
-        "yes_price": price_cents if side == "yes" else (100 - price_cents),
-        "no_price":  (100 - price_cents) if side == "yes" else price_cents,
+        "action":          "buy",
+        "client_order_id": client_id,
+        "ticker":          ticker,
+        "type":            "limit",
+        "side":            side,
+        "count":           quantity,
+        "yes_price":       price_cents if side == "yes" else (100 - price_cents),
+        "no_price":        (100 - price_cents) if side == "yes" else price_cents,
     }
+    log(f"  Placing order: {body}")
     result = api_post("/portfolio/orders", body)
     if result:
-        order_id = result.get("order", {}).get("order_id", "")
+        order_id = result.get("order", {}).get("order_id", client_id)
         log(f"  ✓ Order placed: {side.upper()} {ticker} @ {price_cents}¢ x{quantity} | id={order_id[:8]}")
         return {
             "order_id":    order_id,
