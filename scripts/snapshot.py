@@ -1962,6 +1962,8 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
 
     crypto_kws = ["BTC", "ETH", "SOL", "CRYPTO", "KXBTC", "KXETH", "KXSOL"]
     direction_kws = ["UP", "ABOVE", "HIGH", "PRICE"]
+    # Skip ultra-short-term markets (15min/1hr BTC markets — F&G works on daily timeframe)
+    short_term_kws = ["15M", "1HR", "30M", "15MIN", "1H-", "1H_", "KXBTC1", "KXETH1"]
 
     for m in markets:
         ticker = m.get("ticker", "").upper()
@@ -1969,6 +1971,9 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
 
         # Only target crypto direction markets
         if not any(kw in ticker for kw in crypto_kws):
+            continue
+        # Skip ultra-short-term price markets — F&G sentiment resolves over days
+        if any(kw in ticker for kw in short_term_kws):
             continue
         is_direction = any(kw in ticker or kw in title for kw in direction_kws)
         if not is_direction:
@@ -2861,24 +2866,36 @@ def fetch_supplemental_markets():
     # Fetch markets by querying /markets with various filters
     # Focus on markets with volume > 0 that close within next 90 days
     filters = [
-        # Political: Senate, House, President
-        {"event_ticker": "KXSENATE", "limit": 10},
-        {"event_ticker": "KXHOUSE",  "limit": 10},
-        # Economic: Fed, CPI, Jobs
-        {"event_ticker": "KXFED",    "limit": 10},
-        {"event_ticker": "KXCPI",    "limit": 10},
-        {"event_ticker": "KXJOBS",   "limit": 10},
-        # World Cup 2026 (KXMENWORLDCUP confirmed in trades feed)
+        # ── Political ──
+        {"event_ticker": "KXSENATE",    "limit": 10},
+        {"event_ticker": "KXHOUSE",     "limit": 10},
+        {"event_ticker": "KXPRES",      "limit": 10},
+        {"event_ticker": "KXGOV",       "limit": 10},
+        # ── Economic ──
+        {"event_ticker": "KXFED",       "limit": 10},
+        {"event_ticker": "KXCPI",       "limit": 10},
+        {"event_ticker": "KXJOBS",      "limit": 10},
+        {"event_ticker": "KXGDP",       "limit": 5},
+        # ── World Cup 2026 ──
         {"event_ticker": "KXMENWORLDCUP", "limit": 20},
-        # Crypto daily/weekly markets
-        {"event_ticker": "KXBTCD",      "limit": 5},
-        {"event_ticker": "KXETHD",      "limit": 5},
+        # ── Crypto ──
+        {"event_ticker": "KXBTCD",      "limit": 5},  # daily BTC
+        {"event_ticker": "KXETHD",      "limit": 5},  # daily ETH
         {"event_ticker": "KXBTCW",      "limit": 5},  # weekly BTC
         {"event_ticker": "KXETHW",      "limit": 5},  # weekly ETH
-        # NBA/NHL playoff series winner markets
-        {"event_ticker": "KXNBAPLAYOFF", "limit": 20},
-        {"event_ticker": "KXNBAWINNER",  "limit": 10},
-        {"event_ticker": "KXNHLWINNER",  "limit": 10},
+        {"event_ticker": "KXBTCM",      "limit": 3},  # monthly BTC
+        {"event_ticker": "KXSOLW",      "limit": 3},  # weekly SOL
+        # ── NBA Playoffs ──
+        {"event_ticker": "KXNBAPLAYOFF","limit": 20},
+        {"event_ticker": "KXNBAWINNER", "limit": 10},
+        {"event_ticker": "KXNBAFINALS", "limit": 10},
+        {"event_ticker": "KXNBACHAMP",  "limit": 5},
+        # ── NHL Playoffs ──
+        {"event_ticker": "KXNHLWINNER", "limit": 10},
+        {"event_ticker": "KXNHLFINALS", "limit": 10},
+        {"event_ticker": "KXNHLCHAMP",  "limit": 5},
+        # ── Other Sports ──
+        {"event_ticker": "KXMLBWINNER", "limit": 5},
     ]
 
     seen = set()
@@ -2888,13 +2905,14 @@ def fetch_supplemental_markets():
             if not resp:
                 continue
             mkts = resp.get("markets", [])
-            for m in mkts[:5]:  # max 5 per filter
+            # Take up to 8 per filter (was 5 — expand coverage)
+            for m in mkts[:8]:
                 ticker = m.get("ticker", "")
                 if not ticker or ticker in seen:
                     continue
                 seen.add(ticker)
 
-                # Get detailed market data
+                # Get detailed market data (needed for bid/ask prices)
                 detail = get(f"/markets/{ticker}")
                 if not detail:
                     continue
