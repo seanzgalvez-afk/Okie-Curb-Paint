@@ -226,7 +226,24 @@
         <span style="color:#f59e0b;">⚡</span> Strategy Signals
         <span class="text-xs font-normal text-slate-500 ml-1">— ranked by priority &amp; Kelly size</span>
       </h2>
-      <p class="text-xs text-slate-500 mb-4">Research-backed signals: favorite-longshot bias, bundle arb, Vegas divergence, cross-platform arb, weather model edge. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper.</p>
+      <p class="text-xs text-slate-500 mb-3">11 research-backed strategies. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper than taker.</p>
+      <!-- Filter toolbar -->
+      <div class="flex flex-wrap gap-2 mb-4 items-center" id="signals-filter-bar">
+        <span class="text-xs text-slate-500 mr-1">Filter:</span>
+        <button class="sig-filter-btn active text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="all" style="background:#f59e0b22;color:#f59e0b;border-color:#f59e0b44;"
+          onclick="filterSignals('all')">All</button>
+        <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="high" style="background:#22c55e22;color:#22c55e;border-color:#22c55e44;"
+          onclick="filterSignals('high')">High Conf</button>
+        <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="medium" style="background:#fbbf2422;color:#fbbf24;border-color:#fbbf2444;"
+          onclick="filterSignals('medium')">Medium</button>
+        <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="consensus" style="background:#818cf822;color:#818cf8;border-color:#818cf844;"
+          onclick="filterSignals('consensus')">🤝 Consensus</button>
+        <span id="sig-ev-display" class="ml-auto text-xs text-slate-500"></span>
+      </div>
       <div id="signals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       <p id="signals-empty" class="hidden text-slate-500 text-sm mt-2">No signals right now — check back after markets update.</p>
     </section>
@@ -1190,7 +1207,48 @@ function renderSignals(signals) {
       </div>
     </div>`;
   }).join('');
+  // Store all signals for filtering
+  window._allSignals = signals;
+  window._allSignalsHtml = summaryHtml + cardsHtml;
   grid.innerHTML = summaryHtml + cardsHtml;
+
+  // Show total expected value
+  const totalEV = signals.reduce((sum, s) => {
+    if (!s.kelly_frac || !s.take_profit_cents || !s.price) return sum;
+    const ev = s.kelly_frac * (s.take_profit_cents - s.price) / 100;
+    return sum + ev;
+  }, 0);
+  const evEl = document.getElementById('sig-ev-display');
+  if (evEl && totalEV > 0) {
+    evEl.textContent = `Est. EV: +${(totalEV * 100).toFixed(1)}¢ on $100`;
+  }
+}
+
+// Filter signals by confidence level
+function filterSignals(filter) {
+  const signals = window._allSignals || [];
+  document.querySelectorAll('.sig-filter-btn').forEach(b => {
+    b.style.opacity = b.dataset.filter === filter ? '1' : '0.5';
+  });
+
+  let filtered = signals;
+  if (filter === 'high') {
+    filtered = signals.filter(s => s.confidence === 'high');
+  } else if (filter === 'medium') {
+    filtered = signals.filter(s => s.confidence === 'high' || s.confidence === 'medium');
+  } else if (filter === 'consensus') {
+    filtered = signals.filter(s => s.consensus_count >= 2);
+  }
+
+  if (filtered.length === 0) {
+    document.getElementById('signals-grid').innerHTML = `<div class="text-slate-500 text-sm col-span-full py-4">No signals match this filter.</div>`;
+    return;
+  }
+  // Re-render with filtered signals (pass filtered to renderSignals for clean rebuild)
+  const savedAll = window._allSignals;
+  window._allSignals = filtered;
+  renderSignals(filtered);
+  window._allSignals = savedAll; // restore for other filter uses
 }
 
 // ── Live Edges ─────────────────────────────────────────────────────────────
