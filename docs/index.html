@@ -131,6 +131,9 @@
       </div>
     </div>
 
+    <!-- ── Alert Banners (extreme conditions) ── -->
+    <div id="alert-banners" class="mb-4"></div>
+
     <!-- ── Header ── -->
     <header class="flex flex-wrap items-center justify-between gap-4 mb-8">
       <div class="flex items-center gap-3">
@@ -173,7 +176,13 @@
           <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Fear & Greed</p>
           <p id="fg-value" class="text-4xl font-black">—</p>
           <p id="fg-label" class="text-sm font-semibold mt-1">—</p>
-          <p id="fg-change" class="text-xs text-slate-500 mt-0.5"></p>
+          <div class="w-full mt-2" style="height:4px;background:#1e293b;border-radius:2px;">
+            <div id="fg-bar" style="height:4px;border-radius:2px;width:50%;background:#fbbf24;transition:width 0.6s,background 0.6s;"></div>
+          </div>
+          <div class="flex justify-between w-full text-xs text-slate-600 mt-0.5">
+            <span>Fear</span><span>Neutral</span><span>Greed</span>
+          </div>
+          <p id="fg-change" class="text-xs text-slate-500 mt-1 text-center"></p>
         </div>
       </div>
 
@@ -519,6 +528,7 @@ function renderHealthBar(health, generated) {
 
 function render(data) {
   renderHealthBar(data.health || {}, data.generated || '');
+  renderAlertBanners(data);
   renderSignals(data.strategy_signals || []);
   renderLineMovements(data.line_movements || []);
   renderHeader(data);
@@ -531,6 +541,85 @@ function render(data) {
   renderTable();
   renderCharts(allMarkets);
   renderLiveFeed(data);
+}
+
+// ── Alert Banners ───────────────────────────────────────────────────────────
+function renderAlertBanners(data) {
+  const el = document.getElementById('alert-banners');
+  if (!el) return;
+  const banners = [];
+
+  // 1. Extreme Fear/Greed
+  const fg = data.fear_greed || {};
+  const fgVal = fg.value;
+  if (fgVal != null) {
+    if (fgVal <= 20) {
+      banners.push({
+        bg: '#450a0a', border: '#f87171', icon: '😱',
+        title: `Extreme Fear Index: ${fgVal}/100`,
+        body: `Markets in extreme fear (${fg.label || 'Extreme Fear'}). Historical: panic-selling creates buy opportunities. Crypto Kalshi markets may be underpriced.`,
+        action: 'Look for BUY YES on crypto price-up markets',
+        color: '#f87171',
+      });
+    } else if (fgVal >= 80) {
+      banners.push({
+        bg: '#052e16', border: '#4ade80', icon: '🤑',
+        title: `Extreme Greed Index: ${fgVal}/100`,
+        body: `Markets in extreme greed (${fg.label || 'Extreme Greed'}). Historical: euphoria → distribution. Crypto markets may be overpriced.`,
+        action: 'Look for BUY NO on crypto price-up markets',
+        color: '#4ade80',
+      });
+    } else if (fgVal <= 30) {
+      banners.push({
+        bg: '#3b0a0a', border: '#fbbf24', icon: '⚠️',
+        title: `Fear Index: ${fgVal}/100 — Elevated Fear`,
+        body: `${fg.label || 'Fear'} sentiment detected. Consider small contrarian positions in crypto markets.`,
+        action: 'Monitor BUY YES setups on BTC/ETH markets',
+        color: '#fbbf24',
+      });
+    }
+  }
+
+  // 2. Large Vegas edges
+  const edges = data.edges || [];
+  const bigEdges = edges.filter(e => Math.abs(e.gap || 0) >= 12);
+  if (bigEdges.length > 0) {
+    const e = bigEdges[0];
+    banners.push({
+      bg: '#0c1a3b', border: '#22d3ee', icon: '🎰',
+      title: `Vegas Edge Alert: ${Math.abs(e.gap).toFixed(0)}¢ gap on ${e.ticker}`,
+      body: `Kalshi shows ${e.kalshi_price}¢ vs Vegas implied ${e.vegas_prob?.toFixed(0)}¢. ${e.direction}.`,
+      action: `${e.direction} on ${e.ticker} — limit order recommended`,
+      color: '#22d3ee',
+    });
+  }
+
+  // 3. High-confidence consensus signals
+  const sigs = data.strategy_signals || [];
+  const consSigs = sigs.filter(s => s.consensus_count >= 2 && s.confidence === 'high');
+  if (consSigs.length > 0) {
+    const s = consSigs[0];
+    banners.push({
+      bg: '#1c1202', border: '#fbbf24', icon: '🤝',
+      title: `Consensus Signal: ${s.consensus_count} strategies agree on ${s.ticker}`,
+      body: `${s.direction} — ${(s.consensus_types || []).join(', ')}. Kelly: ${((s.kelly_frac||0)*100).toFixed(1)}%`,
+      action: `Entry @ ${s.entry_limit_cents || s.price}¢ → TP ${s.take_profit_cents || '?'}¢`,
+      color: '#fbbf24',
+    });
+  }
+
+  if (banners.length === 0) { el.innerHTML = ''; return; }
+
+  el.innerHTML = banners.map(b => `
+    <div class="rounded-xl px-4 py-3 mb-3 flex items-start gap-3 border"
+         style="background:${b.bg};border-color:${b.border};">
+      <span class="text-2xl flex-shrink-0 mt-0.5">${b.icon}</span>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm" style="color:${b.color};">${b.title}</p>
+        <p class="text-xs text-slate-300 mt-0.5">${b.body}</p>
+        <p class="text-xs mt-1 font-semibold" style="color:${b.color};">→ ${b.action}</p>
+      </div>
+    </div>`).join('');
 }
 
 // ── Header ─────────────────────────────────────────────────────────────────
@@ -661,11 +750,22 @@ function renderLiveFeed(data) {
   if (fg.value !== undefined) {
     const v   = fg.value;
     const col = v <= 25 ? '#f87171' : v <= 45 ? '#fb923c' : v <= 55 ? '#fbbf24' : v <= 75 ? '#86efac' : '#4ade80';
+    const signal = v <= 20 ? '⚡ BUY crypto markets' : v >= 80 ? '⚡ FADE crypto markets' : v <= 30 ? 'Watch for BUY' : v >= 70 ? 'Watch for FADE' : 'Neutral';
     document.getElementById('fg-value').innerHTML = `<span style="color:${col}">${v}</span>`;
-    document.getElementById('fg-label').innerHTML = `<span style="color:${col}">${escHtml(fg.label)}</span>`;
+    document.getElementById('fg-label').innerHTML = `<span style="color:${col}">${escHtml(fg.label || '')}</span>`;
+    const fgBar = document.getElementById('fg-bar');
+    if (fgBar) { fgBar.style.width = v + '%'; fgBar.style.background = col; }
     if (fg.yesterday !== null && fg.yesterday !== undefined) {
       const diff = v - fg.yesterday;
-      document.getElementById('fg-change').textContent = `${diff >= 0 ? '+' : ''}${diff} from yesterday`;
+      document.getElementById('fg-change').textContent = `${diff >= 0 ? '+' : ''}${diff} from yesterday · ${signal}`;
+    } else {
+      document.getElementById('fg-change').textContent = signal;
+    }
+    // Update gauge card border color
+    const fgCard = document.getElementById('fg-card');
+    if (fgCard) {
+      fgCard.style.borderLeft = `3px solid ${col}`;
+      if (v <= 25 || v >= 75) fgCard.style.boxShadow = `0 0 12px ${col}33`;
     }
   }
 
