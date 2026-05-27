@@ -1316,6 +1316,102 @@ def analyze_weather_edge(markets, weather_data):
             })
     return signals
 
+def analyze_volume_spikes(markets):
+    """
+    Volume spike detection: markets with unusually high 24h volume
+    relative to their typical volume signal informed trading.
+    High volume + neutral price (40-60¢) = undecided market about to move.
+    High volume + extreme price (>85¢ or <15¢) = confirmation trade.
+    """
+    signals = []
+    # Sort by volume to find top traders
+    sorted_markets = sorted(
+        [m for m in markets if m.get("volume", 0) > 50],
+        key=lambda m: m.get("volume", 0),
+        reverse=True
+    )
+    # Take top 10% by volume (or top 10, whichever smaller)
+    top_n = max(3, len(sorted_markets) // 10)
+    hot_markets = sorted_markets[:top_n]
+
+    if not hot_markets:
+        return signals
+
+    # Compute median volume for reference
+    vols = [m.get("volume", 0) for m in sorted_markets]
+    median_vol = sorted(vols)[len(vols) // 2] if vols else 100
+
+    for m in hot_markets:
+        ticker = m.get("ticker", "")
+        title  = m.get("title", ticker)
+        vol    = m.get("volume", 0)
+        price  = m.get("_yes_price", m.get("yes_ask", 50))
+
+        if not ticker or not price:
+            continue
+
+        vol_ratio = vol / median_vol if median_vol else 1
+        if vol_ratio < 3.0:  # Need 3x median volume to qualify
+            continue
+
+        # Strategy: high volume on undecided markets = follow the money
+        if 35 <= price <= 65:
+            # Neutral market with high volume = someone knows something
+            # Direction: buy YES if price is above 50, NO if below
+            direction = "BUY YES" if price >= 50 else "BUY NO"
+            side_price = price if "YES" in direction else (100 - price)
+            kelly = kelly_size(price, side_price, maker=True)
+            signals.append({
+                "type":        "volume_spike",
+                "direction":   direction,
+                "ticker":      ticker,
+                "title":       title,
+                "price":       price,
+                "rationale":   f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning.",
+                "confidence":  "medium",
+                "kelly_frac":  kelly * 0.5,  # half-Kelly for momentum
+                "fee_cents":   kalshi_fee(price),
+                "priority":    2,
+                "volume":      vol,
+                "vol_ratio":   round(vol_ratio, 1),
+            })
+        elif price > 85:
+            # Heavy volume on near-certainty = high confidence follow
+            kelly = kelly_size(price, price, maker=True)
+            signals.append({
+                "type":        "volume_spike",
+                "direction":   "BUY YES",
+                "ticker":      ticker,
+                "title":       title,
+                "price":       price,
+                "rationale":   f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ favourite. Heavy confirmation.",
+                "confidence":  "high",
+                "kelly_frac":  kelly * 0.3,
+                "fee_cents":   kalshi_fee(price),
+                "priority":    2,
+                "volume":      vol,
+                "vol_ratio":   round(vol_ratio, 1),
+            })
+        elif price < 15:
+            # High volume longshot — but longshot bias says fades, so BUY NO
+            kelly = kelly_size(100 - price, 100 - price, maker=True)
+            signals.append({
+                "type":        "volume_spike",
+                "direction":   "BUY NO",
+                "ticker":      ticker,
+                "title":       title,
+                "price":       price,
+                "rationale":   f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade.",
+                "confidence":  "medium",
+                "kelly_frac":  kelly * 0.3,
+                "fee_cents":   kalshi_fee(100 - price),
+                "priority":    2,
+                "volume":      vol,
+                "vol_ratio":   round(vol_ratio, 1),
+            })
+
+    return signals
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data):
     """
     Run all strategy modules and return unified ranked signal list.
@@ -1354,6 +1450,12 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data):
             all_signals += analyze_weather_edge(markets, weather_data)
     except Exception as e:
         log(f"Strategy weather error: {e}")
+
+    # 6. Volume spike detection
+    try:
+        all_signals += analyze_volume_spikes(markets)
+    except Exception as e:
+        log(f"Strategy volume spike error: {e}")
 
     # Filter out expired / closing-soon markets (need > 2 hours to place & fill)
     now_utc = datetime.now(timezone.utc)
