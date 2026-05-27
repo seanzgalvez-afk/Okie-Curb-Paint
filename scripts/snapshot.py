@@ -2340,24 +2340,30 @@ def analyze_momentum_edge(markets):
         title  = m.get("title", ticker)
         yp     = m.get("_yes_price")
         vol    = m.get("volume", 0) or 0
-        yb     = m.get("yes_bid") or 0
-        ya     = m.get("yes_ask") or 99
+
+        # Compute spread using binary market identity: yes_ask = 100 - no_bid
+        # This avoids the bug where yes_ask defaults to 99 when missing.
+        yb = m.get("yes_bid") or 0
+        nb = m.get("no_bid")  or 0
+        ya = m.get("yes_ask") or (100 - nb if nb else None)
+        if ya is None:
+            ya = 99  # last resort fallback
         spread = ya - yb
 
         if yp is None or not ticker:
             continue
 
         t_up = ticker.upper()
-        # Only look at GAME and WINNER markets (binary outcomes)
-        if not any(x in t_up for x in ["GAME", "WINNER", "1H"]):
+        # Look at GAME, WINNER, 1H markets (binary outcomes) + SERIES/PLAYOFF
+        if not any(x in t_up for x in ["GAME", "WINNER", "1H", "SERIES", "PLAYOFF"]):
             continue
 
-        # Require decent volume (market is liquid)
-        if vol < 15:
+        # Require some volume (lowered for playoff markets)
+        if vol < 5:
             continue
 
-        # Tight spread required (< 4¢)
-        if spread > 4:
+        # Tight spread required (< 8¢ — was 4¢, too strict for lower-volume markets)
+        if spread > 8:
             continue
 
         # Mid-range underdog: 20-35¢ YES in a binary game market
