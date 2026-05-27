@@ -63,38 +63,68 @@ jobs:
             echo "No NTFY_TOPIC set, skipping notification"
             exit 0
           fi
-          # Count edges in data.json
-          EDGE_COUNT=$(python3 -c "
-          import json, sys
-          try:
-              data = json.load(open('docs/data.json'))
-              edges = data.get('edges', [])
-              big = [e for e in edges if abs(e.get('gap',0)) >= 10]
-              print(len(big))
-          except:
-              print(0)
-          ")
-          if [ "$EDGE_COUNT" -gt "0" ]; then
-            # Get top edge details
-            TOP_EDGE=$(python3 -c "
-          import json
-          try:
-              data = json.load(open('docs/data.json'))
-              edges = sorted(data.get('edges',[]), key=lambda x: abs(x.get('gap',0)), reverse=True)
-              big = [e for e in edges if abs(e.get('gap',0)) >= 10]
-              if big:
-                  e = big[0]
-                  print(f\"{e['direction']} {e['ticker'][:20]} | Kalshi {e['kalshi_price']}c vs Vegas {e['vegas_prob']}c | Gap: {e['gap']:+.0f}c\")
-          except Exception as ex:
-              print('Edge detected')
-            ")
-            curl -s \
-              -H "Title: 🚨 Kalshi Edge Alert" \
-              -H "Priority: high" \
-              -H "Tags: chart_increasing" \
-              -d "$TOP_EDGE" \
-              "https://ntfy.sh/$NTFY_TOPIC" || true
-          fi
+          python3 - <<'PYEOF'
+import json, subprocess, sys, os
 
+topic = os.environ["NTFY_TOPIC"]
 
- 
+try:
+    data = json.load(open("docs/data.json"))
+except Exception as e:
+    print(f"Could not read data.json: {e}")
+    sys.exit(0)
+
+alerts = []
+
+# 1) Vegas edges ≥10c
+edges = data.get("edges", [])
+big_edges = [e for e in edges if abs(e.get("gap", 0)) >= 10]
+if big_edges:
+    e = big_edges[0]
+    alerts.append({
+        "title": "🚨 Vegas Edge Alert",
+        "priority": "high",
+        "tags": "chart_increasing",
+        "body": f"{e['direction']} {e['ticker'][:20]} | Kalshi {e['kalshi_price']}c vs Vegas {e['vegas_prob']}c | Gap: {e['gap']:+.0f}c",
+    })
+
+# 2) High-confidence strategy signals
+sigs = data.get("strategy_signals", [])
+high = [s for s in sigs if s.get("confidence") == "high"]
+if high:
+    s = high[0]
+    alerts.append({
+        "title": "⚡ Strategy Signal",
+        "priority": "high",
+        "tags": "zap",
+        "body": f"{s.get('direction','?')} {s.get('ticker','')[:20]} | {s.get('signal_type','?')} | Kelly {s.get('kelly_pct',0):.1f}% | {s.get('rationale','')[:80]}",
+    })
+
+# 3) Sharp line movements ≥5 pts
+moves = data.get("line_movements", [])
+big_moves = [m for m in moves if abs(m.get("prob_move", 0)) >= 5]
+if big_moves:
+    m = big_moves[0]
+    alerts.append({
+        "title": "📈 Sharp Line Move",
+        "priority": "default",
+        "tags": "eyes",
+        "body": f"{m['team']} ({m.get('sport','')}) {m['direction']} {m['prob_move']:+.1f}pts | {m['away']} @ {m['home']}",
+    })
+
+if not alerts:
+    print("No alerts to send")
+    sys.exit(0)
+
+for alert in alerts:
+    result = subprocess.run([
+        "curl", "-s",
+        "-H", f"Title: {alert['title']}",
+        "-H", f"Priority: {alert['priority']}",
+        "-H", f"Tags: {alert['tags']}",
+        "-d", alert["body"],
+        f"https://ntfy.sh/{topic}",
+    ], capture_output=True, text=True)
+    print(f"Sent: {alert['title']} -> {result.returncode}")
+PYEOF
+

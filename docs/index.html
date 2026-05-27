@@ -206,6 +206,16 @@
       <p id="signals-empty" class="hidden text-slate-500 text-sm mt-2">No signals right now — check back after markets update.</p>
     </section>
 
+    <!-- ── Line Movements ── -->
+    <section class="mb-10" id="line-movements-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span>📈</span> Line Movements
+        <span class="text-xs bg-slate-700 text-slate-300 rounded-full px-2 py-0.5 font-mono" id="lm-count">–</span>
+      </h2>
+      <p style="color:#aaa;font-size:0.9em" class="mb-4">Sharp money signals: moves ≥3 probability points vs prior snapshot</p>
+      <div id="line-movements"></div>
+    </section>
+
     <!-- ── Best Picks ── -->
     <section class="mb-10">
       <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
@@ -440,6 +450,7 @@ async function fetchData() {
 
 function render(data) {
   renderSignals(data.strategy_signals || []);
+  renderLineMovements(data.line_movements || []);
   renderHeader(data);
   renderBestPicks(data.best_picks || []);
   renderEdges(data.edges || []);
@@ -791,6 +802,33 @@ function renderDemoPortfolio(portfolio) {
         <p class="text-slate-500">${o.signal_type} · ${o.placed_at ? o.placed_at.slice(0,10) : ''}</p>
       </div>`).join('');
   }
+}
+
+// ── Line Movements ─────────────────────────────────────────────────────────────
+function renderLineMovements(moves) {
+    const el = document.getElementById('line-movements');
+    if (!el) return;
+    const badge = document.getElementById('lm-count');
+    if (badge) badge.textContent = moves.length;
+    if (!moves.length) {
+        el.innerHTML = '<p style="color:#888;text-align:center">No significant line movements detected</p>';
+        return;
+    }
+    const rows = moves.map(m => {
+        const dir = m.prob_move > 0 ? '🔺' : '🔻';
+        const mag = Math.abs(m.prob_move).toFixed(1);
+        return `<tr>
+            <td>${m.sport || ''}</td>
+            <td>${m.away} @ ${m.home}</td>
+            <td>${m.team}</td>
+            <td>${dir} ${mag}pts (${m.direction})</td>
+            <td>${m.bookmaker}</td>
+            <td style="color:#888;font-size:0.85em">${(m.commence || '').slice(0,10)}</td>
+        </tr>`;
+    }).join('');
+    el.innerHTML = `<table class="table"><thead><tr>
+        <th>Sport</th><th>Game</th><th>Team</th><th>Move</th><th>Book</th><th>Tip-off</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 // ── Strategy Signals ──────────────────────────────────────────────────────────

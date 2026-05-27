@@ -259,33 +259,95 @@ def check_settlements(state):
             # Order no longer resting — filled, cancelled, or market resolved
             order["status"] = "filled_or_resolved"
             order["closed_at"] = datetime.now(timezone.utc).isoformat()
+            # Preserve entry price for CLV calculation
+            if "entry_price_cents" not in order:
+                order["entry_price_cents"] = order.get("price_cents", 50)
             state["closed"].append(order)
             log(f"  Order settled: {order['ticker']} {order['side']}")
         else:
+            # Fetch current market price for open positions
+            book = get_market_info(order.get("ticker", ""))
+            if book:
+                mid = None
+                if book.get("best_bid") is not None and book.get("best_ask") is not None:
+                    mid = (book["best_bid"] + book["best_ask"]) / 2
+                elif book.get("best_bid") is not None:
+                    mid = book["best_bid"]
+                elif book.get("best_ask") is not None:
+                    mid = book["best_ask"]
+                if mid is not None:
+                    order["last_known_price"] = mid
             still_open_orders.append(order)
     state["orders"] = still_open_orders
 
     return state
 
 # ── Stats calculation ─────────────────────────────────────────────────────────
-def calc_stats(state):
+def compute_portfolio_stats(state):
+    """
+    Compute CLV-aware portfolio statistics from the trade state.
+
+    CLV (Closing Line Value) = entry_price_cents - 50.
+    Positive CLV means we bought when the market implied we had an edge
+    relative to the 50¢ breakeven; negative means the opposite.
+
+    Returns a dict with:
+      total_trades, wins, losses, win_rate, avg_clv,
+      total_pnl_cents, roi_pct, open_count, bankroll_cents, last_updated.
+    """
     closed = state.get("closed", [])
+    total  = len(closed)
+    open_count = len(state.get("orders", []))
+    bankroll   = state.get("bankroll_cents", BANKROLL_CENTS)
+
     if not closed:
         return {
             "total_trades":   0,
-            "bankroll_cents": state.get("bankroll_cents", BANKROLL_CENTS),
-            "open_count":     len(state.get("orders", [])),
+            "wins":           0,
+            "losses":         0,
+            "win_rate":       None,
+            "avg_clv":        None,
+            "total_pnl_cents":0,
+            "roi_pct":        None,
+            "open_count":     open_count,
+            "bankroll_cents": bankroll,
+            "last_updated":   datetime.now(timezone.utc).isoformat(),
         }
 
-    # For now track order counts (P&L requires market resolution data)
-    total = len(closed)
+    wins   = sum(1 for t in closed if (t.get("pnl_cents") or 0) > 0)
+    losses = sum(1 for t in closed if (t.get("pnl_cents") or 0) < 0)
+
+    # CLV: entry_price_cents - 50 (positive = bought with edge vs. breakeven)
+    clv_values = [
+        t["entry_price_cents"] - 50
+        for t in closed
+        if "entry_price_cents" in t
+    ]
+    avg_clv = (sum(clv_values) / len(clv_values)) if clv_values else None
+
+    total_pnl    = sum((t.get("pnl_cents") or 0) for t in closed)
+    cost_bases   = [t.get("cost_basis_cents") or 0 for t in closed]
+    total_cost   = sum(cost_bases)
+    roi_pct      = (total_pnl / total_cost * 100) if total_cost else None
+
     return {
         "total_trades":    total,
-        "open_count":      len(state.get("orders", [])),
-        "bankroll_cents":  state.get("bankroll_cents", BANKROLL_CENTS),
+        "wins":            wins,
+        "losses":          losses,
+        "win_rate":        (wins / total) if total else None,
+        "avg_clv":         avg_clv,
+        "total_pnl_cents": total_pnl,
+        "roi_pct":         roi_pct,
+        "open_count":      open_count,
+        "bankroll_cents":  bankroll,
         "signals_placed":  total,
         "last_updated":    datetime.now(timezone.utc).isoformat(),
     }
+
+
+def calc_stats(state):
+    """Thin wrapper kept for backwards-compat; delegates to compute_portfolio_stats."""
+    return compute_portfolio_stats(state)
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
@@ -438,11 +500,12 @@ def main():
     log(f"Total tracked orders: {len(state['orders'])}")
 
     # 7. Build output for dashboard
+    portfolio_stats = compute_portfolio_stats(state)
     demo_portfolio = {
         "balance_cents":  balance,
         "open_orders":    state["orders"],
         "closed_trades":  state["closed"][-20:],  # last 20
-        "stats":          calc_stats(state),
+        "stats":          portfolio_stats,
         "last_run":       datetime.now(timezone.utc).isoformat(),
     }
 
