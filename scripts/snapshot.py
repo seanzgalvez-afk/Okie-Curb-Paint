@@ -2113,6 +2113,144 @@ def analyze_metaculus_edge(markets, metaculus_qs):
     return signals[:3]
 
 
+def analyze_home_advantage(markets, espn_games):
+    """
+    Home Team Advantage in Sports Playoff Markets.
+
+    Well-documented research findings:
+    - NBA Playoffs: Home teams win ~65% of games (historical ~1984-2024)
+    - NHL Playoffs: Home teams win ~55% of games
+    - MLB Regular Season: Home teams win ~54% of games
+    - NFL: Home teams win ~57% of games (less in playoffs)
+
+    When Kalshi underprices home teams in these ranges, there's structural edge.
+    Must exclude in-progress games.
+
+    Method: Parse Kalshi ticker to identify home vs away teams,
+    cross-reference with ESPN to identify which team is home.
+    """
+    signals = []
+    if not espn_games or not markets:
+        return signals
+
+    # Home advantage rates by sport
+    home_rates = {"nba": 65, "nhl": 55, "mlb": 54, "nfl": 57}
+
+    # Build a quick lookup: (league, away_team_abbrev, home_team_abbrev) -> game
+    # Kalshi tickers: KXNBAGAME-26MAY26SASOKC-OKC means game SAS@OKC, OKC home
+    game_map = {}
+    for g in espn_games:
+        status = (g.get("status") or "").lower()
+        if any(w in status for w in ("in progress", "final", "halftime", "end of")):
+            continue
+        league = g.get("league", "")
+        if league not in home_rates:
+            continue
+        game_map[g.get("event_id", "")] = g
+
+    # For each GAME market pair, detect the home team
+    # Pattern: KXNBAGAME-{date}{AWYHOM}-{TEAM}
+    # The game string: SASOKC → SAS is away, OKC is home
+    from collections import defaultdict
+    game_pairs = defaultdict(list)
+
+    for m in markets:
+        ticker = m.get("ticker", "")
+        if not any(x in ticker for x in ["NBAGAME", "NHLGAME", "MLBGAME"]):
+            continue
+        yp = m.get("_yes_price")
+        if yp is None:
+            continue
+        # Parse: KXNBAGAME-26MAY26SASOKC-OKC
+        # series = KXNBAGAME-26MAY26SASOKC, suffix = OKC
+        parts = ticker.rsplit("-", 1)
+        if len(parts) != 2:
+            continue
+        series = parts[0]
+        suffix = parts[1]  # team abbreviation
+        game_pairs[series].append({"suffix": suffix, "yp": yp, "ticker": ticker, "title": m.get("title","")})
+
+    for series, contracts in game_pairs.items():
+        if len(contracts) != 2:
+            continue  # need exactly 2 teams
+        if sum(c["yp"] for c in contracts) > 105 or sum(c["yp"] for c in contracts) < 95:
+            continue  # prices don't sum to ~100 (not a proper 2-outcome binary)
+
+        # Detect league from series name
+        league = None
+        if "NBA" in series:
+            league = "nba"
+        elif "NHL" in series:
+            league = "nhl"
+        elif "MLB" in series:
+            league = "mlb"
+        if not league:
+            continue
+
+        home_win_rate = home_rates[league]
+
+        # Parse the game code: e.g., SASOKC from KXNBAGAME-26MAY26SASOKC
+        # Game code is at the end of the series after the date part (DDMMMYY)
+        # Format: KXNBAGAME-{DDMMMYY}{AWYHOM}
+        s_upper = series.upper()
+        # Find the two team abbreviations in the series name
+        team_suffixes = [c["suffix"] for c in contracts]
+
+        # Try to figure out which team is home from Kalshi's convention
+        # The series name KXNBAGAME-26MAY26SASOKC means SAS@OKC → OKC is home
+        # The last 3-6 chars before the series is the home team
+        game_code = s_upper.split("-")[-1] if "-" in s_upper else ""
+
+        # Find the suffix that appears at the END of the game code (= home team)
+        home_suffix = None
+        away_suffix = None
+        for suf in team_suffixes:
+            if game_code.endswith(suf):
+                home_suffix = suf
+                away_suffix = [x for x in team_suffixes if x != suf][0]
+                break
+
+        if not home_suffix:
+            continue
+
+        # Find the home team contract
+        home_contract = next((c for c in contracts if c["suffix"] == home_suffix), None)
+        if not home_contract:
+            continue
+
+        home_price = home_contract["yp"]
+
+        # Home advantage edge: if home team priced below historical win rate
+        gap = home_win_rate - home_price
+        if gap < 5:
+            continue  # insufficient edge
+
+        kelly = kelly_size(home_win_rate, home_price, maker=True, fraction=0.25)
+        if kelly <= 0:
+            continue
+
+        signals.append({
+            "type":              "home_advantage",
+            "direction":         "BUY YES",
+            "ticker":            home_contract["ticker"],
+            "title":             home_contract["title"],
+            "price":             home_price,
+            "rationale":         f"Home team ({home_suffix}) priced at {home_price}¢ vs historical {league.upper()} home win rate ~{home_win_rate}%. Gap: {gap:+.0f}¢.",
+            "confidence":        "medium" if gap >= 10 else "low",
+            "kelly_frac":        kelly,
+            "fee_cents":         kalshi_fee(home_price),
+            "priority":          2 if gap >= 10 else 3,
+            "gap":               gap,
+            "entry_limit_cents": max(1, home_price - 2),
+            "take_profit_cents": min(99, int(home_win_rate)),
+            "stop_loss_pct":     0.35,
+        })
+
+    signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
+    log(f"Home advantage: {len(signals)} signals")
+    return signals[:5]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
                         metaculus_qs=None):
     """
@@ -2192,6 +2330,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_metaculus_edge(markets, metaculus_qs)
     except Exception as e:
         log(f"Strategy metaculus error: {e}")
+
+    # 12. Home team advantage in sports markets
+    try:
+        if espn_games:
+            all_signals += analyze_home_advantage(markets, espn_games)
+    except Exception as e:
+        log(f"Strategy home advantage error: {e}")
 
     # Consensus detection: count how many strategies agree per ticker+direction
     from collections import defaultdict
