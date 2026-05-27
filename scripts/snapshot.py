@@ -1742,6 +1742,96 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
     return signals[:3]
 
 
+def analyze_fred_edge(markets, fred_data):
+    """
+    Use FRED economic data to find mispriced economic/political Kalshi markets.
+
+    Key relationships:
+    - Fed Funds Rate (FEDFUNDS): affects "Fed rate hike/cut" markets
+    - CPI/CPILFESL: affects "inflation" markets
+    - UNRATE: affects "unemployment" markets
+    - 10Y Treasury (GS10): affects "yield" markets
+
+    Strategy: when FRED data strongly suggests a direction and Kalshi price
+    disagrees, that's an edge.
+    """
+    signals = []
+    if not fred_data or not markets:
+        return signals
+
+    # Get current values
+    fed_rate = None
+    cpi      = None
+    unrate   = None
+
+    for series_id, info in fred_data.items():
+        val = info.get("value") if isinstance(info, dict) else None
+        if val is None:
+            try:
+                val = float(info)
+            except (TypeError, ValueError):
+                pass
+        if val is None:
+            continue
+        sid = series_id.upper()
+        if "FEDFUNDS" in sid or "FEDRATE" in sid or sid == "FED_RATE":
+            try: fed_rate = float(val)
+            except: pass
+        elif "CPILFE" in sid or ("CPI" in sid and "CORE" in sid):
+            try: cpi = float(val)
+            except: pass
+        elif "UNRATE" in sid or sid == "UNEMPLOYMENT":
+            try: unrate = float(val)
+            except: pass
+
+    # Cross-reference with Kalshi markets
+    for m in markets:
+        ticker = m.get("ticker", "").upper()
+        title  = (m.get("title") or "").upper()
+        yp     = m.get("_yes_price")
+        if yp is None:
+            continue
+
+        # Fed rate markets
+        if ("FED" in ticker or "RATE" in ticker) and fed_rate is not None:
+            if "HIKE" in title or "RAISE" in title or "INCREASE" in title:
+                # Fed unlikely to hike if rate already high (>5.5%)
+                if fed_rate > 5.5 and yp > 40:
+                    signals.append({
+                        "type":        "fred_edge",
+                        "direction":   "BUY NO",
+                        "ticker":      m.get("ticker", ""),
+                        "title":       m.get("title", ""),
+                        "price":       yp,
+                        "rationale":   f"FRED: Fed Funds Rate = {fed_rate:.2f}%. Rate hike unlikely at this level. Kalshi prices {yp}¢.",
+                        "confidence":  "medium",
+                        "kelly_frac":  0.01,
+                        "fee_cents":   kalshi_fee(100 - yp),
+                        "priority":    2,
+                    })
+
+        # Unemployment markets
+        if "UNEMP" in ticker or "UNRATE" in ticker or "JOBLESS" in ticker:
+            if unrate is not None:
+                # High unrate > 5% usually means "will unemployment stay above X?" YES
+                if unrate > 5.0 and "ABOVE" in title and yp < 40:
+                    signals.append({
+                        "type":        "fred_edge",
+                        "direction":   "BUY YES",
+                        "ticker":      m.get("ticker", ""),
+                        "title":       m.get("title", ""),
+                        "price":       yp,
+                        "rationale":   f"FRED: Unemployment = {unrate:.1f}%. Historical persistence suggests above-threshold likely.",
+                        "confidence":  "low",
+                        "kelly_frac":  0.01,
+                        "fee_cents":   kalshi_fee(yp),
+                        "priority":    3,
+                    })
+
+    log(f"FRED edge: {len(signals)} signals")
+    return signals[:3]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None):
     """
     Run all strategy modules and return unified ranked signal list.
@@ -1800,6 +1890,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_fear_greed_edge(markets, fear_greed)
     except Exception as e:
         log(f"Strategy fear_greed error: {e}")
+
+    # 9. FRED economic edge
+    try:
+        if fred_data:
+            all_signals += analyze_fred_edge(markets, fred_data)
+    except Exception as e:
+        log(f"Strategy FRED error: {e}")
 
     # Deduplicate: keep highest-priority signal per ticker
     seen_tickers = {}
