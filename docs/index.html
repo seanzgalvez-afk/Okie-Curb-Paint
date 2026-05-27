@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Kalshi" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
   <style>
     body { background-color: #0f172a; }
     .card { background-color: #1e293b; }
@@ -145,6 +145,7 @@
         <div class="card rounded-xl px-4 py-2 text-center">
           <p class="text-xs text-slate-400 uppercase tracking-wider">Last updated</p>
           <p id="last-updated" class="text-sm font-medium text-slate-200">—</p>
+          <span id="refresh-countdown" class="text-xs text-slate-500"></span>
         </div>
         <button id="refresh-btn" onclick="fetchData()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-900 font-semibold text-sm transition">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -523,7 +524,20 @@ function renderHeader(data) {
 
   // Last updated
   const generated = data.generated || '';
-  document.getElementById('last-updated').textContent = generated;
+  window._lastGenerated = generated;
+
+  // Staleness warning
+  let staleWarning = '';
+  if (generated) {
+    try {
+      const genMs = new Date(generated.replace(' UTC', 'Z').replace(' ', 'T')).getTime();
+      const ageMin = (Date.now() - genMs) / 60000;
+      staleWarning = ageMin > 15
+        ? `<span class="ml-2 px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-400 text-xs">⚠ ${Math.round(ageMin)}m old</span>`
+        : '';
+    } catch (_) {}
+  }
+  document.getElementById('last-updated').innerHTML = escHtml(generated) + staleWarning;
 
   // Status dot
   const dot = document.getElementById('status-dot');
@@ -538,6 +552,8 @@ function renderHeader(data) {
       }
     } catch (_) {}
   }
+
+  startRefreshCountdown();
 }
 
 // ── Best Picks ─────────────────────────────────────────────────────────────
@@ -840,6 +856,15 @@ function renderDemoPortfolio(portfolio) {
       ⚡ ${rs.signals_evaluated} signal(s) evaluated, 0 orders placed — check demo API credentials</div>`;
   }
 
+  // PnL history chart (if available)
+  const history = portfolio.pnl_history || [];
+  if (history.length >= 2) {
+    statsEl.innerHTML += `<div class="col-span-full mt-4">
+      <div class="text-xs text-slate-400 mb-2 font-semibold">P&L History</div>
+      <canvas id="pnl-chart" height="80" style="max-height:80px;"></canvas>
+    </div>`;
+  }
+
   // Open orders
   if (orders.length === 0) {
     openEl.innerHTML = '';
@@ -871,6 +896,39 @@ function renderDemoPortfolio(portfolio) {
         </div>
         <p class="text-slate-500">${o.signal_type} · ${o.placed_at ? o.placed_at.slice(0,10) : ''}</p>
       </div>`).join('');
+  }
+
+  // Render P&L chart after DOM settles
+  if (history.length >= 2) {
+    setTimeout(() => {
+      const ctx = document.getElementById('pnl-chart');
+      if (!ctx || !window.Chart) return;
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: history.map((_, i) => i === 0 ? 'start' : '+' + i),
+          datasets: [{
+            data: history.map(h => h.pnl_cents || 0),
+            borderColor: '#22c55e',
+            backgroundColor: 'rgba(34,197,94,0.1)',
+            tension: 0.3,
+            fill: true,
+            pointRadius: 2,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { display: false },
+            y: {
+              ticks: { color: '#94a3b8', font: { size: 10 } },
+              grid: { color: '#1e293b' }
+            }
+          }
+        }
+      });
+    }, 100);
   }
 }
 
@@ -912,6 +970,30 @@ function renderSignals(signals) {
   }
   empty.classList.add('hidden');
 
+  // Build signal summary bar
+  const typeCounts = {};
+  signals.forEach(s => { typeCounts[s.type] = (typeCounts[s.type] || 0) + 1; });
+  const summaryTypeColors = {bundle_arb:'#22c55e',vegas_divergence:'#06b6d4',weather_edge:'#a855f7',
+    cross_platform_arb:'#f59e0b',longshot_bias:'#ef4444',volume_spike:'#f97316',
+    espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e'};
+  const summaryTypeLabels = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',weather_edge:'Weather',
+    cross_platform_arb:'Cross-Plat',longshot_bias:'Longshot',volume_spike:'Volume',
+    espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum'};
+
+  const summaryBar = Object.entries(typeCounts).map(([type, count]) =>
+    `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:${summaryTypeColors[type]||'#94a3b8'}22;color:${summaryTypeColors[type]||'#94a3b8'};border:1px solid ${summaryTypeColors[type]||'#94a3b8'}44">${summaryTypeLabels[type]||type} ×${count}</span>`
+  ).join(' ');
+
+  const highConf = signals.filter(s => s.confidence === 'high').length;
+  const topKelly = signals.reduce((max, s) => Math.max(max, s.kelly_frac||0), 0);
+
+  const summaryHtml = `<div class="mb-4 flex flex-wrap gap-2 items-center">
+    <span class="text-slate-400 text-sm">${signals.length} signals</span>
+    ${highConf > 0 ? `<span class="px-2 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/40">✓ ${highConf} HIGH CONF</span>` : ''}
+    ${summaryBar}
+    ${topKelly > 0.02 ? `<span class="ml-auto text-xs text-slate-400">Top Kelly: ${(topKelly*100).toFixed(1)}%</span>` : ''}
+  </div>`;
+
   const typeColors = {
     bundle_arb:        '#10b981',  // green
     vegas_divergence:  '#22d3ee',  // cyan
@@ -922,6 +1004,7 @@ function renderSignals(signals) {
     espn_odds_edge:    '#60a5fa',  // blue
     fear_greed_edge:   '#e879f9',  // fuchsia
     fred_edge:         '#84cc16',  // lime green
+    momentum_edge:     '#f43f5e',  // rose
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -933,6 +1016,7 @@ function renderSignals(signals) {
     espn_odds_edge:    '🏆 ESPN Edge',
     fear_greed_edge:   '😱 F&G Edge',
     fred_edge:         '📊 FRED Signal',
+    momentum_edge:     '⚡ Momentum',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',
@@ -940,7 +1024,7 @@ function renderSignals(signals) {
     low:    'bg-slate-700 text-slate-400',
   };
 
-  grid.innerHTML = signals.map(s => {
+  const cardsHtml = signals.map(s => {
     const color    = typeColors[s.type]  || '#94a3b8';
     const label    = typeLabels[s.type]  || s.type;
     const conf     = confBadge[s.confidence] || confBadge.low;
@@ -1062,6 +1146,7 @@ function renderSignals(signals) {
       </div>
     </div>`;
   }).join('');
+  grid.innerHTML = summaryHtml + cardsHtml;
 }
 
 // ── Live Edges ─────────────────────────────────────────────────────────────
@@ -1359,6 +1444,33 @@ function calcKelly() {
     const bet = Math.max(0, bankroll * adjK);
     document.getElementById('kelly-bet').textContent = '$' + bet.toFixed(2);
   }
+}
+
+// ── Auto-refresh countdown ─────────────────────────────────────────────────
+let _countdownInterval = null;
+function startRefreshCountdown() {
+  const countEl = document.getElementById('refresh-countdown');
+  if (!countEl) return;
+  if (_countdownInterval) clearInterval(_countdownInterval);
+  const genTime = new Date((window._lastGenerated || '').replace(' UTC','Z').replace(' ','T') || Date.now());
+  const nextRefresh = new Date(genTime.getTime() + 5 * 60 * 1000); // 5 min after gen
+
+  function tick() {
+    const secsLeft = Math.max(0, Math.round((nextRefresh - Date.now()) / 1000));
+    const mins = Math.floor(secsLeft / 60);
+    const secs = secsLeft % 60;
+    if (countEl) {
+      if (secsLeft <= 0) {
+        countEl.textContent = '🔄 refresh due — reload page';
+        countEl.style.color = '#f87171';
+      } else {
+        countEl.textContent = `next refresh ~${mins}:${String(secs).padStart(2,'0')}`;
+        countEl.style.color = secsLeft < 60 ? '#fbbf24' : '#94a3b8';
+      }
+    }
+  }
+  tick();
+  _countdownInterval = setInterval(tick, 1000);
 }
 
 // ── Boot ───────────────────────────────────────────────────────────────────

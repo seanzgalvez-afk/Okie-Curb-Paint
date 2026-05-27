@@ -1879,6 +1879,99 @@ def analyze_fred_edge(markets, fred_data):
     return signals[:3]
 
 
+def analyze_momentum_edge(markets):
+    """
+    Momentum / Mean-Reversion Edge:
+
+    Binary markets tend to snap back when price moves far from historical equilibrium.
+
+    Strategy:
+    - If a GAME/WINNER market is priced 10-35¢ (heavily discounted underdog):
+      Check if volume is spiking (someone may know something, OR it's emotional selloff)
+    - If spread < 3¢ AND price 15-30¢ AND volume > 20: small edge buying the underdog
+      (market research: underdogs at 20-30¢ win ~28-35% of the time vs implied 20-30%)
+    - If price > 70¢ AND spread < 3¢: the heavy favorite may be slightly overpriced
+      (people follow the crowd and push favorites past fair value)
+
+    Evidence: Academic research on prediction markets shows prices cluster at round numbers
+    (25¢, 50¢, 75¢) and underdogs between 20-35¢ are typically slightly underpriced
+    due to favorite-longshot bias working in reverse for mid-range underdogs.
+    """
+    signals = []
+    for m in markets:
+        ticker = m.get("ticker", "")
+        title  = m.get("title", ticker)
+        yp     = m.get("_yes_price")
+        vol    = m.get("volume", 0) or 0
+        yb     = m.get("yes_bid") or 0
+        ya     = m.get("yes_ask") or 99
+        spread = ya - yb
+
+        if yp is None or not ticker:
+            continue
+
+        t_up = ticker.upper()
+        # Only look at GAME and WINNER markets (binary outcomes)
+        if not any(x in t_up for x in ["GAME", "WINNER", "1H"]):
+            continue
+
+        # Require decent volume (market is liquid)
+        if vol < 15:
+            continue
+
+        # Tight spread required (< 4¢)
+        if spread > 4:
+            continue
+
+        # Mid-range underdog: 20-35¢ YES in a binary game market
+        # Research: these markets slightly underprice the trailing team
+        if 20 <= yp <= 35 and vol > 20:
+            true_prob = yp + 3  # small structural edge
+            kelly = kelly_size(true_prob, yp, maker=True, fraction=0.25)
+            if kelly > 0.001:
+                signals.append({
+                    "type":              "momentum_edge",
+                    "direction":         "BUY YES",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             yp,
+                    "rationale":         f"Mid-range underdog at {yp}¢ in liquid market (vol={vol}). Research shows 20-35¢ game underdogs win ~3pts more than implied. Spread {spread}¢.",
+                    "confidence":        "low",
+                    "kelly_frac":        kelly,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          3,
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(99, yp + 6),
+                    "stop_loss_pct":     0.35,
+                })
+
+        # Heavy favorite slight overpricing: 72-82¢ (crowd bias)
+        # At round numbers the crowd tends to overweight favorites
+        if 72 <= yp <= 82 and vol > 15:
+            no_price = 100 - yp
+            true_prob = no_price + 2  # slight edge for NO
+            kelly = kelly_size(true_prob, no_price, maker=True, fraction=0.25)
+            if kelly > 0.001:
+                signals.append({
+                    "type":              "momentum_edge",
+                    "direction":         "BUY NO",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             yp,
+                    "rationale":         f"Heavy favorite at {yp}¢ may be crowd-overpriced (vol={vol}). Crowd bias pushes favorites past fair value in range 70-82¢. Spread {spread}¢.",
+                    "confidence":        "low",
+                    "kelly_frac":        kelly,
+                    "fee_cents":         kalshi_fee(no_price),
+                    "priority":          3,
+                    "entry_limit_cents": max(1, no_price - 2),
+                    "take_profit_cents": min(99, no_price + 6),
+                    "stop_loss_pct":     0.35,
+                })
+
+    log(f"Momentum edge: {len(signals)} signals")
+    return signals[:5]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None):
     """
     Run all strategy modules and return unified ranked signal list.
@@ -1945,6 +2038,12 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
     except Exception as e:
         log(f"Strategy FRED error: {e}")
 
+    # 10. Momentum / mean-reversion edge
+    try:
+        all_signals += analyze_momentum_edge(markets)
+    except Exception as e:
+        log(f"Strategy momentum error: {e}")
+
     # Deduplicate: keep highest-priority signal per ticker
     seen_tickers = {}
     deduped = []
@@ -2008,9 +2107,24 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
     # Sort by priority (1=highest), then by kelly_frac * quality_score descending
     live_signals.sort(key=lambda x: (x.get("priority", 9), -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))))
 
-    # Add rank
+    # Enrich each signal with kelly_pct and close_time from market lookup
     for i, s in enumerate(live_signals):
         s["rank"] = i + 1
+        # Add kelly_pct for easy display (percentage form)
+        if "kelly_frac" in s and "kelly_pct" not in s:
+            s["kelly_pct"] = round(s["kelly_frac"] * 100, 1)
+        # Add close_time from markets list
+        if "close_time" not in s or not s.get("close_time"):
+            ticker = s.get("ticker", "")
+            for m in markets:
+                if m.get("ticker") == ticker:
+                    s["close_time"] = m.get("close_time", "")
+                    break
+        # Add volume and spread_cents from market if not already set
+        ticker = s.get("ticker", "")
+        mkt = next((m for m in markets if m.get("ticker") == ticker), None)
+        if mkt and "volume" not in s:
+            s["volume"] = mkt.get("volume", 0) or 0
 
     log(f"Strategy engine: {len(live_signals)} live signals (filtered {len(all_signals)-len(live_signals)} expired)")
     return live_signals[:20]  # top 20
@@ -2525,6 +2639,16 @@ docs_dir.mkdir(exist_ok=True)
 clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
                  for m in markets_list]
 
+# Build signal summary for dashboard overview
+from collections import Counter
+sig_counts = Counter(s.get("type", "unknown") for s in strategy_signals)
+signal_summary = {
+    "total":     len(strategy_signals),
+    "by_type":   dict(sig_counts),
+    "high_conf": len([s for s in strategy_signals if s.get("confidence") == "high"]),
+    "top_kelly": round(max((s.get("kelly_frac", 0) for s in strategy_signals), default=0) * 100, 1),
+}
+
 (docs_dir / "data.json").write_text(json.dumps({
     "generated":     ts_str,
     "balance_cents": balance_cents,
@@ -2548,6 +2672,7 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "weather":          weather_data,
     "line_movements":   line_movements,
     "strategy_signals": strategy_signals,
+    "signal_summary":   signal_summary,
     "health":         health,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")

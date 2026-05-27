@@ -372,17 +372,33 @@ def compute_portfolio_stats(state):
     total_cost   = sum(cost_bases)
     roi_pct      = (total_pnl / total_cost * 100) if total_cost else None
 
+    # Per-strategy breakdown
+    strategy_stats = {}
+    for order in closed:
+        sig_type = order.get("signal_type", "unknown")
+        if sig_type not in strategy_stats:
+            strategy_stats[sig_type] = {"wins": 0, "losses": 0, "pnl": 0}
+        if (order.get("pnl_cents") or 0) > 0:
+            strategy_stats[sig_type]["wins"] += 1
+            strategy_stats[sig_type]["pnl"] += order.get("pnl_cents", 0)
+        else:
+            strategy_stats[sig_type]["losses"] += 1
+            strategy_stats[sig_type]["pnl"] -= order.get("cost_basis_cents", 0)
+
     return {
         "total_trades":    total,
         "wins":            wins,
         "losses":          losses,
+        "resolved":        total,
         "win_rate":        (wins / total) if total else None,
         "avg_clv":         avg_clv,
+        "total_pnl":       total_pnl,
         "total_pnl_cents": total_pnl,
         "roi_pct":         roi_pct,
         "open_count":      open_count,
         "bankroll_cents":  bankroll,
         "signals_placed":  total,
+        "by_strategy":     strategy_stats,
         "last_updated":    datetime.now(timezone.utc).isoformat(),
     }
 
@@ -551,13 +567,34 @@ def main():
     log(f"\nNew orders placed: {new_orders}")
     log(f"Total tracked orders: {len(state['orders'])}")
 
+    if high_priority:
+        best = max(high_priority, key=lambda s: (s.get("kelly_frac", 0) * (s.get("take_profit_cents", 0) or 0)))
+        if best.get("kelly_frac", 0) > 0:
+            log(f"★ BEST SIGNAL: [{best.get('type','?')}] {best.get('ticker','')} {best.get('direction','')} @ {best.get('entry_limit_cents','?')}¢ → TP {best.get('take_profit_cents','?')}¢ | Kelly {best.get('kelly_frac',0)*100:.1f}%")
+
     # 7. Build output for dashboard
-    portfolio_stats = compute_portfolio_stats(state)
+
+    # Track P&L history for charting (keep last 100 snapshots)
+    stats = compute_portfolio_stats(state)
+    pnl_snapshot = {
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "pnl_cents": stats.get("total_pnl", 0),
+        "win_rate": stats.get("win_rate", 0),
+        "roi_pct": stats.get("roi_pct", 0),
+        "n_trades": stats.get("resolved", 0),
+    }
+    if "pnl_history" not in state:
+        state["pnl_history"] = []
+    state["pnl_history"].append(pnl_snapshot)
+    state["pnl_history"] = state["pnl_history"][-100:]  # keep last 100
+
+    portfolio_stats = stats
     demo_portfolio = {
         "balance_cents":  balance,
         "open_orders":    state["orders"],
         "closed_trades":  state["closed"][-20:],  # last 20
         "stats":          portfolio_stats,
+        "pnl_history":    state.get("pnl_history", []),
         "last_run":       datetime.now(timezone.utc).isoformat(),
         "run_summary": {
             "signals_evaluated": len(high_priority[:10]),
