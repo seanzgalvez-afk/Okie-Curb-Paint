@@ -149,18 +149,20 @@ def get_market_info(ticker):
     return {"best_bid": best_bid, "best_ask": best_ask}
 
 # ── Order placement ───────────────────────────────────────────────────────────
-def place_limit_order(ticker, side, price_cents, quantity, signal_type, rationale):
+def place_limit_order(ticker, side, price_cents, quantity, signal_type, rationale,
+                      action="buy"):
     """
     Place a limit order on demo Kalshi.
-    side: 'yes' or 'no'
+    side:     'yes' or 'no'
     price_cents: limit price (1-99)
     quantity: number of contracts
+    action:   'buy' (default) or 'sell'
     Returns order dict or None.
     """
     # Kalshi requires client_order_id (unique per order)
     client_id = str(uuid.uuid4())
     body = {
-        "action":          "buy",
+        "action":          action,
         "client_order_id": client_id,
         "ticker":          ticker,
         "type":            "limit",
@@ -169,21 +171,23 @@ def place_limit_order(ticker, side, price_cents, quantity, signal_type, rational
         "yes_price":       price_cents if side == "yes" else (100 - price_cents),
         "no_price":        (100 - price_cents) if side == "yes" else price_cents,
     }
-    log(f"  Placing order: {body}")
+    log(f"  Placing {action.upper()} order: {body}")
     result = api_post("/portfolio/orders", body)
     if result:
         order_id = result.get("order", {}).get("order_id", client_id)
-        log(f"  ✓ Order placed: {side.upper()} {ticker} @ {price_cents}¢ x{quantity} | id={order_id[:8]}")
+        log(f"  ✓ {action.upper()} order: {side.upper()} {ticker} @ {price_cents}¢ x{quantity} | id={order_id[:8]}")
         return {
-            "order_id":    order_id,
-            "ticker":      ticker,
-            "side":        side,
-            "price_cents": price_cents,
-            "quantity":    quantity,
-            "signal_type": signal_type,
-            "rationale":   rationale[:100],
-            "placed_at":   datetime.now(timezone.utc).isoformat(),
-            "status":      "resting",
+            "order_id":         order_id,
+            "ticker":           ticker,
+            "side":             side,
+            "action":           action,
+            "price_cents":      price_cents,
+            "quantity":         quantity,
+            "cost_basis_cents": price_cents * quantity if action == "buy" else 0,
+            "signal_type":      signal_type,
+            "rationale":        rationale[:100],
+            "placed_at":        datetime.now(timezone.utc).isoformat(),
+            "status":           "resting",
         }
     return None
 
@@ -214,17 +218,22 @@ def should_trade_signal(signal, state):
 
     priority   = signal.get("priority", 9)
     kelly_frac = signal.get("kelly_frac", 0)
+    confidence = signal.get("confidence", "low")
     direction  = signal.get("direction", "")
     price      = signal.get("price", 50)
 
-    if priority > 2:
+    # Allow priority ≤2 always, OR priority 3 with high confidence
+    if priority > 3:
+        return False, None, 0, 0
+    if priority == 3 and confidence != "high":
         return False, None, 0, 0
     if kelly_frac <= 0:
         return False, None, 0, 0
 
-    # Cap position at 5% of bankroll
-    max_risk_cents = int(state["bankroll_cents"] * 0.05)
-    kelly_risk_cents = int(state["bankroll_cents"] * min(kelly_frac, 0.05))
+    # Cap position at 5% of bankroll; reduce to 2.5% for priority 3
+    pct_cap = 0.025 if priority == 3 else 0.05
+    max_risk_cents = int(state["bankroll_cents"] * pct_cap)
+    kelly_risk_cents = int(state["bankroll_cents"] * min(kelly_frac, pct_cap))
     risk_cents = min(kelly_risk_cents, max_risk_cents)
 
     if risk_cents < 10:  # min $0.10 per trade
@@ -269,17 +278,18 @@ def check_settlements(state):
 
             # If this was a BUY order that filled, place take-profit SELL
             tp = order.get("take_profit_cents")
-            if (tp and order.get("side") == "yes" and
+            if (tp and order.get("action", "buy") == "buy" and
                     order.get("status") == "filled_or_resolved" and
                     not order.get("tp_placed")):
-                log(f"  Placing take-profit sell: {order['ticker']} YES @ {tp}¢")
+                log(f"  Placing take-profit sell: {order['ticker']} {order.get('side','yes').upper()} @ {tp}¢")
                 tp_order = place_limit_order(
                     ticker=order["ticker"],
-                    side="yes",           # selling YES = placing YES ask
+                    side=order.get("side", "yes"),
                     price_cents=tp,
                     quantity=order.get("quantity", 1),
                     signal_type=f"tp_{order.get('signal_type','?')}",
                     rationale=f"Take-profit sell for {order['ticker']} entry @ {order.get('price_cents')}¢ → target {tp}¢",
+                    action="sell",  # ← SELL to close the position
                 )
                 if tp_order:
                     tp_order["is_take_profit"] = True
@@ -447,15 +457,24 @@ def main():
     new_orders = 0
     max_new_orders = 5  # max new orders per run
 
-    high_priority = [s for s in signals if s.get("priority", 9) <= 2]
+    high_priority = [s for s in signals
+                     if s.get("priority", 9) <= 2
+                     or (s.get("priority", 9) == 3 and s.get("confidence") == "high")]
     log(f"High-priority signals to evaluate: {len(high_priority)}")
 
     # Pull current Kalshi markets for live prices + close times
+    # Note: data.json has "clean_markets" (no _-prefixed fields), so use what's available
     markets_data = data.get("markets", [])
-    market_prices = {m["ticker"]: m.get("yes_bid", m.get("yes_ask", 50))
-                     for m in markets_data if "ticker" in m}
-    market_close  = {m["ticker"]: m.get("close_time", "")
-                     for m in markets_data if "ticker" in m}
+    market_prices = {}
+    market_close  = {}
+    for m in markets_data:
+        tk = m.get("ticker")
+        if not tk:
+            continue
+        # Best price: yes_bid → yes_ask → last_price → 50
+        price = m.get("yes_bid") or m.get("yes_ask") or m.get("last_price") or 50
+        market_prices[tk] = price
+        market_close[tk] = m.get("close_time", "")
 
     def market_is_live(ticker):
         """Return True if market closes more than 2 hours from now."""
