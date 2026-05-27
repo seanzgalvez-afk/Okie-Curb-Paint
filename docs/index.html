@@ -941,37 +941,109 @@ function renderSignals(signals) {
   };
 
   grid.innerHTML = signals.map(s => {
-    const color  = typeColors[s.type]  || '#94a3b8';
-    const label  = typeLabels[s.type]  || s.type;
-    const conf   = confBadge[s.confidence] || confBadge.low;
-    const dirColor = s.direction && s.direction.includes('YES') ? '#4ade80' : '#f87171';
+    const color    = typeColors[s.type]  || '#94a3b8';
+    const label    = typeLabels[s.type]  || s.type;
+    const conf     = confBadge[s.confidence] || confBadge.low;
+    const isBuyYes = s.direction && (s.direction.includes('YES') || s.direction === 'BUY ALL');
+    const dirColor = isBuyYes ? '#4ade80' : '#f87171';
+    const dirBg    = isBuyYes ? 'background:#14532d;color:#4ade80;' : 'background:#450a0a;color:#f87171;';
     const kellyPct = s.kelly_frac ? (s.kelly_frac * 100).toFixed(1) : '0';
     const feeCents = s.fee_cents  ? s.fee_cents.toFixed(2) : '?';
 
+    // Build the "what to do" action line
+    const action = s.direction === 'BUY ALL'
+      ? `Buy YES on all ${(s.contracts||[]).length} legs`
+      : s.direction === 'BUY YES'
+        ? `Buy YES contracts @ ${s.price}¢`
+        : `Buy NO contracts @ ${100 - (s.price||50)}¢`;
+
+    // Expected value calculation
+    const kelly$ = s.kelly_frac ? `$${(1000 * s.kelly_frac).toFixed(0)} on $1k` : null;
+
+    // Extra context rows based on signal type
+    let extraRows = '';
+    if (s.type === 'bundle_arb') {
+      const legs = (s.contracts||[]).map(t => `<span class="font-mono bg-slate-800 px-1 rounded">${t.split('-').pop()}</span>`).join(' + ');
+      extraRows += `<div class="mt-2 text-xs text-slate-400">📋 Legs: ${legs}</div>`;
+    }
+    if (s.gap != null) {
+      const gapCol = Math.abs(s.gap) >= 10 ? '#f87171' : Math.abs(s.gap) >= 5 ? '#fbbf24' : '#94a3b8';
+      extraRows += `<div class="mt-1 text-xs" style="color:${gapCol};">📏 Gap vs market: <strong>${s.gap > 0 ? '+' : ''}${s.gap}¢</strong></div>`;
+    }
+    if (s.espn_prob != null) {
+      extraRows += `<div class="mt-1 text-xs text-slate-400">🏟 ESPN/DK implied: <strong class="text-white">${s.espn_prob.toFixed(0)}¢</strong> vs Kalshi <strong class="text-white">${s.price}¢</strong></div>`;
+    }
+    if (s.vol_ratio != null) {
+      extraRows += `<div class="mt-1 text-xs text-slate-400">📊 Volume: <strong class="text-white">${s.vol_ratio}× median</strong> (${(s.volume||0).toLocaleString()} trades)</div>`;
+    }
+    if (s.fear_greed != null) {
+      const fg = s.fear_greed;
+      const fgCol = fg <= 20 ? '#f87171' : fg >= 80 ? '#4ade80' : '#94a3b8';
+      extraRows += `<div class="mt-1 text-xs" style="color:${fgCol};">😱 Fear & Greed index: <strong>${fg}/100</strong></div>`;
+    }
+    if (s.spread_cents != null) {
+      const spreadCol = s.spread_cents <= 2 ? '#4ade80' : s.spread_cents <= 5 ? '#fbbf24' : '#f87171';
+      extraRows += `<div class="mt-1 text-xs" style="color:${spreadCol};">↔ Bid-ask spread: <strong>${s.spread_cents}¢</strong>${s.spread_cents > 5 ? ' (wide — use limit orders)' : ''}</div>`;
+    }
+
+    // Close time if available
+    const closeTime = s.close_time ? `<span class="text-slate-500">· closes ${s.close_time.slice(0,10)}</span>` : '';
+
     return `
-    <div class="rounded-xl p-4 border" style="background:#1e293b;border-color:${color}44;">
-      <div class="flex items-center justify-between mb-2">
-        <span class="text-xs font-semibold px-2 py-0.5 rounded" style="background:${color}22;color:${color};">${label}</span>
-        <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'}</span>
+    <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${color}55;">
+      <!-- Header bar -->
+      <div class="px-4 py-2 flex items-center justify-between" style="background:${color}18;border-bottom:1px solid ${color}33;">
+        <span class="text-xs font-bold" style="color:${color};">${label}</span>
+        <div class="flex items-center gap-2">
+          <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'} confidence</span>
+          <span class="text-xs text-slate-500">#${s.rank || '?'}</span>
+        </div>
       </div>
-      <p class="text-sm font-semibold text-white mb-1 leading-snug">${s.title || s.ticker}</p>
-      <p class="text-xs text-slate-400 mb-3 leading-relaxed">${s.rationale}</p>
-      <div class="flex items-center justify-between text-xs mb-3">
-        <span class="font-bold text-base" style="color:${dirColor};">${s.direction}</span>
-        <span class="text-slate-400">${s.price}¢ current</span>
+      <!-- Body -->
+      <div class="p-4">
+        <!-- Market name -->
+        <p class="text-sm font-bold text-white mb-0.5 leading-snug">${escHtml(s.title || s.ticker)}</p>
+        <p class="text-xs font-mono text-slate-500 mb-3">${s.ticker} ${closeTime}</p>
+
+        <!-- THE TRADE — big and obvious -->
+        <div class="rounded-lg px-3 py-2 mb-3 flex items-center justify-between" style="${dirBg}">
+          <span class="text-sm font-black">${s.direction}</span>
+          <span class="text-xs font-semibold opacity-80">${action}</span>
+        </div>
+
+        <!-- WHY — the rationale, full text -->
+        <p class="text-xs text-slate-300 leading-relaxed mb-3">${escHtml(s.rationale)}</p>
+
+        <!-- Extra context rows -->
+        ${extraRows}
+
+        <!-- Numbers row -->
+        <div class="mt-3 pt-3 border-t border-slate-700 grid grid-cols-3 gap-2 text-center text-xs">
+          <div>
+            <p class="text-slate-500 mb-0.5">Kelly size</p>
+            <p class="font-bold text-white">${kellyPct}%</p>
+            ${kelly$ ? `<p class="text-slate-500 text-xs">${kelly$}</p>` : ''}
+          </div>
+          <div>
+            <p class="text-slate-500 mb-0.5">Est. fee</p>
+            <p class="font-bold text-slate-300">${feeCents}¢</p>
+          </div>
+          <div>
+            <p class="text-slate-500 mb-0.5">${s.net_profit ? 'Locked profit' : 'Market price'}</p>
+            <p class="font-bold ${s.net_profit ? 'text-green-400' : 'text-white'}">${s.net_profit ? '+' + s.net_profit + '¢' : s.price + '¢'}</p>
+          </div>
+        </div>
+
+        ${s.warning ? `<p class="text-xs text-amber-400 mt-2">⚠️ ${s.warning}</p>` : ''}
+
+        <!-- Trade button -->
+        <a href="https://kalshi.com/markets/${s.ticker}" target="_blank"
+           class="block text-center mt-3 py-2 rounded-lg text-xs font-bold transition"
+           style="background:${color}22;color:${color};border:1px solid ${color}44;"
+           onmouseover="this.style.background='${color}44'" onmouseout="this.style.background='${color}22'">
+          Open Trade on Kalshi →
+        </a>
       </div>
-      <div class="flex gap-3 text-xs text-slate-400 mb-3">
-        <span>📐 Kelly: <strong class="text-white">${kellyPct}%</strong></span>
-        <span>💸 Fee: <strong class="text-slate-300">${feeCents}¢</strong></span>
-        ${s.spread_cents != null ? `<span>↔ Spread: <strong class="text-slate-300">${s.spread_cents}¢</strong></span>` : ''}
-        ${s.net_profit ? `<span>💰 Net: <strong class="text-green-400">+${s.net_profit}¢</strong></span>` : ''}
-      </div>
-      ${s.warning ? `<p class="text-xs text-amber-400 mt-1">⚠️ ${s.warning}</p>` : ''}
-      <a href="https://kalshi.com/markets/${s.ticker}" target="_blank"
-         class="block text-center mt-2 py-1.5 rounded text-xs font-semibold"
-         style="background:${color}22;color:${color};">
-        Trade on Kalshi →
-      </a>
     </div>`;
   }).join('');
 }
@@ -988,43 +1060,66 @@ function renderEdges(edges) {
   empty.classList.add('hidden');
   grid.innerHTML = edges.map(e => {
     const isBuy  = e.direction === 'BUY YES';
-    const badge  = isBuy ? 'bg-green-500 text-slate-900' : 'bg-red-500 text-slate-100';
     const gapAbs = Math.abs(e.gap);
-    const gapCol = gapAbs >= 15 ? 'text-red-400' : gapAbs >= 10 ? 'text-yellow-400' : 'text-cyan-400';
-    const borderCol = isBuy ? 'border-green-500/30' : 'border-red-500/30';
+    const gapCol = gapAbs >= 15 ? '#f87171' : gapAbs >= 10 ? '#fbbf24' : '#22d3ee';
+    const borderCol = isBuy ? 'border-green-500/40' : 'border-red-500/40';
+    const dirBg  = isBuy ? 'background:#14532d;color:#4ade80' : 'background:#450a0a;color:#f87171';
     const gtime  = e.game_time ? new Date(e.game_time).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '';
+
+    // Explain what the edge means in plain English
+    const explain = isBuy
+      ? `Vegas has this at ${e.vegas_prob}¢ — Kalshi is ${gapAbs}¢ cheaper. Buy YES, let Kalshi catch up.`
+      : `Vegas has this at ${e.vegas_prob}¢ — Kalshi is ${gapAbs}¢ more expensive. Buy NO, fade the overpricing.`;
+
     return `
-      <div class="card rounded-2xl p-5 pick-card flex flex-col gap-3 border ${borderCol}">
-        <div class="flex items-start justify-between gap-2">
-          <span class="font-mono text-xs text-slate-400 break-all leading-tight">${escHtml(e.ticker)}</span>
-          <span class="px-2 py-0.5 rounded-full text-xs font-bold ${badge} shrink-0">${escHtml(e.direction)}</span>
+      <div class="card rounded-2xl overflow-hidden pick-card border ${borderCol}">
+        <!-- Header -->
+        <div class="px-5 py-3 flex items-center justify-between" style="${isBuy?'background:#14532d22':'background:#450a0a22'};border-bottom:1px solid ${gapCol}33;">
+          <span class="text-xs font-bold" style="color:${gapCol};">🎰 Vegas Edge</span>
+          <span class="px-2 py-0.5 rounded-full text-xs font-bold" style="${dirBg}">${escHtml(e.direction)}</span>
         </div>
-        <p class="text-sm font-semibold text-slate-200 leading-snug">${escHtml(e.title)}</p>
-        <div class="flex items-center justify-between gap-2">
-          <div class="text-center">
-            <p class="text-xs text-slate-500 mb-0.5">Kalshi</p>
-            <p class="text-xl font-bold text-slate-300">${e.kalshi_price}¢</p>
+        <div class="p-5 flex flex-col gap-3">
+          <!-- Market name + ticker -->
+          <div>
+            <p class="text-sm font-bold text-white leading-snug">${escHtml(e.title)}</p>
+            <p class="text-xs font-mono text-slate-500 mt-0.5">${escHtml(e.ticker)}${gtime ? ` · ${escHtml(gtime)}` : ''}</p>
           </div>
-          <div class="text-center flex-1">
-            <p class="${gapCol} text-3xl font-black">${e.gap > 0 ? '+' : ''}${e.gap}¢</p>
-            <p class="text-xs text-slate-500">gap</p>
+
+          <!-- Price comparison — big visual -->
+          <div class="rounded-lg p-3" style="background:#0f172a;">
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <div class="text-center flex-1">
+                <p class="text-xs text-slate-500 mb-1">Kalshi price</p>
+                <p class="text-2xl font-black text-white">${e.kalshi_price}¢</p>
+              </div>
+              <div class="text-center px-3">
+                <p class="text-3xl font-black" style="color:${gapCol};">${e.gap > 0 ? '+' : ''}${e.gap}¢</p>
+                <p class="text-xs text-slate-500">gap</p>
+              </div>
+              <div class="text-center flex-1">
+                <p class="text-xs text-slate-500 mb-1">Vegas implied</p>
+                <p class="text-2xl font-black text-cyan-400">${e.vegas_prob}¢</p>
+              </div>
+            </div>
+            <!-- Progress bar showing gap magnitude -->
+            <div class="bg-slate-700 rounded-full h-1.5 w-full">
+              <div class="h-1.5 rounded-full transition-all" style="width:${Math.min(100, gapAbs * 5)}%;background:${gapCol};"></div>
+            </div>
           </div>
-          <div class="text-center">
-            <p class="text-xs text-slate-500 mb-0.5">Vegas</p>
-            <p class="text-xl font-bold text-cyan-400">${e.vegas_prob}¢</p>
-          </div>
+
+          <!-- Plain-English explanation -->
+          <p class="text-xs text-slate-300 leading-relaxed">${escHtml(explain)}</p>
+
+          <!-- Source books -->
+          ${e.books && e.books.length ? `<p class="text-xs text-slate-500">📊 Books: ${e.books.slice(0,3).map(b=>escHtml(b)).join(', ')}</p>` : ''}
+
+          <a href="https://kalshi.com/markets/${encodeURIComponent(e.ticker)}" target="_blank" rel="noopener"
+             class="text-center py-2 rounded-lg text-xs font-bold transition"
+             style="background:${gapCol}22;color:${gapCol};border:1px solid ${gapCol}44;"
+             onmouseover="this.style.background='${gapCol}44'" onmouseout="this.style.background='${gapCol}22'">
+            Trade This Edge on Kalshi →
+          </a>
         </div>
-        <div class="bg-slate-700 rounded-full h-1 w-full">
-          <div class="h-1 rounded-full ${isBuy ? 'bg-green-400' : 'bg-red-400'}" style="width:${Math.min(100, gapAbs * 5)}%"></div>
-        </div>
-        <div class="space-y-1 text-xs text-slate-500">
-          ${gtime ? `<p>🕐 ${escHtml(gtime)}</p>` : ''}
-          ${e.books.slice(0,2).map(b=>`<p>📊 ${escHtml(b)}</p>`).join('')}
-        </div>
-        <a href="https://kalshi.com/markets/${encodeURIComponent(e.ticker)}" target="_blank" rel="noopener"
-           class="mt-auto text-center py-2 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-green-500 hover:text-slate-900 transition text-green-400">
-          Trade This Edge ↗
-        </a>
       </div>`;
   }).join('');
 }
