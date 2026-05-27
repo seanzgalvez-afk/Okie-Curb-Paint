@@ -483,38 +483,57 @@ def _espn_get(url, params=None):
         return None
 
 def fetch_espn_scoreboard():
-    """Fetch today's games across all sports. Returns list of game dicts with event IDs."""
+    """Fetch today's + tomorrow's games across all sports.
+    Returns list of game dicts with event IDs.
+    Looks ahead 2 days to catch upcoming games that have Kalshi markets.
+    """
+    from datetime import timedelta
     all_games = []
+    seen_ids = set()
+
+    # Fetch today and next 2 days for each sport/league
+    today_utc = datetime.now(timezone.utc).date()
+    dates_to_fetch = [today_utc + timedelta(days=d) for d in range(3)]
+
     for sport, league in ESPN_SPORTS:
-        data = _espn_get(f"{ESPN_SITE}/{sport}/{league}/scoreboard")
-        if not data:
-            continue
-        for event in data.get("events", []):
-            comp  = event.get("competitions", [{}])[0]
-            teams = comp.get("competitors", [])
-            game  = {
-                "event_id":   event.get("id", ""),
-                "sport":      sport,
-                "league":     league,
-                "name":       event.get("name", ""),
-                "short_name": event.get("shortName", ""),
-                "date":       event.get("date", ""),
-                "status":     event.get("status", {}).get("type", {}).get("description", ""),
-                "home_team":  "", "away_team": "",
-                "home_score": None, "away_score": None,
-                "home_win_pct": None, "away_win_pct": None,
-            }
-            for t in teams:
-                side = "home" if t.get("homeAway") == "home" else "away"
-                game[f"{side}_team"]  = t.get("team", {}).get("displayName", "")
-                game[f"{side}_score"] = t.get("score")
-                # Win probability sometimes embedded in scoreboard
-                wp = t.get("statistics", [])
-                for stat in wp:
-                    if stat.get("name") == "winProbability":
-                        game[f"{side}_win_pct"] = stat.get("displayValue")
-            all_games.append(game)
-        log(f"ESPN {sport}/{league} scoreboard -> {len(data.get('events',[]))} games")
+        for fetch_date in dates_to_fetch:
+            params = {"dates": fetch_date.strftime("%Y%m%d")} if fetch_date != today_utc else {}
+            data = _espn_get(f"{ESPN_SITE}/{sport}/{league}/scoreboard", params)
+            if not data:
+                continue
+            for event in data.get("events", []):
+                event_id = event.get("id", "")
+                if event_id and event_id in seen_ids:
+                    continue  # Skip duplicate games (same event fetched for different dates)
+                if event_id:
+                    seen_ids.add(event_id)
+
+                comp  = event.get("competitions", [{}])[0]
+                teams = comp.get("competitors", [])
+                game  = {
+                    "event_id":   event_id,
+                    "sport":      sport,
+                    "league":     league,
+                    "name":       event.get("name", ""),
+                    "short_name": event.get("shortName", ""),
+                    "date":       event.get("date", ""),
+                    "status":     event.get("status", {}).get("type", {}).get("description", ""),
+                    "home_team":  "", "away_team": "",
+                    "home_score": None, "away_score": None,
+                    "home_win_pct": None, "away_win_pct": None,
+                }
+                for t in teams:
+                    side = "home" if t.get("homeAway") == "home" else "away"
+                    game[f"{side}_team"]  = t.get("team", {}).get("displayName", "")
+                    game[f"{side}_score"] = t.get("score")
+                    # Win probability sometimes embedded in scoreboard
+                    wp = t.get("statistics", [])
+                    for stat in wp:
+                        if stat.get("name") == "winProbability":
+                            game[f"{side}_win_pct"] = stat.get("displayValue")
+                all_games.append(game)
+            log(f"ESPN {sport}/{league} {fetch_date} -> {len(data.get('events',[]))} games")
+    log(f"ESPN scoreboard total: {len(all_games)} games across 3 days")
     return all_games
 
 def fetch_espn_injuries():

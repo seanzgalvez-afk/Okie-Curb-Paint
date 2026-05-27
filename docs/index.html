@@ -125,6 +125,7 @@
         <span id="hb-fred"      class="health-badge">⬤ FRED</span>
         <span id="hb-poly"      class="health-badge">⬤ PolyMarket</span>
         <span id="hb-predict"   class="health-badge">⬤ PredictIt</span>
+        <span id="hb-manifold"  class="health-badge">⬤ Manifold</span>
         <span id="hb-meta"      class="health-badge">⬤ Metaculus</span>
         <span id="hb-weather"   class="health-badge">⬤ Weather</span>
         <span id="hb-updated"   style="margin-left:auto;color:#64748b;font-size:0.75em;" class="mono"></span>
@@ -518,6 +519,7 @@ function renderHealthBar(health, generated) {
     'hb-fred':      health.fred,
     'hb-poly':      health.polymarket,
     'hb-predict':   health.predictit,
+    'hb-manifold':  health.manifold,
     'hb-meta':      health.metaculus,
     'hb-weather':   health.weather,
   };
@@ -1269,6 +1271,18 @@ function renderSignals(signals) {
       if (s.volume > 0) {
         extraRows += `<div class="mt-1 text-xs text-slate-500">📦 Volume: <strong class="text-slate-300">${s.volume.toLocaleString()}</strong> contracts</div>`;
       }
+    }
+    if (s.price_move != null) {
+      // price_trend signals — show the raw move
+      const mv = s.price_move;
+      const mvCol = mv > 0 ? '#4ade80' : '#f87171';
+      const mvDir = mv > 0 ? '🔺' : '🔻';
+      extraRows += `<div class="mt-2 rounded p-2 text-xs" style="background:#0f172a;border:1px solid #334155;">
+        <span class="text-slate-400">Sharp move: </span>
+        <span style="color:${mvCol};font-weight:bold;">${mvDir} ${Math.abs(mv).toFixed(1)}¢</span>
+        <span class="text-slate-500"> (${s.prev_price||'?'}¢ → ${s.curr_price||s.price||'?'}¢)</span>
+        <span class="text-slate-400 ml-2">Follow smart money entering this market</span>
+      </div>`;
     }
     if (s.entry_limit_cents != null) {
       const tp   = s.take_profit_cents || '—';
