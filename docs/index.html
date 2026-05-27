@@ -551,7 +551,7 @@ function renderBestPicks(picks) {
     const isYes = p.side === 'YES';
     const badgeClass = isYes ? 'bg-green-500 text-slate-900' : 'bg-red-500 text-slate-100';
     const stars = scoreToStars(p.edge_score);
-    const kalshiUrl = 'https://kalshi.com/markets/' + encodeURIComponent(p.ticker);
+    const kalshiUrl = mkKalshiUrl(p.ticker);
     return `
       <div class="card rounded-2xl p-5 pick-card flex flex-col gap-3">
         <div class="flex items-start justify-between gap-2">
@@ -775,7 +775,7 @@ function renderCrossArb(arb) {
           </div>
         </div>
         <div class="flex gap-2 mt-auto">
-          <a href="https://kalshi.com/markets/${encodeURIComponent(a.kalshi_ticker)}" target="_blank" rel="noopener"
+          <a href="${mkKalshiUrl(a.kalshi_ticker)}" target="_blank" rel="noopener"
              class="flex-1 text-center py-1.5 rounded-lg text-xs font-semibold bg-slate-700 hover:bg-cyan-500 hover:text-slate-900 transition text-cyan-400">
             Kalshi ↗
           </a>
@@ -1037,7 +1037,7 @@ function renderSignals(signals) {
         ${s.warning ? `<p class="text-xs text-amber-400 mt-2">⚠️ ${s.warning}</p>` : ''}
 
         <!-- Trade button -->
-        <a href="https://kalshi.com/markets/${s.ticker}" target="_blank"
+        <a href="${mkKalshiUrl(s.ticker)}" target="_blank"
            class="block text-center mt-3 py-2 rounded-lg text-xs font-bold transition"
            style="background:${color}22;color:${color};border:1px solid ${color}44;"
            onmouseover="this.style.background='${color}44'" onmouseout="this.style.background='${color}22'">
@@ -1113,7 +1113,7 @@ function renderEdges(edges) {
           <!-- Source books -->
           ${e.books && e.books.length ? `<p class="text-xs text-slate-500">📊 Books: ${e.books.slice(0,3).map(b=>escHtml(b)).join(', ')}</p>` : ''}
 
-          <a href="https://kalshi.com/markets/${encodeURIComponent(e.ticker)}" target="_blank" rel="noopener"
+          <a href="${mkKalshiUrl(e.ticker)}" target="_blank" rel="noopener"
              class="text-center py-2 rounded-lg text-xs font-bold transition"
              style="background:${gapCol}22;color:${gapCol};border:1px solid ${gapCol}44;"
              onmouseover="this.style.background='${gapCol}44'" onmouseout="this.style.background='${gapCol}22'">
@@ -1290,6 +1290,25 @@ function escHtml(str) {
     .replace(/</g,'&lt;')
     .replace(/>/g,'&gt;')
     .replace(/"/g,'&quot;');
+}
+
+/**
+ * Build the correct Kalshi market URL.
+ * Kalshi URLs use lowercase and follow the pattern:
+ *   https://kalshi.com/markets/[event-ticker]/[market-ticker]
+ * where event-ticker = full ticker minus the last "-OUTCOME" segment.
+ *
+ * Examples:
+ *   KXNBAGAME-26MAY26SASOKC-OKC  → /markets/kxnbagame-26may26sasokc/kxnbagame-26may26sasokc-okc
+ *   KXBTCD-26MAY2622-T75899.99   → /markets/kxbtcd-26may2622/kxbtcd-26may2622-t75899.99
+ */
+function mkKalshiUrl(ticker) {
+  if (!ticker) return 'https://kalshi.com/markets';
+  const t   = ticker.toLowerCase();
+  // Strip the last segment to get the event ticker
+  const lastDash = t.lastIndexOf('-');
+  const eventTicker = lastDash > 0 ? t.slice(0, lastDash) : t;
+  return `https://kalshi.com/markets/${eventTicker}/${t}`;
 }
 
 // ── Kelly Calculator ───────────────────────────────────────────────────────
