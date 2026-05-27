@@ -1246,15 +1246,35 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data):
     except Exception as e:
         log(f"Strategy weather error: {e}")
 
+    # Filter out expired / closing-soon markets (need > 2 hours to place & fill)
+    now_utc = datetime.now(timezone.utc)
+    mkt_close = {m["ticker"]: m.get("close_time", "") for m in markets}
+    live_signals = []
+    for s in all_signals:
+        ticker = s.get("ticker", "")
+        ct = mkt_close.get(ticker, "")
+        if ct:
+            try:
+                close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+                if close_dt.tzinfo is None:
+                    close_dt = close_dt.replace(tzinfo=timezone.utc)
+                mins_left = (close_dt - now_utc).total_seconds() / 60
+                if mins_left < 120:
+                    log(f"Strategy: skip {ticker} — closes in {mins_left:.0f} min")
+                    continue
+            except Exception:
+                pass  # can't parse — keep the signal
+        live_signals.append(s)
+
     # Sort by priority (1=highest), then by kelly_frac descending
-    all_signals.sort(key=lambda x: (x.get("priority", 9), -x.get("kelly_frac", 0)))
+    live_signals.sort(key=lambda x: (x.get("priority", 9), -x.get("kelly_frac", 0)))
 
     # Add rank
-    for i, s in enumerate(all_signals):
+    for i, s in enumerate(live_signals):
         s["rank"] = i + 1
 
-    log(f"Strategy engine: {len(all_signals)} signals ({sum(1 for s in all_signals if s['priority']==1)} high priority)")
-    return all_signals[:20]  # top 20
+    log(f"Strategy engine: {len(live_signals)} live signals (filtered {len(all_signals)-len(live_signals)} expired)")
+    return live_signals[:20]  # top 20
 
 def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
     """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt."""
@@ -1405,7 +1425,7 @@ try:
 
         ticker_str = m.get("ticker", "")
         close_raw  = str(m.get("close_time", ""))
-        close_date = close_raw[:10] if close_raw else ""
+        close_date = close_raw  # keep full ISO datetime for expiry checks
 
         t_up = ticker_str.upper()
         if any(x in t_up for x in ["NBA","NFL","MLB","NHL","SPORTS","GAME"]):

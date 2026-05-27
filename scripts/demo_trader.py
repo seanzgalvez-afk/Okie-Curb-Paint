@@ -16,7 +16,7 @@ Required env vars (GitHub Secrets):
 """
 
 import base64, json, os, sys, time, traceback, uuid
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 import httpx
@@ -330,10 +330,25 @@ def main():
     high_priority = [s for s in signals if s.get("priority", 9) <= 2]
     log(f"High-priority signals to evaluate: {len(high_priority)}")
 
-    # Pull current Kalshi markets for live prices
+    # Pull current Kalshi markets for live prices + close times
     markets_data = data.get("markets", [])
     market_prices = {m["ticker"]: m.get("yes_bid", m.get("yes_ask", 50))
                      for m in markets_data if "ticker" in m}
+    market_close  = {m["ticker"]: m.get("close_time", "")
+                     for m in markets_data if "ticker" in m}
+
+    def market_is_live(ticker):
+        """Return True if market closes more than 2 hours from now."""
+        ct = market_close.get(ticker, "")
+        if not ct:
+            return True  # unknown — allow
+        try:
+            close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+            if close_dt.tzinfo is None:
+                close_dt = close_dt.replace(tzinfo=timezone.utc)
+            return (close_dt - datetime.now(timezone.utc)).total_seconds() > 7200
+        except Exception:
+            return True
 
     for signal in high_priority[:10]:
         if new_orders >= max_new_orders:
@@ -345,6 +360,12 @@ def main():
         direction = signal.get("direction", "")
 
         log(f"\nEvaluating: [{sig_type}] {ticker} {direction}")
+
+        # Skip expired / closing-soon markets
+        check_ticker = (signal.get("contracts") or [ticker])[0]
+        if not market_is_live(check_ticker):
+            log(f"  Skip {ticker}: market closing soon or expired")
+            continue
 
         # ── Bundle arb: buy YES on ALL contracts in the series ──────────────
         if sig_type == "bundle_arb" and direction == "BUY ALL":
