@@ -1623,13 +1623,57 @@ def analyze_espn_odds_edge(espn_games, markets):
 
         # Try to match to Kalshi markets by team abbreviation
         suffix_map = sport_suffix_map[league]
+
+        # Hard-coded team name → Kalshi ticker suffix lookup
+        _TEAM_ABBREV = {
+            # NBA
+            "ATLANTA HAWKS": "ATL", "BOSTON CELTICS": "BOS", "BROOKLYN NETS": "BKN",
+            "CHARLOTTE HORNETS": "CHA", "CHICAGO BULLS": "CHI", "CLEVELAND CAVALIERS": "CLE",
+            "DALLAS MAVERICKS": "DAL", "DENVER NUGGETS": "DEN", "DETROIT PISTONS": "DET",
+            "GOLDEN STATE WARRIORS": "GSW", "HOUSTON ROCKETS": "HOU", "INDIANA PACERS": "IND",
+            "LOS ANGELES CLIPPERS": "LAC", "LOS ANGELES LAKERS": "LAL", "MEMPHIS GRIZZLIES": "MEM",
+            "MIAMI HEAT": "MIA", "MILWAUKEE BUCKS": "MIL", "MINNESOTA TIMBERWOLVES": "MIN",
+            "NEW ORLEANS PELICANS": "NOP", "NEW YORK KNICKS": "NYK", "OKLAHOMA CITY THUNDER": "OKC",
+            "ORLANDO MAGIC": "ORL", "PHILADELPHIA 76ERS": "PHI", "PHOENIX SUNS": "PHX",
+            "PORTLAND TRAIL BLAZERS": "POR", "SACRAMENTO KINGS": "SAC", "SAN ANTONIO SPURS": "SAS",
+            "TORONTO RAPTORS": "TOR", "UTAH JAZZ": "UTA", "WASHINGTON WIZARDS": "WAS",
+            # MLB
+            "ARIZONA DIAMONDBACKS": "ARI", "ATLANTA BRAVES": "ATL", "BALTIMORE ORIOLES": "BAL",
+            "BOSTON RED SOX": "BOS", "CHICAGO CUBS": "CHC", "CHICAGO WHITE SOX": "CWS",
+            "CINCINNATI REDS": "CIN", "CLEVELAND GUARDIANS": "CLE", "COLORADO ROCKIES": "COL",
+            "DETROIT TIGERS": "DET", "HOUSTON ASTROS": "HOU", "KANSAS CITY ROYALS": "KC",
+            "LOS ANGELES ANGELS": "LAA", "LOS ANGELES DODGERS": "LAD", "MIAMI MARLINS": "MIA",
+            "MILWAUKEE BREWERS": "MIL", "MINNESOTA TWINS": "MIN", "NEW YORK METS": "NYM",
+            "NEW YORK YANKEES": "NYY", "OAKLAND ATHLETICS": "OAK", "PHILADELPHIA PHILLIES": "PHI",
+            "PITTSBURGH PIRATES": "PIT", "SAN DIEGO PADRES": "SD", "SAN FRANCISCO GIANTS": "SF",
+            "SEATTLE MARINERS": "SEA", "ST. LOUIS CARDINALS": "STL", "TAMPA BAY RAYS": "TB",
+            "TEXAS RANGERS": "TEX", "TORONTO BLUE JAYS": "TOR", "WASHINGTON NATIONALS": "WSH",
+            # NHL
+            "ANAHEIM DUCKS": "ANA", "ARIZONA COYOTES": "ARI", "BOSTON BRUINS": "BOS",
+            "BUFFALO SABRES": "BUF", "CALGARY FLAMES": "CGY", "CAROLINA HURRICANES": "CAR",
+            "CHICAGO BLACKHAWKS": "CHI", "COLORADO AVALANCHE": "COL", "COLUMBUS BLUE JACKETS": "CBJ",
+            "DALLAS STARS": "DAL", "DETROIT RED WINGS": "DET", "EDMONTON OILERS": "EDM",
+            "FLORIDA PANTHERS": "FLA", "LOS ANGELES KINGS": "LA", "MINNESOTA WILD": "MIN",
+            "MONTREAL CANADIENS": "MTL", "NASHVILLE PREDATORS": "NSH", "NEW JERSEY DEVILS": "NJ",
+            "NEW YORK ISLANDERS": "NYI", "NEW YORK RANGERS": "NYR", "OTTAWA SENATORS": "OTT",
+            "PHILADELPHIA FLYERS": "PHI", "PITTSBURGH PENGUINS": "PIT", "SAN JOSE SHARKS": "SJS",
+            "SEATTLE KRAKEN": "SEA", "ST. LOUIS BLUES": "STL", "TAMPA BAY LIGHTNING": "TB",
+            "TORONTO MAPLE LEAFS": "TOR", "UTAH HOCKEY CLUB": "UTA", "VANCOUVER CANUCKS": "VAN",
+            "VEGAS GOLDEN KNIGHTS": "VGK", "WASHINGTON CAPITALS": "WSH", "WINNIPEG JETS": "WPG",
+        }
+
         for team_name, espn_prob, ml in [
             (home_team, home_prob, hml),
             (away_team, away_prob, aml),
         ]:
-            # Try common abbreviation patterns from team name
-            words = team_name.upper().split()
+            team_upper = team_name.upper()
+            # Try hard-coded lookup first
             candidates = set()
+            if team_upper in _TEAM_ABBREV:
+                candidates.add(_TEAM_ABBREV[team_upper])
+
+            # Also try common abbreviation patterns from team name
+            words = team_upper.split()
             if words:
                 candidates.add(words[-1][:3])   # last word first 3 (e.g., THUNDER→THU)
                 candidates.add(words[-1][:4])   # last word first 4 (e.g., THUNDER→THUN)
@@ -1972,7 +2016,105 @@ def analyze_momentum_edge(markets):
     return signals[:5]
 
 
-def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None):
+def analyze_metaculus_edge(markets, metaculus_qs):
+    """
+    Metaculus Consensus Edge: Compare Kalshi prices to Metaculus community predictions.
+
+    Metaculus is one of the most calibrated forecasting platforms — community predictions
+    from domain experts who track resolution history. When Metaculus diverges significantly
+    from Kalshi, it suggests Kalshi may be mispriced.
+
+    Evidence: Metaculus has a Brier score consistently better than base rates; their
+    forecasters resolve questions correctly far more often than market-implied probabilities
+    on related prediction markets. A ≥10¢ gap between Metaculus and Kalshi is actionable.
+
+    Matching: fuzzy keyword matching between Metaculus question title and Kalshi market title.
+    """
+    signals = []
+    if not metaculus_qs or not markets:
+        return signals
+
+    # Build keyword index of Kalshi markets (title words)
+    def title_keywords(text):
+        stopwords = {"the","a","an","in","of","on","at","to","for","and","or","is","will","by","with","from"}
+        words = set(text.lower().split())
+        return words - stopwords
+
+    mkt_index = []
+    for m in markets:
+        yp = m.get("_yes_price")
+        if yp is None:
+            continue
+        kw = title_keywords(m.get("title", "") + " " + m.get("ticker", ""))
+        mkt_index.append((kw, m))
+
+    for q in metaculus_qs:
+        mprob = q.get("prob")
+        if mprob is None:
+            continue  # no community prediction yet
+
+        q_kw = title_keywords(q.get("title", ""))
+        if len(q_kw) < 3:
+            continue
+
+        # Find best-matching Kalshi market by keyword overlap
+        best_overlap = 0
+        best_market = None
+        for mkt_kw, mkt in mkt_index:
+            overlap = len(q_kw & mkt_kw)
+            if overlap > best_overlap:
+                best_overlap = overlap
+                best_market = mkt
+
+        # Require at least 4 keyword matches for a confident match
+        if best_overlap < 4 or best_market is None:
+            continue
+
+        kalshi_price = best_market.get("_yes_price", 50)
+        gap = mprob - kalshi_price  # positive = Metaculus more bullish than Kalshi
+
+        if abs(gap) < 10:
+            continue  # not a big enough gap to trade
+
+        # Direction
+        if gap > 10:   # Metaculus says YES is underpriced on Kalshi
+            direction = "BUY YES"
+            prob = mprob
+            price = kalshi_price
+        else:          # Metaculus says NO is better value
+            direction = "BUY NO"
+            prob = 100 - mprob
+            price = kalshi_price
+
+        kelly = kelly_size(prob, price, maker=True, fraction=0.25)
+        if kelly <= 0:
+            continue
+
+        signals.append({
+            "type":              "metaculus_edge",
+            "direction":         direction,
+            "ticker":            best_market.get("ticker", ""),
+            "title":             best_market.get("title", ""),
+            "price":             round(kalshi_price, 1),
+            "rationale":         f"Metaculus consensus: {mprob:.0f}% vs Kalshi {kalshi_price:.0f}¢ (gap {gap:+.0f}¢). Expert forecasters from: {q.get('title','')[:60]}",
+            "confidence":        "high" if abs(gap) >= 15 else "medium",
+            "kelly_frac":        kelly,
+            "fee_cents":         kalshi_fee(price),
+            "priority":          1 if abs(gap) >= 15 else 2,
+            "gap":               round(gap, 1),
+            "espn_prob":         mprob,   # reuse field for display
+            "entry_limit_cents": max(1, price - 3),
+            "take_profit_cents": min(99, int(mprob)),
+            "stop_loss_pct":     0.3,
+        })
+
+    signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
+    log(f"Metaculus edge: {len(signals)} signals")
+    return signals[:3]
+
+
+def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
+                        metaculus_qs=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -2043,6 +2185,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         all_signals += analyze_momentum_edge(markets)
     except Exception as e:
         log(f"Strategy momentum error: {e}")
+
+    # 11. Metaculus expert consensus vs Kalshi
+    try:
+        if metaculus_qs:
+            all_signals += analyze_metaculus_edge(markets, metaculus_qs)
+    except Exception as e:
+        log(f"Strategy metaculus error: {e}")
 
     # Deduplicate: keep highest-priority signal per ticker
     seen_tickers = {}
@@ -2613,7 +2762,8 @@ except Exception as e:
 # ── Strategy engine ───────────────────────────────────────────────────────────
 strategy_signals = []
 try:
-    strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data, espn_games=espn_games)
+    strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data,
+                                            espn_games=espn_games, metaculus_qs=metaculus_qs)
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")

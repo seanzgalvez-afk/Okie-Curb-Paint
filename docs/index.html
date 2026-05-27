@@ -993,10 +993,12 @@ function renderSignals(signals) {
   signals.forEach(s => { typeCounts[s.type] = (typeCounts[s.type] || 0) + 1; });
   const summaryTypeColors = {bundle_arb:'#22c55e',vegas_divergence:'#06b6d4',weather_edge:'#a855f7',
     cross_platform_arb:'#f59e0b',longshot_bias:'#ef4444',volume_spike:'#f97316',
-    espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e'};
+    espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e',
+    metaculus_edge:'#818cf8'};
   const summaryTypeLabels = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',weather_edge:'Weather',
     cross_platform_arb:'Cross-Plat',longshot_bias:'Longshot',volume_spike:'Volume',
-    espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum'};
+    espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum',
+    metaculus_edge:'Metaculus'};
 
   const summaryBar = Object.entries(typeCounts).map(([type, count]) =>
     `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:${summaryTypeColors[type]||'#94a3b8'}22;color:${summaryTypeColors[type]||'#94a3b8'};border:1px solid ${summaryTypeColors[type]||'#94a3b8'}44">${summaryTypeLabels[type]||type} ×${count}</span>`
@@ -1023,6 +1025,7 @@ function renderSignals(signals) {
     fear_greed_edge:   '#e879f9',  // fuchsia
     fred_edge:         '#84cc16',  // lime green
     momentum_edge:     '#f43f5e',  // rose
+    metaculus_edge:    '#818cf8',  // indigo
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -1035,6 +1038,7 @@ function renderSignals(signals) {
     fear_greed_edge:   '😱 F&G Edge',
     fred_edge:         '📊 FRED Signal',
     momentum_edge:     '⚡ Momentum',
+    metaculus_edge:    '🔮 Metaculus',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',

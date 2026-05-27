@@ -509,8 +509,9 @@ def main():
             log(f"  Bundle arb: {len(contracts)} legs, qty={qty}, total_cost≈{total_cost}¢")
             placed_legs = 0
             for leg_ticker in contracts:
-                # Use entry_limit if available, otherwise use market price
-                leg_price = signal.get("entry_limit_cents") or market_prices.get(leg_ticker, 50)
+                # For bundle arb: ALWAYS use individual market price, not the aggregate
+                # entry_limit_cents on bundle signals = TOTAL cost (sum), not per-leg
+                leg_price = market_prices.get(leg_ticker, 50)
                 limit_price = max(1, min(99, leg_price))
                 order = place_limit_order(
                     ticker=leg_ticker,
