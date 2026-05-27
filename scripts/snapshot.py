@@ -3120,6 +3120,13 @@ def fetch_supplemental_markets():
         {"event_ticker": "KXNHLCHAMP",  "limit": 5},
         # ── Other Sports ──
         {"event_ticker": "KXMLBWINNER", "limit": 5},
+        # ── World Cup 2026 ── (try multiple possible event ticker formats)
+        {"event_ticker": "KXMENWORLDCUP",   "limit": 20},
+        {"event_ticker": "KXWORLDCUP",      "limit": 10},
+        {"event_ticker": "KXWC26",          "limit": 10},
+        {"event_ticker": "KXWC2026",        "limit": 10},
+        {"event_ticker": "KXFIFAWC26",      "limit": 10},
+        {"event_ticker": "KXMENWC26",       "limit": 10},
     ]
 
     seen = set()
@@ -3397,6 +3404,7 @@ if _on_interval(30):  # Only every 30 minutes to save API credits
                 close_raw = str(m.get("close_time", ""))
                 supp_vol = m.get("volume", 0) or m.get("volumeNum", 0) or 0
                 supp_cat = (
+                    "Soccer"    if any(x in ticker_str.upper() for x in ["WORLDCUP","WC26","FIFA","SOC"]) else
                     "Sports"    if any(x in ticker_str.upper() for x in ["NBA","NFL","MLB","NHL","WINNER","PLAYOFF"]) else
                     "Crypto"    if any(x in ticker_str.upper() for x in ["BTC","ETH","SOL","CRYPTO"]) else
                     "Politics"  if any(x in ticker_str.upper() for x in ["SENATE","HOUSE","PRES","POL","GOV"]) else
@@ -3447,7 +3455,9 @@ else:
         # Step 2: Brute-force specific event tickers
         lines.append("\n### Direct event ticker fetch attempts:")
         GUESSES = [
-            "KXWC26", "KXWC2026", "KXFIFAWC26", "KXFIFAWC2026",
+            # Most likely official Kalshi tickers for World Cup 2026
+            "KXMENWORLDCUP", "KXWORLDCUP", "KXWC26", "KXWC2026",
+            "KXFIFAWC26", "KXFIFAWC2026", "KXMENWC26", "KXMENWC2026",
             "KXWC26FUTURES", "KXWC2026FUTURES", "KXFIFAWC26FUTURES",
             "KXWC26WINNER", "KXWC26CHAMP", "KXWC26CHAMPION",
             "KXWC26GROUPA", "KXWC26GROUPB", "KXWC26GROUPC",
