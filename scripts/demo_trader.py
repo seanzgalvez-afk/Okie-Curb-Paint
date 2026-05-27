@@ -255,17 +255,38 @@ def check_settlements(state):
     # Get current resting orders
     live_orders = {o.get("order_id"): o for o in get_demo_orders()}
 
-    # Check tracked orders — move settled ones to closed
+    # Check tracked orders — move settled ones to closed, place take-profits
     still_open_orders = []
+    new_tp_orders = []  # take-profit sell orders to add
     for order in state["orders"]:
         oid = order.get("order_id", "")
         if oid not in live_orders:
             # Order no longer resting — filled, cancelled, or market resolved
             order["status"] = "filled_or_resolved"
             order["closed_at"] = datetime.now(timezone.utc).isoformat()
-            # Preserve entry price for CLV calculation
             if "entry_price_cents" not in order:
                 order["entry_price_cents"] = order.get("price_cents", 50)
+
+            # If this was a BUY order that filled, place take-profit SELL
+            tp = order.get("take_profit_cents")
+            if (tp and order.get("side") == "yes" and
+                    order.get("status") == "filled_or_resolved" and
+                    not order.get("tp_placed")):
+                log(f"  Placing take-profit sell: {order['ticker']} YES @ {tp}¢")
+                tp_order = place_limit_order(
+                    ticker=order["ticker"],
+                    side="yes",           # selling YES = placing YES ask
+                    price_cents=tp,
+                    quantity=order.get("quantity", 1),
+                    signal_type=f"tp_{order.get('signal_type','?')}",
+                    rationale=f"Take-profit sell for {order['ticker']} entry @ {order.get('price_cents')}¢ → target {tp}¢",
+                )
+                if tp_order:
+                    tp_order["is_take_profit"] = True
+                    tp_order["parent_order_id"] = oid
+                    new_tp_orders.append(tp_order)
+                    order["tp_placed"] = True
+
             state["closed"].append(order)
             log(f"  Order settled: {order['ticker']} {order['side']}")
         else:
@@ -281,8 +302,25 @@ def check_settlements(state):
                     mid = book["best_ask"]
                 if mid is not None:
                     order["last_known_price"] = mid
+
+            # Stop-loss check: if market moved badly, cancel and close
+            sl_pct = order.get("stop_loss_pct")
+            if sl_pct and order.get("last_known_price") and order.get("price_cents"):
+                entry = order["price_cents"]
+                current = order["last_known_price"]
+                loss_pct = (entry - current) / entry if order.get("side") == "yes" else (current - (100 - entry)) / (100 - entry)
+                if loss_pct > sl_pct:
+                    log(f"  Stop-loss triggered: {order['ticker']} loss={loss_pct:.0%} > {sl_pct:.0%} limit")
+                    cancel_order(oid)
+                    order["status"] = "stop_loss_triggered"
+                    order["closed_at"] = datetime.now(timezone.utc).isoformat()
+                    order["pnl_cents"] = int((current - entry) * order.get("quantity", 1))
+                    state["closed"].append(order)
+                    continue
+
             still_open_orders.append(order)
-    state["orders"] = still_open_orders
+
+    state["orders"] = still_open_orders + new_tp_orders
 
     return state
 
