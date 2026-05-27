@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-27 01:14 UTC
+# Generated: 2026-05-27 01:18 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY262115-15                      1c  98c      48  2026-05-27  BTC price up in next 15 mins?
-  KXNBAGAME-26MAY26SASOKC-SAS                 28c  71c      21  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXNBAGAME-26MAY26SASOKC-OKC                 71c  28c       7  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXMVECROSSCATEGORY-S2026FBA9207297A-8694CE  36c  65c       7  2026-06-10  yes Oklahoma City,no Over 221.5 points s
-  KXNBA1HWINNER-26MAY26SASOKC-SAS             13c  86c       5  2026-06-10  San Antonio vs Oklahoma City: First Half
-  KXMLBHIT-26MAY262005HOUTEX-HOUBSHEWMAKE28-   2c   7c       4  2026-05-30  Braden Shewmake: 1+ hits?
-  KXNBATOTAL-26MAY26SASOKC-221                52c  47c       4  2026-06-10  Game 5: San Antonio at Oklahoma City: To
-  KXMLBGAME-26MAY261840LAADET-DET              8c  91c       4  2026-05-29  Los Angeles A vs Detroit Winner?
-  KXMLBSPREAD-26MAY261910CINNYM-CIN4          58c  40c       4  2026-05-29  Cincinnati wins by over 3.5 runs?
-  KXBTCD-26MAY2622-T75899.99                  67c  32c       4  2026-05-27  Bitcoin price  on May 26, 2026?
-  KXMLBGAME-26MAY261840LAADET-LAA             91c   8c       3  2026-05-29  Los Angeles A vs Detroit Winner?
-  KXPRIMARYTURNOUT-SENATETXR26-1400000        41c  55c       3  2027-05-26  Will the total vote count for all partic
-  KXMLBTOTAL-26MAY261845ATLBOS-12             59c  40c       3  2026-05-29  Atlanta vs Boston Total Runs?
-  KXMLBTOTAL-26MAY261940MINCWS-5              47c  52c       3  2026-05-29  Minnesota vs Chicago WS Total Runs?
-  KXMLBTOTAL-26MAY261845ATLBOS-13             35c  64c       3  2026-05-29  Atlanta vs Boston Total Runs?
-  KXMLBGAME-26MAY261940MINCWS-MIN             81c  18c       2  2026-05-29  Minnesota vs Chicago WS Winner?
-  KXMLBGAME-26MAY262005HOUTEX-HOU              4c  95c       2  2026-05-30  Houston vs Texas Winner?
+  KXBTC15M-26MAY262130-30                      9c  91c      26  2026-05-27  BTC price up in next 15 mins?
+  KXMLBGAME-26MAY262005HOUTEX-HOU              7c  92c      22  2026-05-30  Houston vs Texas Winner?
+  KXNBAGAME-26MAY26SASOKC-SAS                 29c  70c      19  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXMLBGAME-26MAY262005HOUTEX-TEX             92c   6c      13  2026-05-30  Houston vs Texas Winner?
+  KXNBAGAME-26MAY26SASOKC-OKC                 70c  29c       6  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXNBASPREAD-26MAY26SASOKC-SAS1              26c  72c       6  2026-06-10  San Antonio wins by over 1.5 points?
+  KXMLBTOTAL-26MAY261910CINNYM-11             43c  55c       5  2026-05-29  Cincinnati vs New York M Total Runs?
+  KXMLBSPREAD-26MAY262005HOUTEX-TEX4          56c  41c       5  2026-05-30  Texas wins by over 3.5 runs?
+  KXNBASPREAD-26MAY26SASOKC-OKC20             12c  87c       5  2026-06-10  Oklahoma City wins by over 20.5 points?
+  KXMLBSPREAD-26MAY261910CINNYM-CIN4          62c  37c       4  2026-05-29  Cincinnati wins by over 3.5 runs?
+  KXNBA1HSPREAD-26MAY26SASOKC-OKC6            50c  48c       4  2026-06-10  Will Oklahoma City win the 1H by over 6.
+  KXMLBSPREAD-26MAY261910CINNYM-CIN5          35c  64c       3  2026-05-29  Reds wins by over 4.5 runs?
+  KXNBASPREAD-26MAY26SASOKC-OKC6              50c  48c       3  2026-06-10  Oklahoma City wins by over 6.5 points?
+  KXMLBGAME-26MAY261845ATLBOS-ATL             93c   6c       3  2026-05-29  Atlanta vs Boston Winner?
+  KXSOL15M-26MAY262130-30                     21c  78c       3  2026-05-27  SOL price up in next 15 mins?
+  KXMLBTOTAL-26MAY262005HOUTEX-18             32c  36c       3  2026-05-30  Houston vs Texas Total Runs?
+  KXHANNITYMENTION-26MAY21-BORD               12c  26c       2  2026-06-05  What will Sean Hannity say during Fox Ne
   KXNHLGAME-26MAY26COLVGK-VGK                 49c  50c       2  2026-06-10  Game 4: Colorado at Vegas Winner?
-  KXNBA1HWINNER-26MAY26SASOKC-OKC             82c  16c       2  2026-06-10  San Antonio vs Oklahoma City: First Half
-  KXNBASPREAD-26MAY26SASOKC-SAS8              10c  88c       2  2026-06-10  San Antonio wins by over 8.5 points?
+  KXMLBTOTAL-26MAY261910CINNYM-12             27c  67c       2  2026-05-29  Cincinnati vs New York M Total Runs?
+  KXMLBTOTAL-26MAY261910CINNYM-10             61c  38c       2  2026-05-29  Cincinnati vs New York M Total Runs?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Current and former players, coaches, and staff of the league, association, or organization(s) governing the event. For college leagues/associations specifically, or where otherwise appropriate (as identified by the Exchange), this applies to current and former players/coaches/staff of the specific teams in <event> rather than the league/association as a whole (e.g., if the Division I Gonzaga Men’s Basketball Team is playing in <event>, this prohibition w
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/CRIMECHARGE.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/CRIMECHA
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -77,8 +77,9 @@
 ### Series tickers found in trades feed:
   KXBTC15M
   KXBTCD
-  KXITFWMATCH
-  KXMLBF5
+  KXETH15M
+  KXHANNITYMENTION
+  KXMENWORLDCUP
   KXMLBGAME
   KXMLBHIT
   KXMLBSPREAD
@@ -86,13 +87,10 @@
   KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
   KXNBA1HSPREAD
-  KXNBA1HTOTAL
-  KXNBA1HWINNER
-  KXNBABLK
+  KXNBA2HSPREAD
   KXNBAGAME
+  KXNBAMENTION
+  KXNBAOVERTIME
   KXNBASPREAD
-  KXNBATOTAL
   KXNHLGAME
-  KXNHLSPREAD
-  KXPRIMARYTURNOUT
-  KXXRP15M
+  KXSOL15M
