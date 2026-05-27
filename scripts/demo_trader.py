@@ -86,6 +86,8 @@ def api_get(path, params=None):
         log(f"GET {path} error: {e}")
         return None
 
+_api_errors = []  # collect errors for dashboard display
+
 def api_post(path, body):
     try:
         r = httpx.post(f"{DEMO_BASE}{path}", headers=auth_headers("POST", path),
@@ -93,9 +95,11 @@ def api_post(path, body):
         log(f"POST {path} -> {r.status_code} | {r.text[:400]}")
         if r.is_success:
             return r.json()
+        _api_errors.append({"path": path, "status": r.status_code, "body": r.text[:200]})
         return None
     except Exception as e:
         log(f"POST {path} error: {e}")
+        _api_errors.append({"path": path, "error": str(e)})
         return None
 
 # ── Trade persistence ─────────────────────────────────────────────────────────
@@ -509,13 +513,14 @@ def main():
         "last_run":       datetime.now(timezone.utc).isoformat(),
         "run_summary": {
             "signals_evaluated": len(high_priority[:10]),
-            "new_orders_attempted": new_orders,
+            "orders_placed": new_orders,
             "signals_skipped_expired": sum(
                 1 for s in high_priority[:10]
                 if not market_is_live((s.get("contracts") or [s.get("ticker","")])[0])
             ),
-            "signals_skipped_priority": len([s for s in signals if s.get("priority",9) > 2]),
+            "signals_skipped_low_priority": len([s for s in signals if s.get("priority",9) > 2]),
             "api_key_set": bool(KEY_ID),
+            "api_errors": _api_errors[-5:],  # last 5 errors
         },
     }
 
