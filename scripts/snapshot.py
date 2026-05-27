@@ -1455,34 +1455,37 @@ def analyze_volume_spikes(markets):
     High volume + extreme price (>85¢ or <15¢) = confirmation trade.
     """
     signals = []
-    # Sort by volume to find top traders
+    # Sort by volume — use _trade_count as fallback, lower threshold for Kalshi
+    def mkt_vol(m):
+        return m.get("volume", 0) or m.get("_trade_count", 0) or 0
+
     sorted_markets = sorted(
-        [m for m in markets if m.get("volume", 0) > 50],
-        key=lambda m: m.get("volume", 0),
+        [m for m in markets if mkt_vol(m) > 3],  # lowered from 50 to 3 (Kalshi lower volume)
+        key=mkt_vol,
         reverse=True
     )
-    # Take top 10% by volume (or top 10, whichever smaller)
-    top_n = max(3, len(sorted_markets) // 10)
+    # Take top 20% by volume (or top 10, whichever smaller)
+    top_n = max(3, min(10, len(sorted_markets) // 5))
     hot_markets = sorted_markets[:top_n]
 
     if not hot_markets:
         return signals
 
     # Compute median volume for reference
-    vols = [m.get("volume", 0) for m in sorted_markets]
-    median_vol = sorted(vols)[len(vols) // 2] if vols else 100
+    vols = [mkt_vol(m) for m in sorted_markets]
+    median_vol = sorted(vols)[len(vols) // 2] if vols else 10
 
     for m in hot_markets:
         ticker = m.get("ticker", "")
         title  = m.get("title", ticker)
-        vol    = m.get("volume", 0)
+        vol    = mkt_vol(m)
         price  = m.get("_yes_price", m.get("yes_ask", 50))
 
         if not ticker or not price:
             continue
 
         vol_ratio = vol / median_vol if median_vol else 1
-        if vol_ratio < 3.0:  # Need 3x median volume to qualify
+        if vol_ratio < 2.0:  # Need 2x median volume to qualify (lowered from 3x)
             continue
 
         # Strategy: high volume on undecided markets = follow the money
@@ -2791,6 +2794,12 @@ try:
         else:
             category = "Other"
 
+        tc = trade_count.get(ticker_str, 0)
+        # Use trade_count as a proxy for volume when direct volume is unavailable
+        # The Kalshi API often returns volume=0 for markets; trade count is more reliable
+        raw_volume = m.get("volume", 0) or m.get("volumeNum", 0) or 0
+        effective_volume = max(raw_volume, tc)
+
         markets_list.append({
             "ticker":      ticker_str,
             "title":       m.get("title", ""),
@@ -2799,11 +2808,11 @@ try:
             "yes_ask":     yes_ask,
             "no_ask":      no_ask,
             "last_price":  last_p,
-            "volume":      m.get("volume", 0) or 0,
+            "volume":      effective_volume,
             "close_time":  close_date,
             "category":    category,
             "_yes_price":  yes_price,
-            "_trade_count": trade_count.get(ticker_str, 0),
+            "_trade_count": tc,
         })
 
 except Exception as e:
@@ -2827,6 +2836,13 @@ if _on_interval(30):  # Only every 30 minutes to save API credits
                     continue
                 existing_tickers.add(ticker_str)
                 close_raw = str(m.get("close_time", ""))
+                supp_vol = m.get("volume", 0) or m.get("volumeNum", 0) or 0
+                supp_cat = (
+                    "Sports"    if any(x in ticker_str.upper() for x in ["NBA","NFL","MLB","NHL","WINNER","PLAYOFF"]) else
+                    "Crypto"    if any(x in ticker_str.upper() for x in ["BTC","ETH","SOL","CRYPTO"]) else
+                    "Politics"  if any(x in ticker_str.upper() for x in ["SENATE","HOUSE","PRES","POL","GOV"]) else
+                    "Economics"
+                )
                 markets_list.append({
                     "ticker":      ticker_str,
                     "title":       m.get("title", ""),
@@ -2835,9 +2851,9 @@ if _on_interval(30):  # Only every 30 minutes to save API credits
                     "yes_ask":     yes_ask,
                     "no_ask":      no_ask,
                     "last_price":  last_p,
-                    "volume":      m.get("volume", 0) or 0,
+                    "volume":      supp_vol,
                     "close_time":  close_raw,
-                    "category":    "Politics" if any(x in ticker_str.upper() for x in ["SENATE","HOUSE","PRES","POL","GOV"]) else "Economics",
+                    "category":    supp_cat,
                     "_yes_price":  yes_price,
                     "_trade_count": 0,
                     "_supplemental": True,
