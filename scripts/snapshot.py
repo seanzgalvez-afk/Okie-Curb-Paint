@@ -1412,7 +1412,150 @@ def analyze_volume_spikes(markets):
 
     return signals
 
-def run_strategy_engine(markets, edges, cross_arb, weather_data):
+def analyze_espn_odds_edge(espn_games, markets):
+    """
+    Compare ESPN's embedded DraftKings odds to Kalshi prices.
+    Gives a second data point beyond The Odds API — helps confirm or contradict
+    existing edges and catches markets the Odds API misses.
+    """
+    signals = []
+    if not espn_games or not markets:
+        return signals
+
+    # Build index: sport → ticker suffix → market
+    # KXMLBGAME-26MAY261840LAADET-LAA → suffix "LAA" = LAA wins
+    from collections import defaultdict
+    sport_suffix_map = defaultdict(dict)
+    league_map = {"basketball": "nba", "baseball": "mlb", "hockey": "nhl", "football": "nfl"}
+    ticker_league = {}
+    for m in markets:
+        ticker = m.get("ticker", "")
+        yp = m.get("_yes_price")
+        if yp is None:
+            continue
+        # Guess league from ticker prefix
+        for kw, league in [("NBA", "nba"), ("MLB", "mlb"), ("NHL", "nhl"), ("NFL", "nfl")]:
+            if kw in ticker:
+                parts = ticker.rsplit("-", 1)
+                if len(parts) == 2:
+                    suffix = parts[1].upper()
+                    sport_suffix_map[league][suffix] = m
+                    ticker_league[ticker] = league
+                break
+
+    for game in espn_games:
+        league = game.get("league", "")
+        if league not in sport_suffix_map:
+            continue
+
+        # Skip already-in-progress or completed games
+        status = (game.get("status") or "").lower()
+        if any(w in status for w in ("in progress", "final", "halftime", "end of")):
+            continue
+
+        # Get pre-game DraftKings odds (not live)
+        pre_odds = [o for o in game.get("espn_odds", []) if "live" not in o.get("provider", "").lower()]
+        if not pre_odds:
+            continue
+        odds = pre_odds[0]
+
+        home_team = game.get("home_team", "")
+        away_team = game.get("away_team", "")
+        hml = odds.get("home_moneyline")
+        aml = odds.get("away_moneyline")
+        if not hml or not aml:
+            continue
+
+        # Convert moneyline to implied probability (remove vig)
+        def ml_to_prob(ml):
+            if ml is None: return None
+            return (abs(ml) / (abs(ml) + 100) * 100) if ml < 0 else (100 / (ml + 100) * 100)
+
+        home_prob = ml_to_prob(hml)
+        away_prob = ml_to_prob(aml)
+        if home_prob is None or away_prob is None:
+            continue
+
+        # Remove vig (normalize so probs sum to 100)
+        total = home_prob + away_prob
+        home_prob = home_prob / total * 100
+        away_prob = away_prob / total * 100
+
+        # Try to match to Kalshi markets by team abbreviation
+        suffix_map = sport_suffix_map[league]
+        for team_name, espn_prob, ml in [
+            (home_team, home_prob, hml),
+            (away_team, away_prob, aml),
+        ]:
+            # Try common abbreviation patterns from team name
+            words = team_name.upper().split()
+            candidates = set()
+            if words:
+                candidates.add(words[-1][:3])   # last word first 3 (e.g., THUNDER→THU)
+                candidates.add(words[-1][:4])   # last word first 4 (e.g., THUNDER→THUN)
+                candidates.add(words[0][:3])    # first word first 3
+                # Common 2-3 letter abbreviations
+                if len(words) >= 2:
+                    candidates.add(words[0][0] + words[1][:2])   # OKC from Oklahoma City
+                    candidates.add(words[0][0] + words[-1][:2])
+                # Single words: use first 3 letters
+                for w in words:
+                    candidates.add(w[:3])
+                    candidates.add(w[:4])
+
+            matched_market = None
+            matched_abbrev = None
+            for cand in candidates:
+                if cand in suffix_map:
+                    matched_market = suffix_map[cand]
+                    matched_abbrev = cand
+                    break
+
+            if not matched_market:
+                continue
+
+            kalshi_price = matched_market.get("_yes_price", 50)
+            gap = kalshi_price - espn_prob  # positive = Kalshi overprices this team
+
+            if abs(gap) < 5:
+                continue
+
+            # ESPN says team is cheaper → buy YES (Kalshi is overpriced on opposing team)
+            # ESPN says team is more expensive → buy NO
+            if gap > 5:  # Kalshi overprices → buy NO (fade)
+                direction = "BUY NO"
+                price = kalshi_price
+                prob  = 100 - espn_prob
+            else:  # Kalshi underprices → buy YES
+                direction = "BUY YES"
+                price = kalshi_price
+                prob  = espn_prob
+
+            kelly = kelly_size(prob, price, maker=True)
+            if kelly <= 0:
+                continue
+
+            signals.append({
+                "type":        "espn_odds_edge",
+                "direction":   direction,
+                "ticker":      matched_market.get("ticker", ""),
+                "title":       matched_market.get("title", ""),
+                "price":       round(kalshi_price, 1),
+                "rationale":   f"ESPN/DK: {team_name} {ml:+d} ({espn_prob:.0f}%) vs Kalshi {kalshi_price:.0f}¢. Gap: {gap:+.1f}¢ — {game.get('short_name','')}",
+                "confidence":  "high" if abs(gap) >= 10 else "medium",
+                "kelly_frac":  kelly * 0.5,
+                "fee_cents":   kalshi_fee(price),
+                "priority":    1 if abs(gap) >= 10 else 2,
+                "espn_prob":   round(espn_prob, 1),
+                "gap":         round(gap, 1),
+            })
+
+    signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
+    log(f"ESPN odds edge: {len(signals)} signals")
+    return signals[:5]
+
+
+def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -1456,6 +1599,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data):
         all_signals += analyze_volume_spikes(markets)
     except Exception as e:
         log(f"Strategy volume spike error: {e}")
+
+    # 7. ESPN odds edge (DraftKings vs Kalshi)
+    try:
+        if espn_games:
+            all_signals += analyze_espn_odds_edge(espn_games, markets)
+    except Exception as e:
+        log(f"Strategy ESPN odds error: {e}")
 
     # Filter out expired / closing-soon markets (need > 2 hours to place & fill)
     now_utc = datetime.now(timezone.utc)
@@ -1882,7 +2032,7 @@ except Exception as e:
 # ── Strategy engine ───────────────────────────────────────────────────────────
 strategy_signals = []
 try:
-    strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data)
+    strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data, espn_games=espn_games)
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")
