@@ -3423,6 +3423,58 @@ except Exception as e:
     log(f"Strategy engine error: {e}")
     traceback.print_exc(file=sys.stderr)
 
+# ── Re-score best picks incorporating strategy signals ────────────────────────
+# Replace initial best_picks (computed early, before strategy signals) with a
+# smarter ranking that boosts markets that have strategy signals
+try:
+    sig_tickers = {s.get("ticker", ""): s for s in strategy_signals if s.get("ticker")}
+    scored2 = sorted(
+        [(score_market(m, all_volumes, today), m) for m in markets_list],
+        key=lambda x: x[0][0], reverse=True
+    )
+    best_picks = []
+    # First: add markets that have high/medium confidence strategy signals
+    for sig in strategy_signals:
+        if sig.get("confidence") in ("high", "medium") and sig.get("ticker"):
+            tk = sig["ticker"]
+            mkt = next((m for m in markets_list if m.get("ticker") == tk), None)
+            if mkt and not any(p["ticker"] == tk for p in best_picks):
+                direction = sig.get("direction", "BUY YES")
+                yp = mkt.get("_yes_price", 50) or 50
+                side = "YES" if "YES" in direction.upper() else "NO"
+                price = yp if side == "YES" else (100 - yp)
+                kelly_pct = round(sig.get("kelly_frac", 0) * 100, 1)
+                best_picks.append({
+                    "ticker":     tk,
+                    "title":      mkt.get("title", ""),
+                    "side":       side,
+                    "price":      price,
+                    "reason":     f"{sig.get('type','?')} signal | Kelly {kelly_pct}% | {sig.get('rationale','')[:60]}",
+                    "edge_score": round(sig.get("kelly_frac", 0) * 100, 1),
+                    "confidence": sig.get("confidence", "?"),
+                })
+                if len(best_picks) >= 3:
+                    break
+    # Fill remaining slots with highest-volume/price markets
+    for (score, reason), m in scored2:
+        if len(best_picks) >= 5:
+            break
+        tk = m.get("ticker", "")
+        if any(p["ticker"] == tk for p in best_picks):
+            continue
+        yp = m.get("_yes_price")
+        if yp is None:
+            side, price = "YES", 50
+        elif yp < 50:
+            side, price = "YES", yp
+        else:
+            side, price = "NO", 100 - yp
+        best_picks.append({"ticker": tk, "title": m.get("title", ""),
+                            "side": side, "price": price,
+                            "reason": reason, "edge_score": score})
+except Exception as e:
+    log(f"Best picks re-score error: {e}")
+
 # ── Write JSON for dashboard ──────────────────────────────────────────────────
 
 # Build health check dict for diagnostics
