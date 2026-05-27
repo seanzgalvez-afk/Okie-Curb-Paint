@@ -142,6 +142,96 @@ def fetch_vegas_odds():
             log(f"Odds API {sport} error: {e}")
     return games
 
+ODDS_HISTORY_FILE = Path(__file__).parent.parent / "data" / "odds_history.json"
+
+def load_odds_history():
+    """Load previous Odds API game prices for line movement detection."""
+    if ODDS_HISTORY_FILE.exists():
+        try:
+            return json.loads(ODDS_HISTORY_FILE.read_text())
+        except Exception:
+            pass
+    return {}
+
+def save_odds_history(games):
+    """Save current Odds API game prices for next run comparison."""
+    try:
+        snapshot = {}
+        for g in games:
+            gid = g.get("id", "")
+            if not gid:
+                continue
+            prices = {}
+            for bm in g.get("bookmakers", []):
+                for mkt in bm.get("markets", []):
+                    if mkt.get("key") == "h2h":
+                        for oc in mkt.get("outcomes", []):
+                            name = oc.get("name", "")
+                            price = oc.get("price")
+                            if name and price:
+                                prices[name] = price
+            if prices:
+                snapshot[gid] = {
+                    "home": g.get("home_team", ""),
+                    "away": g.get("away_team", ""),
+                    "sport": g.get("_sport", ""),
+                    "commence_time": g.get("commence_time", ""),
+                    "prices": prices,
+                    "saved_at": datetime.now(timezone.utc).isoformat(),
+                }
+        ODDS_HISTORY_FILE.parent.mkdir(exist_ok=True)
+        ODDS_HISTORY_FILE.write_text(json.dumps(snapshot, indent=2))
+        log(f"Saved odds history: {len(snapshot)} games")
+    except Exception as e:
+        log(f"Odds history save error: {e}")
+
+def detect_line_movements(games, history):
+    """
+    Compare current Odds API prices to previous snapshot.
+    Returns list of significant moves (≥3 American odds points = sharp signal).
+    A move at sharp books before soft books = informed money.
+    """
+    movements = []
+    for g in games:
+        gid = g.get("id", "")
+        if gid not in history:
+            continue
+        prev = history[gid].get("prices", {})
+        for bm in g.get("bookmakers", []):
+            book = bm.get("title", "")
+            for mkt in bm.get("markets", []):
+                if mkt.get("key") != "h2h":
+                    continue
+                for oc in mkt.get("outcomes", []):
+                    name  = oc.get("name", "")
+                    price = oc.get("price")
+                    if name not in prev or price is None:
+                        continue
+                    prev_price = prev[name]
+                    # Convert to implied prob to measure move in consistent units
+                    prob_now  = am_to_prob(price)
+                    prob_prev = am_to_prob(prev_price)
+                    if prob_now is None or prob_prev is None:
+                        continue
+                    move = prob_now - prob_prev  # positive = team got more likely
+                    if abs(move) >= 3.0:  # ≥3 probability points = significant
+                        movements.append({
+                            "game_id":    gid,
+                            "home":       g.get("home_team", ""),
+                            "away":       g.get("away_team", ""),
+                            "sport":      g.get("_sport", ""),
+                            "team":       name,
+                            "bookmaker":  book,
+                            "prev_price": prev_price,
+                            "curr_price": price,
+                            "prob_move":  round(move, 1),
+                            "direction":  "shortening" if move > 0 else "drifting",
+                            "commence":   g.get("commence_time", ""),
+                        })
+    # Sort by magnitude
+    movements.sort(key=lambda x: abs(x["prob_move"]), reverse=True)
+    return movements[:10]
+
 def fetch_event_player_props(sport, event_id):
     """Fetch player prop odds for a specific game (uses per-event endpoint).
     Markets: player_points, player_rebounds, player_assists.
@@ -652,51 +742,70 @@ def fetch_fear_greed():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def fetch_metaculus_questions(search_terms=None):
-    """Fetch top active Metaculus questions via their v3 API."""
+    """Fetch top active Metaculus questions. Tries multiple API versions."""
     try:
-        # v3 API — questions endpoint with open status
-        params = {
-            "status": "open",
-            "order_by": "-activity",
-            "limit": 20,
-        }
-        if search_terms:
-            params["search"] = search_terms
         headers = {"Accept": "application/json"}
-        # Try v3 first, fall back to v2
-        for url in [
-            "https://www.metaculus.com/api/posts/",
-            "https://www.metaculus.com/api2/questions/",
-        ]:
-            r = httpx.get(url, params=params, headers=headers, timeout=10)
-            log(f"Metaculus {url} -> {r.status_code}")
-            if r.status_code == 200:
-                data = r.json()
-                raw = data.get("results", data if isinstance(data, list) else [])
-                if raw:
-                    break
-        else:
+        # Try multiple endpoints in order
+        endpoints = [
+            ("https://www.metaculus.com/api/posts/?statuses=open&order_by=-activity&limit=20&post_type=question", "results"),
+            ("https://www.metaculus.com/api2/questions/?status=open&order_by=-activity&limit=20", "results"),
+        ]
+        raw = []
+        for url, key in endpoints:
+            try:
+                r = httpx.get(url, headers=headers, timeout=10)
+                log(f"Metaculus {url[:60]} -> {r.status_code}")
+                if r.status_code == 200:
+                    data = r.json()
+                    raw = data.get(key, data if isinstance(data, list) else [])
+                    if raw:
+                        log(f"Metaculus: got {len(raw)} results from {url[:40]}")
+                        break
+                    log(f"Metaculus: empty results from {url[:40]}")
+            except Exception as e:
+                log(f"Metaculus endpoint error: {e}")
+                continue
+
+        if not raw:
             return []
+
         questions = []
         for q in raw:
-            # v3 nests question inside "question" key
+            # v3 nests under "question" key; v2 has fields at top level
             inner = q.get("question", q)
-            cp = inner.get("community_prediction") or q.get("community_prediction")
-            if isinstance(cp, dict):
-                prob = cp.get("full", {}).get("q2")
-            elif isinstance(cp, (int, float)):
-                prob = cp
-            else:
-                prob = None
-            qid = inner.get("id") or q.get("id")
+            title = inner.get("title") or q.get("title", "")
+            qid   = inner.get("id") or q.get("id")
+
+            # Probability — try multiple field names
+            prob = None
+            for field in ["community_prediction", "cp", "probability"]:
+                val = inner.get(field) or q.get(field)
+                if val is None:
+                    continue
+                if isinstance(val, (int, float)):
+                    prob = float(val)
+                    break
+                if isinstance(val, dict):
+                    prob = val.get("full", {}).get("q2") or val.get("q2") or val.get("median")
+                    if prob is not None:
+                        break
+
+            close_time = (inner.get("scheduled_close_time") or
+                         inner.get("close_time") or
+                         q.get("close_time") or
+                         q.get("scheduled_close_time") or "")
+
+            if not title or not qid:
+                continue
             questions.append({
                 "id":         qid,
-                "title":      inner.get("title") or q.get("title", ""),
-                "prob":       round(prob * 100, 1) if prob is not None else None,
-                "close_time": str(inner.get("scheduled_close_time") or q.get("close_time", ""))[:10],
+                "title":      title,
+                "prob":       round(float(prob) * 100, 1) if prob is not None else None,
+                "close_time": str(close_time)[:10],
                 "url":        f"https://www.metaculus.com/questions/{qid}/",
             })
-        log(f"Metaculus: {len(questions)} questions")
+
+        log(f"Metaculus: {len(questions)} questions parsed")
         return questions
     except Exception as e:
         log(f"Metaculus error: {e}")
@@ -1643,11 +1752,17 @@ except Exception as e:
 
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
+line_movements = []
 vegas_games_count = 0
 odds_status = "no_key"
 try:
     if ODDS_API_KEY:
         vegas_games = fetch_vegas_odds()
+        # Line movement detection
+        odds_history = load_odds_history()
+        line_movements = detect_line_movements(vegas_games, odds_history)
+        save_odds_history(vegas_games)
+        log(f"Line movements detected: {len(line_movements)}")
         vegas_games_count = len(vegas_games)
         odds_status = f"ok_{vegas_games_count}_games"
         log(f"Total Vegas games: {vegas_games_count}")
@@ -1685,6 +1800,7 @@ health = {
     "polymarket":   ("ok" if poly_markets else ("skipped_interval" if not _on_interval(15) else "error")),
     "predictit":    ("ok" if pi_markets else ("skipped_interval" if not _on_interval(15) else "error")),
     "metaculus":    f"ok_{len(metaculus_qs)}" if metaculus_qs else "empty_or_error",
+    "line_movements":  f"ok_{len(line_movements)}" if ODDS_API_KEY else "no_key",
     "vegas_games":  vegas_games_count,
     "espn":         "ok" if espn_games else "empty",
     "weather":     f"ok_{len(weather_data)}" if weather_data else ("skipped_interval" if not _on_interval(30) else "error"),
@@ -1716,6 +1832,7 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
     "predictit":      pi_markets,
     "cross_arb":      cross_market_arb,
     "weather":          weather_data,
+    "line_movements":   line_movements,
     "strategy_signals": strategy_signals,
     "health":         health,
 }, indent=2))
