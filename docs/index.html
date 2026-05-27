@@ -856,11 +856,29 @@ function renderDemoPortfolio(portfolio) {
       ⚡ ${rs.signals_evaluated} signal(s) evaluated, 0 orders placed — check demo API credentials</div>`;
   }
 
+  // Per-strategy breakdown (if available)
+  const byStrategy = stats.by_strategy || {};
+  if (Object.keys(byStrategy).length > 0) {
+    const stratRows = Object.entries(byStrategy).map(([type, s]) => {
+      const wr = (s.wins + s.losses) > 0 ? Math.round(100 * s.wins / (s.wins + s.losses)) : null;
+      const pnlColor = s.pnl >= 0 ? '#4ade80' : '#f87171';
+      return `<div class="flex justify-between items-center text-xs py-1 border-b border-slate-700/50">
+        <span class="text-slate-300">${type.replace(/_/g,' ')}</span>
+        <span class="text-slate-400">${s.wins}W/${s.losses}L${wr !== null ? ` (${wr}%)` : ''}</span>
+        <span style="color:${pnlColor};">${s.pnl > 0 ? '+' : ''}${(s.pnl/100).toFixed(2)}</span>
+      </div>`;
+    }).join('');
+    statsEl.innerHTML += `<div class="col-span-full mt-3 rounded-lg p-3 bg-slate-800/50 border border-slate-700">
+      <p class="text-xs text-slate-400 font-semibold mb-2">📊 By Strategy</p>
+      ${stratRows}
+    </div>`;
+  }
+
   // PnL history chart (if available)
   const history = portfolio.pnl_history || [];
   if (history.length >= 2) {
     statsEl.innerHTML += `<div class="col-span-full mt-4">
-      <div class="text-xs text-slate-400 mb-2 font-semibold">P&L History</div>
+      <div class="text-xs text-slate-400 mb-2 font-semibold">📈 P&L History</div>
       <canvas id="pnl-chart" height="80" style="max-height:80px;"></canvas>
     </div>`;
   }
@@ -1068,6 +1086,23 @@ function renderSignals(signals) {
     if (s.spread_cents != null) {
       const spreadCol = s.spread_cents <= 2 ? '#4ade80' : s.spread_cents <= 5 ? '#fbbf24' : '#f87171';
       extraRows += `<div class="mt-1 text-xs" style="color:${spreadCol};">↔ Bid-ask spread: <strong>${s.spread_cents}¢</strong>${s.spread_cents > 5 ? ' (wide — use limit orders)' : ''}</div>`;
+    }
+    if (s.quality_score != null) {
+      const qs = Math.min(1, s.quality_score);
+      const qsColor = qs >= 0.8 ? '#4ade80' : qs >= 0.5 ? '#fbbf24' : '#94a3b8';
+      const qsPct = Math.round(qs * 100);
+      extraRows += `<div class="mt-2 text-xs text-slate-400">Signal quality
+        <div class="mt-1 rounded-full overflow-hidden" style="background:#1e293b;height:4px;">
+          <div style="width:${qsPct}%;background:${qsColor};height:4px;transition:width 0.6s;"></div>
+        </div>
+        <span style="color:${qsColor};">${qsPct}%</span> <span class="text-slate-600">(vol × liquidity score)</span>
+      </div>`;
+    }
+    if (s.volume != null && s.vol_ratio == null) {
+      // Show raw volume when vol_ratio isn't already shown
+      if (s.volume > 0) {
+        extraRows += `<div class="mt-1 text-xs text-slate-500">📦 Volume: <strong class="text-slate-300">${s.volume.toLocaleString()}</strong> contracts</div>`;
+      }
     }
     if (s.entry_limit_cents != null) {
       const tp   = s.take_profit_cents || '—';

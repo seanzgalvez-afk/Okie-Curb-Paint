@@ -2146,6 +2146,11 @@ def fetch_supplemental_markets():
         {"event_ticker": "KXFED",    "limit": 10},
         {"event_ticker": "KXCPI",    "limit": 10},
         {"event_ticker": "KXJOBS",   "limit": 10},
+        # World Cup 2026 (KXMENWORLDCUP confirmed in trades feed)
+        {"event_ticker": "KXMENWORLDCUP", "limit": 20},
+        # Crypto daily markets
+        {"event_ticker": "KXBTCD",   "limit": 5},
+        {"event_ticker": "KXETHD",   "limit": 5},
     ]
 
     seen = set()

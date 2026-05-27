@@ -93,11 +93,16 @@ sigs = data.get("strategy_signals", [])
 high = [s for s in sigs if s.get("confidence") == "high"]
 if high:
     s = high[0]
+    sig_type = s.get("type") or s.get("signal_type") or "?"
+    kelly_pct = s.get("kelly_pct") or round((s.get("kelly_frac") or 0) * 100, 1)
+    entry = s.get("entry_limit_cents")
+    tp = s.get("take_profit_cents")
+    entry_str = f" | Entry {entry}c→TP {tp}c" if entry and tp else ""
     alerts.append({
         "title": "⚡ Strategy Signal",
         "priority": "high",
         "tags": "zap",
-        "body": f"{s.get('direction','?')} {s.get('ticker','')[:20]} | {s.get('signal_type','?')} | Kelly {s.get('kelly_pct',0):.1f}% | {s.get('rationale','')[:80]}",
+        "body": f"{s.get('direction','?')} {s.get('ticker','')[:20]} | {sig_type} | Kelly {kelly_pct:.1f}%{entry_str} | {s.get('rationale','')[:60]}",
     })
 
 # 3) Sharp line movements ≥5 pts
