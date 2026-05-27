@@ -1,170 +1,194 @@
 {
-  "generated": "2026-05-26 22:52 UTC",
+  "generated": "2026-05-27 01:05 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [
     {
-      "ticker": "KXBTC15M-26MAY261900-00",
+      "ticker": "KXBTC15M-26MAY262115-15",
       "title": "BTC price up in next 15 mins?",
-      "yes_bid": 6,
-      "no_bid": 94,
-      "yes_ask": 6,
-      "no_ask": 94,
-      "last_price": 6,
+      "yes_bid": 13,
+      "no_bid": 85,
+      "yes_ask": 15,
+      "no_ask": 87,
+      "last_price": 14,
       "volume": 0,
-      "close_time": "2026-05-26",
+      "close_time": "2026-05-27",
       "category": "Crypto"
     },
     {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT",
-      "title": "Will Edas Butvilas win the Mayo vs Butvilas: Round Of 32 match?",
-      "yes_bid": 48,
-      "no_bid": 48,
-      "yes_ask": 52,
-      "no_ask": 52,
-      "last_price": 49,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXNBATOTAL-26MAY26SASOKC-209",
-      "title": "Game 5: San Antonio at Oklahoma City: Total Points",
-      "yes_bid": 69,
-      "no_bid": 30,
-      "yes_ask": 70,
-      "no_ask": 31,
-      "last_price": 70,
-      "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261840CHCPIT-CHC",
-      "title": "Chicago C vs Pittsburgh Winner?",
-      "yes_bid": 18,
-      "no_bid": 81,
-      "yes_ask": 19,
-      "no_ask": 82,
-      "last_price": 19,
-      "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXNBAGAME-26MAY26SASOKC-OKC",
-      "title": "Game 5: San Antonio at Oklahoma City Winner?",
-      "yes_bid": 58,
-      "no_bid": 41,
-      "yes_ask": 59,
-      "no_ask": 42,
-      "last_price": 59,
-      "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI",
-      "title": "Will Braden Shick win the Monday vs Shick: Round Of 32 match?",
-      "yes_bid": 33,
-      "no_bid": 64,
-      "yes_ask": 36,
-      "no_ask": 67,
-      "last_price": 33,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXATPCHALLENGERMATCH-26MAY26MONSHI-MON",
-      "title": "Will Johannus Monday win the Monday vs Shick: Round Of 32 match?",
-      "yes_bid": 66,
-      "no_bid": 32,
-      "yes_ask": 68,
-      "no_ask": 34,
-      "last_price": 69,
-      "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261840CHCPIT-PIT",
-      "title": "Chicago C vs Pittsburgh Winner?",
-      "yes_bid": 81,
-      "no_bid": 18,
-      "yes_ask": 82,
-      "no_ask": 19,
+      "ticker": "KXBTCD-26MAY2622-T75799.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 80,
+      "no_bid": 19,
+      "yes_ask": 81,
+      "no_ask": 20,
       "last_price": 81,
       "volume": 0,
-      "close_time": "2026-05-29",
+      "close_time": "2026-05-27",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
+      "title": "Game 5: San Antonio at Oklahoma City Winner?",
+      "yes_bid": 38,
+      "no_bid": 61,
+      "yes_ask": 39,
+      "no_ask": 62,
+      "last_price": 39,
+      "volume": 0,
+      "close_time": "2026-06-10",
       "category": "Sports"
     },
     {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR",
-      "title": "Gremio vs Montevideo City Winner?",
-      "yes_bid": 53,
-      "no_bid": 46,
-      "yes_ask": 54,
-      "no_ask": 47,
-      "last_price": 53,
+      "ticker": "KXNBA1HSPREAD-26MAY26SASOKC-SAS3",
+      "title": "Will San Antonio win the 1H by over 3.5 points?",
+      "yes_bid": 22,
+      "no_bid": 75,
+      "yes_ask": 25,
+      "no_ask": 78,
+      "last_price": 25,
       "volume": 0,
-      "close_time": "2026-06-09",
+      "close_time": "2026-06-10",
       "category": "Sports"
     },
     {
-      "ticker": "KXMLBTOTAL-26MAY261810WSHCLE-11",
-      "title": "Washington vs Cleveland Total Runs?",
-      "yes_bid": 46,
-      "no_bid": 53,
-      "yes_ask": 47,
-      "no_ask": 54,
-      "last_price": 47,
+      "ticker": "KXBTCD-26MAY2622-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 34,
+      "no_bid": 65,
+      "yes_ask": 35,
+      "no_ask": 66,
+      "last_price": 35,
       "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
+      "close_time": "2026-05-27",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXCONMEBOLSUDGAME-26MAY26MILOHF-OHF",
-      "title": "Millonarios vs O\u00b4Higgins Winner?",
-      "yes_bid": 72,
-      "no_bid": 27,
-      "yes_ask": 73,
-      "no_ask": 28,
-      "last_price": 72,
+      "ticker": "KXBTCD-26MAY2622-T75899.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 59,
+      "no_bid": 40,
+      "yes_ask": 60,
+      "no_ask": 41,
+      "last_price": 60,
       "volume": 0,
-      "close_time": "2026-06-09",
-      "category": "Sports"
+      "close_time": "2026-05-27",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXMLBGAME-26MAY261940NYYKC-NYY",
-      "title": "New York Y vs Kansas City Winner?",
-      "yes_bid": 64,
-      "no_bid": 35,
-      "yes_ask": 65,
-      "no_ask": 36,
-      "last_price": 65,
+      "ticker": "KXBTCD-26MAY2622-T75699.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 91,
+      "no_bid": 8,
+      "yes_ask": 92,
+      "no_ask": 9,
+      "last_price": 91,
       "volume": 0,
-      "close_time": "2026-05-29",
-      "category": "Sports"
+      "close_time": "2026-05-27",
+      "category": "Crypto"
     },
     {
-      "ticker": "KXATPMATCH-26MAY28AUGBUR-AUG",
-      "title": "Will Felix Auger-Aliassime win the Auger-Aliassime vs Burruchaga: Round Of 64 match?",
-      "yes_bid": 70,
-      "no_bid": 28,
-      "yes_ask": 72,
-      "no_ask": 30,
-      "last_price": 72,
+      "ticker": "KXRT-PRE-75",
+      "title": "Pressure Rotten Tomatoes score?",
+      "yes_bid": 58,
+      "no_bid": 31,
+      "yes_ask": 69,
+      "no_ask": 42,
+      "last_price": 63,
       "volume": 0,
-      "close_time": "2026-06-11",
+      "close_time": "2026-06-01",
       "category": "Other"
     },
     {
-      "ticker": "KXMLBSPREAD-26MAY261835TBBAL-TB2",
-      "title": "Tampa Bay wins by over 1.5 runs?",
+      "ticker": "KXMLBTOTAL-26MAY261940STLMIL-8",
+      "title": "St. Louis vs Milwaukee Total Runs?",
+      "yes_bid": 55,
+      "no_bid": 44,
+      "yes_ask": 56,
+      "no_ask": 45,
+      "last_price": 56,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXATPCHALLENGERMATCH-26MAY26SWEAGU-SWE",
+      "title": "Will Dane Sweeny win the Sweeny vs Aguiard: Round Of 32 match?",
+      "yes_bid": 56,
+      "no_bid": 41,
+      "yes_ask": 59,
+      "no_ask": 44,
+      "last_price": 58,
+      "volume": 0,
+      "close_time": "2026-06-10",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXBTCD-26MAY2622-T76199.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 8,
+      "no_bid": 91,
+      "yes_ask": 9,
+      "no_ask": 92,
+      "last_price": 8,
+      "volume": 0,
+      "close_time": "2026-05-27",
+      "category": "Crypto"
+    },
+    {
+      "ticker": "KXMLBSPREAD-26MAY261840CHCPIT-PIT11",
+      "title": "Pirates wins by over 10.5 runs?",
+      "yes_bid": 71,
+      "no_bid": 24,
+      "yes_ask": 76,
+      "no_ask": 29,
+      "last_price": 78,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXBNB15M-26MAY262115-15",
+      "title": "BNB price up in next 15 mins?",
+      "yes_bid": 46,
+      "no_bid": 48,
+      "yes_ask": 52,
+      "no_ask": 54,
+      "last_price": 55,
+      "volume": 0,
+      "close_time": "2026-05-27",
+      "category": "Other"
+    },
+    {
+      "ticker": "KXMLBHIT-26MAY261840CHCPIT-CHCCKELLY15-2",
+      "title": "Carson Kelly: 2+ hits?",
+      "yes_bid": 2,
+      "no_bid": 7,
+      "yes_ask": 93,
+      "no_ask": 98,
+      "last_price": 97,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBGAME-26MAY261840LAADET-LAA",
+      "title": "Los Angeles A vs Detroit Winner?",
+      "yes_bid": 24,
+      "no_bid": 74,
+      "yes_ask": 26,
+      "no_ask": 76,
+      "last_price": 26,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBTOTAL-26MAY261940NYYKC-15",
+      "title": "New York Y vs Kansas City Total Runs?",
       "yes_bid": 49,
-      "no_bid": 50,
-      "yes_ask": 50,
+      "no_bid": 49,
+      "yes_ask": 51,
       "no_ask": 51,
       "last_price": 50,
       "volume": 0,
@@ -172,118 +196,94 @@
       "category": "Sports"
     },
     {
-      "ticker": "KXNBAGAME-26MAY26SASOKC-SAS",
-      "title": "Game 5: San Antonio at Oklahoma City Winner?",
-      "yes_bid": 41,
-      "no_bid": 58,
-      "yes_ask": 42,
-      "no_ask": 59,
-      "last_price": 42,
-      "volume": 0,
-      "close_time": "2026-06-10",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXHIGHTSEA-26MAY26-B60.5",
-      "title": "Will the maximum temperature be  60-61\u00b0 on May 26, 2026?",
-      "yes_bid": 39,
-      "no_bid": 59,
-      "yes_ask": 41,
-      "no_ask": 61,
-      "last_price": 41,
+      "ticker": "KXBTCD-26MAY2622-T76099.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "yes_bid": 17,
+      "no_bid": 82,
+      "yes_ask": 18,
+      "no_ask": 83,
+      "last_price": 20,
       "volume": 0,
       "close_time": "2026-05-27",
-      "category": "Other"
+      "category": "Crypto"
     },
     {
-      "ticker": "KXNBARETURN-26JUNOKCJWILLIAMS8-527",
-      "title": "Will Jalen Williams play in a game for the Thunder after May 21, 2026 and before May 27, 2026?",
-      "yes_bid": 8,
-      "no_bid": 78,
-      "yes_ask": 22,
-      "no_ask": 92,
-      "last_price": 22,
-      "volume": 0,
-      "close_time": "2026-07-04",
-      "category": "Sports"
-    },
-    {
-      "ticker": "KXARTISTSTREAMSY-DRAKE26DEC31-22.5B",
-      "title": "Will Drake have 22500000000 Streams on Luminate during January 01 - December 31, 2026?",
-      "yes_bid": 98,
-      "no_bid": 1,
-      "yes_ask": 99,
-      "no_ask": 2,
-      "last_price": 98,
-      "volume": 0,
-      "close_time": "2027-01-02",
-      "category": "Other"
-    },
-    {
-      "ticker": "KXMLBGAME-26MAY261845ATLBOS-ATL",
-      "title": "Atlanta vs Boston Winner?",
-      "yes_bid": 45,
-      "no_bid": 54,
-      "yes_ask": 46,
-      "no_ask": 55,
-      "last_price": 46,
+      "ticker": "KXMLBTOTAL-26MAY261940STLMIL-11",
+      "title": "St. Louis vs Milwaukee Total Runs?",
+      "yes_bid": 25,
+      "no_bid": 74,
+      "yes_ask": 26,
+      "no_ask": 75,
+      "last_price": 24,
       "volume": 0,
       "close_time": "2026-05-29",
       "category": "Sports"
     },
     {
-      "ticker": "KXBTCD-26MAY2619-T75599.99",
-      "title": "Bitcoin price  on May 26, 2026?",
-      "yes_bid": 53,
-      "no_bid": 46,
-      "yes_ask": 54,
-      "no_ask": 47,
-      "last_price": 53,
+      "ticker": "KXMLBTOTAL-26MAY261940STLMIL-9",
+      "title": "St. Louis vs Milwaukee Total Runs?",
+      "yes_bid": 42,
+      "no_bid": 56,
+      "yes_ask": 44,
+      "no_ask": 58,
+      "last_price": 43,
       "volume": 0,
-      "close_time": "2026-05-26",
-      "category": "Crypto"
+      "close_time": "2026-05-29",
+      "category": "Sports"
+    },
+    {
+      "ticker": "KXMLBTOTAL-26MAY261840CHCPIT-14",
+      "title": "Chicago C vs Pittsburgh Total Runs?",
+      "yes_bid": 27,
+      "no_bid": 71,
+      "yes_ask": 29,
+      "no_ask": 73,
+      "last_price": 27,
+      "volume": 0,
+      "close_time": "2026-05-29",
+      "category": "Sports"
     }
   ],
   "best_picks": [
     {
-      "ticker": "KXMLBGAME-26MAY261840CHCPIT-CHC",
-      "title": "Chicago C vs Pittsburgh Winner?",
+      "ticker": "KXBTCD-26MAY2622-T75999.99",
+      "title": "Bitcoin price  on May 26, 2026?",
       "side": "YES",
-      "price": 18,
+      "price": 34,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXHIGHTSEA-26MAY26-B60.5",
-      "title": "Will the maximum temperature be  60-61\u00b0 on May 26, 2026?",
+      "ticker": "KXMLBGAME-26MAY261840LAADET-LAA",
+      "title": "Los Angeles A vs Detroit Winner?",
       "side": "YES",
-      "price": 39,
+      "price": 24,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXMLBGAME-26MAY261845ATLBOS-ATL",
-      "title": "Atlanta vs Boston Winner?",
+      "ticker": "KXBTCD-26MAY2622-T76099.99",
+      "title": "Bitcoin price  on May 26, 2026?",
       "side": "YES",
-      "price": 45,
+      "price": 17,
       "reason": "Underdog value zone + Expiring soon",
       "edge_score": 5.0
     },
     {
-      "ticker": "KXMLBGAME-26MAY261840CHCPIT-PIT",
-      "title": "Chicago C vs Pittsburgh Winner?",
-      "side": "NO",
-      "price": 19,
-      "reason": "Strong favorite zone + Expiring soon",
-      "edge_score": 4.5
+      "ticker": "KXMLBTOTAL-26MAY261940STLMIL-11",
+      "title": "St. Louis vs Milwaukee Total Runs?",
+      "side": "YES",
+      "price": 25,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
     },
     {
-      "ticker": "KXMLBGAME-26MAY261940NYYKC-NYY",
-      "title": "New York Y vs Kansas City Winner?",
-      "side": "NO",
-      "price": 36,
-      "reason": "Strong favorite zone + Expiring soon",
-      "edge_score": 4.5
+      "ticker": "KXMLBTOTAL-26MAY261940STLMIL-9",
+      "title": "St. Louis vs Milwaukee Total Runs?",
+      "side": "YES",
+      "price": 42,
+      "reason": "Underdog value zone + Expiring soon",
+      "edge_score": 5.0
     }
   ],
   "edges": [],
@@ -295,20 +295,31 @@
       "name": "San Antonio Spurs at Oklahoma City Thunder",
       "short_name": "SA @ OKC",
       "date": "2026-05-27T00:30Z",
-      "status": "Scheduled",
+      "status": "End of Period",
       "home_team": "Oklahoma City Thunder",
       "away_team": "San Antonio Spurs",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "29",
+      "away_score": "27",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "OKC -3.5",
           "home_fav": true,
           "home_moneyline": -162,
           "away_moneyline": 136,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -3.5,
+          "over_under": 216.5
+        },
+        {
+          "provider": "Draft Kings - Live Odds",
+          "details": "OKC -3.5",
+          "home_fav": true,
+          "home_moneyline": -180,
+          "away_moneyline": 140,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -3.5,
@@ -332,7 +343,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "SEA -3.5",
           "home_fav": true,
           "home_moneyline": -205,
@@ -360,7 +371,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LAR -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -388,7 +399,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "CIN -3.5",
           "home_fav": true,
           "home_moneyline": -198,
@@ -416,7 +427,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "DET -7",
           "home_fav": true,
           "home_moneyline": -325,
@@ -444,7 +455,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "TEN -3",
           "home_fav": true,
           "home_moneyline": -166,
@@ -472,7 +483,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "BAL -3.5",
           "home_fav": false,
           "home_moneyline": 160,
@@ -500,7 +511,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "PIT -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -528,7 +539,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "CHI -2.5",
           "home_fav": false,
           "home_moneyline": 114,
@@ -556,7 +567,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "JAX -7",
           "home_fav": true,
           "home_moneyline": -298,
@@ -584,7 +595,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "BUF -1.5",
           "home_fav": false,
           "home_moneyline": -108,
@@ -612,7 +623,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LV -3",
           "home_fav": true,
           "home_moneyline": -175,
@@ -640,7 +651,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "GB -1.5",
           "home_fav": false,
           "home_moneyline": 105,
@@ -668,7 +679,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "PHI -5.5",
           "home_fav": true,
           "home_moneyline": -238,
@@ -696,7 +707,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "LAC -11.5",
           "home_fav": true,
           "home_moneyline": -650,
@@ -724,7 +735,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "DAL -2.5",
           "home_fav": false,
           "home_moneyline": 110,
@@ -752,7 +763,7 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
+          "provider": "Draft Kings",
           "details": "KC -2.5",
           "home_fav": true,
           "home_moneyline": -155,
@@ -771,11 +782,11 @@
       "name": "Washington Nationals at Cleveland Guardians",
       "short_name": "WSH @ CLE",
       "date": "2026-05-26T22:10Z",
-      "status": "In Progress",
+      "status": "Final",
       "home_team": "Cleveland Guardians",
       "away_team": "Washington Nationals",
-      "home_score": "0",
-      "away_score": "4",
+      "home_score": "3",
+      "away_score": "6",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -789,17 +800,6 @@
           "away_win_pct": null,
           "spread": -1.5,
           "over_under": 7.5
-        },
-        {
-          "provider": "DraftKings - Live Odds",
-          "details": "WSH -860",
-          "home_fav": false,
-          "home_moneyline": 492,
-          "away_moneyline": -860,
-          "home_win_pct": null,
-          "away_win_pct": null,
-          "spread": 4.5,
-          "over_under": 10.5
         }
       ]
     },
@@ -810,10 +810,10 @@
       "name": "Tampa Bay Rays at Baltimore Orioles",
       "short_name": "TB @ BAL",
       "date": "2026-05-26T22:35Z",
-      "status": "In Progress",
+      "status": "Final",
       "home_team": "Baltimore Orioles",
       "away_team": "Tampa Bay Rays",
-      "home_score": "0",
+      "home_score": "6",
       "away_score": "1",
       "home_win_pct": null,
       "away_win_pct": null,
@@ -831,14 +831,14 @@
         },
         {
           "provider": "DraftKings - Live Odds",
-          "details": "TB -219",
-          "home_fav": false,
-          "home_moneyline": 165,
-          "away_moneyline": -219,
+          "details": "",
+          "home_fav": true,
+          "home_moneyline": 0,
+          "away_moneyline": 10000,
           "home_win_pct": null,
           "away_win_pct": null,
-          "spread": 1.5,
-          "over_under": 8.5
+          "spread": -4.5,
+          "over_under": 7.5
         }
       ]
     },
@@ -852,8 +852,8 @@
       "status": "In Progress",
       "home_team": "Detroit Tigers",
       "away_team": "Los Angeles Angels",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "6",
+      "away_score": "5",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -870,14 +870,14 @@
         },
         {
           "provider": "DraftKings - Live Odds",
-          "details": "DET -165",
+          "details": "DET -350",
           "home_fav": true,
-          "home_moneyline": -165,
-          "away_moneyline": 126,
+          "home_moneyline": -350,
+          "away_moneyline": 249,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": -1.5,
-          "over_under": 8.5
+          "over_under": 12.5
         }
       ]
     },
@@ -891,8 +891,8 @@
       "status": "In Progress",
       "home_team": "Pittsburgh Pirates",
       "away_team": "Chicago Cubs",
-      "home_score": "2",
-      "away_score": "0",
+      "home_score": "12",
+      "away_score": "1",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -909,14 +909,14 @@
         },
         {
           "provider": "DraftKings - Live Odds",
-          "details": "PIT -165",
+          "details": "",
           "home_fav": true,
-          "home_moneyline": -165,
-          "away_moneyline": 126,
+          "home_moneyline": 0,
+          "away_moneyline": 0,
           "home_win_pct": null,
           "away_win_pct": null,
-          "spread": -1.5,
-          "over_under": 7.5
+          "spread": -10.5,
+          "over_under": 13.5
         }
       ]
     },
@@ -930,8 +930,8 @@
       "status": "In Progress",
       "home_team": "Boston Red Sox",
       "away_team": "Atlanta Braves",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "4",
+      "away_score": "5",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -948,14 +948,14 @@
         },
         {
           "provider": "DraftKings - Live Odds",
-          "details": "ATL -116",
+          "details": "ATL -348",
           "home_fav": false,
-          "home_moneyline": -112,
-          "away_moneyline": -116,
+          "home_moneyline": 248,
+          "away_moneyline": -348,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
-          "over_under": 7.5
+          "over_under": 10.5
         }
       ]
     },
@@ -966,24 +966,35 @@
       "name": "Miami Marlins at Toronto Blue Jays",
       "short_name": "MIA @ TOR",
       "date": "2026-05-26T23:07Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Toronto Blue Jays",
       "away_team": "Miami Marlins",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "8",
+      "away_score": "1",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "TOR -126",
-          "home_fav": true,
-          "home_moneyline": -126,
-          "away_moneyline": 105,
+          "details": "TOR -123",
+          "home_fav": false,
+          "home_moneyline": -123,
+          "away_moneyline": 102,
           "home_win_pct": null,
           "away_win_pct": null,
-          "spread": -1.5,
+          "spread": 1.5,
           "over_under": 7.5
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "",
+          "home_fav": true,
+          "home_moneyline": 0,
+          "away_moneyline": 3900,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -6.5,
+          "over_under": 10.5
         }
       ]
     },
@@ -994,11 +1005,11 @@
       "name": "Cincinnati Reds at New York Mets",
       "short_name": "CIN @ NYM",
       "date": "2026-05-26T23:10Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "New York Mets",
       "away_team": "Cincinnati Reds",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "2",
+      "away_score": "6",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -1012,6 +1023,17 @@
           "away_win_pct": null,
           "spread": 1.5,
           "over_under": 7.5
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "CIN -1740",
+          "home_fav": false,
+          "home_moneyline": 740,
+          "away_moneyline": -1740,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": 3.5,
+          "over_under": 10.5
         }
       ]
     },
@@ -1022,24 +1044,35 @@
       "name": "Minnesota Twins at Chicago White Sox",
       "short_name": "MIN @ CHW",
       "date": "2026-05-26T23:40Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Chicago White Sox",
       "away_team": "Minnesota Twins",
       "home_score": "0",
-      "away_score": "0",
+      "away_score": "2",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "MIN -117",
+          "details": "MIN -115",
           "home_fav": false,
-          "home_moneyline": -103,
-          "away_moneyline": -117,
+          "home_moneyline": -105,
+          "away_moneyline": -115,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
           "over_under": 7.5
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "MIN -363",
+          "home_fav": false,
+          "home_moneyline": 257,
+          "away_moneyline": -363,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": 1.5,
+          "over_under": 4.5
         }
       ]
     },
@@ -1050,24 +1083,35 @@
       "name": "New York Yankees at Kansas City Royals",
       "short_name": "NYY @ KC",
       "date": "2026-05-26T23:40Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Kansas City Royals",
       "away_team": "New York Yankees",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "1",
+      "away_score": "9",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "NYY -205",
+          "details": "NYY -199",
           "home_fav": false,
-          "home_moneyline": 168,
-          "away_moneyline": -205,
+          "home_moneyline": 163,
+          "away_moneyline": -199,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
           "over_under": 8.5
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "",
+          "home_fav": false,
+          "home_moneyline": 4300,
+          "away_moneyline": 0,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": 9.5,
+          "over_under": 14.5
         }
       ]
     },
@@ -1078,10 +1122,10 @@
       "name": "St. Louis Cardinals at Milwaukee Brewers",
       "short_name": "STL @ MIL",
       "date": "2026-05-26T23:40Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Milwaukee Brewers",
       "away_team": "St. Louis Cardinals",
-      "home_score": "0",
+      "home_score": "3",
       "away_score": "0",
       "home_win_pct": null,
       "away_win_pct": null,
@@ -1096,6 +1140,17 @@
           "away_win_pct": null,
           "spread": -1.5,
           "over_under": 8.0
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "MIL -2300",
+          "home_fav": true,
+          "home_moneyline": -2300,
+          "away_moneyline": 840,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -4.5,
+          "over_under": 6.5
         }
       ]
     },
@@ -1106,11 +1161,11 @@
       "name": "Houston Astros at Texas Rangers",
       "short_name": "HOU @ TEX",
       "date": "2026-05-27T00:05Z",
-      "status": "Scheduled",
+      "status": "In Progress",
       "home_team": "Texas Rangers",
       "away_team": "Houston Astros",
-      "home_score": "0",
-      "away_score": "0",
+      "home_score": "8",
+      "away_score": "3",
       "home_win_pct": null,
       "away_win_pct": null,
       "espn_odds": [
@@ -1124,6 +1179,17 @@
           "away_win_pct": null,
           "spread": -1.5,
           "over_under": 8.0
+        },
+        {
+          "provider": "DraftKings - Live Odds",
+          "details": "TEX -9300",
+          "home_fav": true,
+          "home_moneyline": -9300,
+          "away_moneyline": 1240,
+          "home_win_pct": null,
+          "away_win_pct": null,
+          "spread": -5.5,
+          "over_under": 16.5
         }
       ]
     },
@@ -1200,10 +1266,10 @@
       "espn_odds": [
         {
           "provider": "DraftKings",
-          "details": "SF -115",
+          "details": "SF -118",
           "home_fav": false,
-          "home_moneyline": -115,
-          "away_moneyline": -105,
+          "home_moneyline": -118,
+          "away_moneyline": -102,
           "home_win_pct": null,
           "away_win_pct": null,
           "spread": 1.5,
@@ -1255,14 +1321,14 @@
       "away_win_pct": null,
       "espn_odds": [
         {
-          "provider": "DraftKings",
-          "details": "COL -115",
-          "home_fav": false,
+          "provider": "Draft Kings",
+          "details": "VGK -105",
+          "home_fav": true,
           "home_moneyline": -105,
           "away_moneyline": -115,
           "home_win_pct": null,
           "away_win_pct": null,
-          "spread": 1.5,
+          "spread": -1.5,
           "over_under": 6.5
         }
       ]
@@ -2196,7 +2262,7 @@
       "league": "nba",
       "status": "Out",
       "detail": "Soreness",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-28"
     },
     {
       "player": "Ajay Mitchell",
@@ -5007,6 +5073,15 @@
       "return_date": ""
     },
     {
+      "player": "Josh Jacobs",
+      "team": "",
+      "sport": "football",
+      "league": "nfl",
+      "status": "Active",
+      "detail": "",
+      "return_date": ""
+    },
+    {
       "player": "Micah Parsons",
       "team": "",
       "sport": "football",
@@ -5221,15 +5296,6 @@
       "status": "Active",
       "detail": "",
       "return_date": ""
-    },
-    {
-      "player": "Sean Rhyan",
-      "team": "",
-      "sport": "football",
-      "league": "nfl",
-      "status": "Questionable",
-      "detail": "Bruise",
-      "return_date": "2026-06-01"
     },
     {
       "player": "Ajani Carter",
@@ -6357,6 +6423,15 @@
       "return_date": ""
     },
     {
+      "player": "Derwin James Jr.",
+      "team": "",
+      "sport": "football",
+      "league": "nfl",
+      "status": "Active",
+      "detail": "",
+      "return_date": ""
+    },
+    {
       "player": "Jerry Wilson",
       "team": "",
       "sport": "football",
@@ -6565,15 +6640,6 @@
     },
     {
       "player": "Denzel Perryman",
-      "team": "",
-      "sport": "football",
-      "league": "nfl",
-      "status": "Active",
-      "detail": "",
-      "return_date": ""
-    },
-    {
-      "player": "Keaton Mitchell",
       "team": "",
       "sport": "football",
       "league": "nfl",
@@ -9732,6 +9798,15 @@
       "return_date": ""
     },
     {
+      "player": "Pavin Smith",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "60-Day-IL",
+      "detail": "Surgery",
+      "return_date": "2026-06-01"
+    },
+    {
       "player": "Hayden Durke",
       "team": "",
       "sport": "baseball",
@@ -9747,15 +9822,6 @@
       "league": "mlb",
       "status": "60-Day-IL",
       "detail": "Fracture",
-      "return_date": "2026-06-15"
-    },
-    {
-      "player": "Pavin Smith",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "60-Day-IL",
-      "detail": "Surgery",
       "return_date": "2026-06-15"
     },
     {
@@ -9876,22 +9942,22 @@
       "return_date": "2027-02-01"
     },
     {
-      "player": "Aaron Civale",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-06-15"
-    },
-    {
       "player": "Denzel Clarke",
       "team": "",
       "sport": "baseball",
       "league": "mlb",
-      "status": "10-Day-IL",
+      "status": "60-Day-IL",
       "detail": "Strain",
-      "return_date": "2026-08-21"
+      "return_date": "2026-08-04"
+    },
+    {
+      "player": "Aaron Civale",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "15-Day-IL",
+      "detail": "Tendinitis",
+      "return_date": "2026-06-12"
     },
     {
       "player": "Max Muncy",
@@ -10281,6 +10347,15 @@
       "return_date": "2026-06-17"
     },
     {
+      "player": "Matthew Boyd",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "15-Day-IL",
+      "detail": "Surgery",
+      "return_date": "2026-06-15"
+    },
+    {
       "player": "Edward Cabrera",
       "team": "",
       "sport": "baseball",
@@ -10306,15 +10381,6 @@
       "status": "60-Day-IL",
       "detail": "Inflammation",
       "return_date": "2026-06-26"
-    },
-    {
-      "player": "Matthew Boyd",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "15-Day-IL",
-      "detail": "Surgery",
-      "return_date": "2026-06-19"
     },
     {
       "player": "Brandon Birdsell",
@@ -10521,7 +10587,7 @@
       "league": "mlb",
       "status": "60-Day-IL",
       "detail": "Surgery",
-      "return_date": "2026-07-01"
+      "return_date": "2026-07-03"
     },
     {
       "player": "Rhett Lowder",
@@ -10935,7 +11001,7 @@
       "league": "mlb",
       "status": "10-Day-IL",
       "detail": "Strain",
-      "return_date": "2026-05-26"
+      "return_date": "2026-06-02"
     },
     {
       "player": "Yainer Diaz",
@@ -11025,7 +11091,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Not Specified",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-28"
     },
     {
       "player": "Cristian Javier",
@@ -11439,7 +11505,7 @@
       "league": "mlb",
       "status": "60-Day-IL",
       "detail": "Strain",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-28"
     },
     {
       "player": "Brandon Lockridge",
@@ -12141,7 +12207,7 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Not Specified",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-28"
     },
     {
       "player": "Brendan Donovan",
@@ -12258,6 +12324,15 @@
       "league": "mlb",
       "status": "Day-To-Day",
       "detail": "Surgery",
+      "return_date": "2026-06-01"
+    },
+    {
+      "player": "Griffin Jax",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "Day-To-Day",
+      "detail": "Bruise",
       "return_date": "2026-06-01"
     },
     {
@@ -12513,6 +12588,15 @@
       "return_date": "2026-08-03"
     },
     {
+      "player": "Dylan Cease",
+      "team": "",
+      "sport": "baseball",
+      "league": "mlb",
+      "status": "15-Day-IL",
+      "detail": "Strain",
+      "return_date": "2026-06-09"
+    },
+    {
       "player": "Vladimir Guerrero Jr.",
       "team": "",
       "sport": "baseball",
@@ -12556,15 +12640,6 @@
       "status": "15-Day-IL",
       "detail": "Tendinitis",
       "return_date": "2026-06-05"
-    },
-    {
-      "player": "Dylan Cease",
-      "team": "",
-      "sport": "baseball",
-      "league": "mlb",
-      "status": "15-Day-IL",
-      "detail": "Strain",
-      "return_date": "2026-06-09"
     },
     {
       "player": "Alejandro Kirk",
@@ -12819,15 +12894,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Petr Mrazek",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Charlie McAvoy",
       "team": "",
       "sport": "hockey",
@@ -12852,15 +12918,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "Severe",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Dans Locmelis",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -12918,60 +12975,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Joel Hanley",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Samuel Honzek",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonathan Huberdeau",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Cullen Potter",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jake Bean",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Henry Mews",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Andrew Mangiapane",
       "team": "",
       "sport": "hockey",
@@ -12979,33 +12982,6 @@
       "status": "Out",
       "detail": "",
       "return_date": "2026-09-15"
-    },
-    {
-      "player": "Matt Grzelcyk",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Artyom Levshunov",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Ryan Ellis",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-07-01"
     },
     {
       "player": "Shea Weber",
@@ -13021,9 +12997,9 @@
       "team": "",
       "sport": "hockey",
       "league": "nhl",
-      "status": "Day-To-Day",
+      "status": "Out",
       "detail": "",
-      "return_date": "2026-05-26"
+      "return_date": "2026-05-28"
     },
     {
       "player": "Roope Hintz",
@@ -13107,15 +13083,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Mattias Janmark",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Carter Verhaeghe",
       "team": "",
       "sport": "hockey",
@@ -13170,75 +13137,12 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Evan Rodrigues",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Aaron Ekblad",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonah Gadjovich",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Sam Reinhart",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Niko Mikkola",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Uvis Balinskis",
       "team": "",
       "sport": "hockey",
       "league": "nhl",
       "status": "Out",
       "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Brad Marchand",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Kevin Fiala",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13287,15 +13191,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Patrik Laine",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-06-02"
-    },
-    {
       "player": "Jonas Siegenthaler",
       "team": "",
       "sport": "hockey",
@@ -13329,33 +13224,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Arseny Gritsyuk",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Stefan Noesen",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-10-15"
-    },
-    {
-      "player": "Zack MacEwen",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13405,24 +13273,6 @@
     },
     {
       "player": "Alexander Romanov",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Pierre Engvall",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Matt Rempe",
       "team": "",
       "sport": "hockey",
       "league": "nhl",
@@ -13500,33 +13350,6 @@
       "league": "nhl",
       "status": "Injured Reserve",
       "detail": "Fracture",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Ty Murchison",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Caleb Jones",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Filip Hallander",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
       "return_date": "2026-09-15"
     },
     {
@@ -13656,24 +13479,6 @@
       "return_date": "2026-09-15"
     },
     {
-      "player": "Auston Matthews",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Chris Tanev",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
       "player": "Barrett Hayton",
       "team": "",
       "sport": "hockey",
@@ -13698,33 +13503,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Thatcher Demko",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Jonathan Lekkerimaki",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Filip Chytil",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Injured Reserve",
-      "detail": "Fracture",
       "return_date": "2026-09-15"
     },
     {
@@ -13761,15 +13539,6 @@
       "league": "nhl",
       "status": "Out",
       "detail": "",
-      "return_date": "2026-09-15"
-    },
-    {
-      "player": "Eriks Mateiko",
-      "team": "",
-      "sport": "hockey",
-      "league": "nhl",
-      "status": "Out",
-      "detail": "Surgery",
       "return_date": "2026-09-15"
     },
     {
@@ -13841,15 +13610,23 @@
       "headline": "NBA playoffs 2026: Live updates from Spurs-Thunder Game 5",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T22:46:45Z",
+      "published": "2026-05-27T00:36:10Z",
       "is_alert": false,
       "url": "https://www.espn.com/nba/story/_/id/48876421/oklahoma-city-thunder-san-antonio-spurs-game-5-nba-playoffs-2026-live-updates"
+    },
+    {
+      "headline": "Celtics' Joe Mazzulla named 2025-26 NBA Coach of the Year",
+      "sport": "basketball",
+      "league": "nba",
+      "published": "2026-05-27T00:58:38Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/nba/story/_/id/48885593/boston-celtics-joe-mazzulla-named-nba-coach-year"
     },
     {
       "headline": "Hammon stands by Brunson take but open to be 'proven wrong'",
       "sport": "basketball",
       "league": "nba",
-      "published": "2026-05-26T22:50:27Z",
+      "published": "2026-05-27T00:13:51Z",
       "is_alert": false,
       "url": "https://www.espn.com/nba/story/_/id/48884962/hammon-stands-brunson-take-open-proven-wrong"
     },
@@ -13870,18 +13647,26 @@
       "url": "https://www.espn.com/nba/story/_/id/48883485/pelicans-coach-jamahl-mosley-wants-unlock-zion-williamson-playmaker"
     },
     {
-      "headline": "Shams: Kenny Atkinson returning as Cavaliers coach next season",
-      "sport": "basketball",
-      "league": "nba",
-      "published": "2026-05-26T20:26:06Z",
+      "headline": "Chargers make Derwin James NFL's highest-paid safety again",
+      "sport": "football",
+      "league": "nfl",
+      "published": "2026-05-27T00:32:42Z",
       "is_alert": false,
-      "url": "https://www.espn.com/video/clip/_/id/48883468/kenny-atkinson-returning-cavaliers-coach-next-season"
+      "url": "https://www.espn.com/nfl/story/_/id/48885409/chargers-make-derwin-james-nfl-highest-paid-safety-again"
+    },
+    {
+      "headline": "Packers' Jacobs arrested, faces several domestic violence charges",
+      "sport": "football",
+      "league": "nfl",
+      "published": "2026-05-27T00:38:25Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/nfl/story/_/id/48885159/packers-jacobs-arrested-faces-several-domestic-violence-charges"
     },
     {
       "headline": "Trevor Lawrence's family, friends voiced concern over faux haircut",
       "sport": "football",
       "league": "nfl",
-      "published": "2026-05-26T22:40:49Z",
+      "published": "2026-05-26T23:00:12Z",
       "is_alert": false,
       "url": "https://www.espn.com/nfl/story/_/id/48884765/trevor-lawrence-jacksonville-jaguars-schedule-release-hairstyle"
     },
@@ -13889,7 +13674,7 @@
       "headline": "Source: Bucs RB Bucky Irving (shoulder) likely ready by summer",
       "sport": "football",
       "league": "nfl",
-      "published": "2026-05-26T22:31:50Z",
+      "published": "2026-05-26T23:09:32Z",
       "is_alert": false,
       "url": "https://www.espn.com/nfl/story/_/id/48884875/source-bucs-rb-bucky-irving-shoulder-likely-ready-summer"
     },
@@ -13902,60 +13687,52 @@
       "url": "https://www.espn.com/nfl/story/_/id/48884510/sources-mahomes-back-field-chiefs-first-ota-practice"
     },
     {
-      "headline": "Panthers QB Bryce Young becoming more vocal leader in Year 4",
-      "sport": "football",
-      "league": "nfl",
-      "published": "2026-05-26T21:51:33Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/nfl/story/_/id/48884457/panthers-qb-bryce-young-becoming-more-vocal-leader-year-4"
-    },
-    {
-      "headline": "2027 NFL draft quarterback class: Top prospects to know",
-      "sport": "football",
-      "league": "nfl",
-      "published": "2026-05-26T21:04:24Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/nfl/draft2027/story/_/id/48828988/2027-nfl-draft-quarterback-class-top-prospects-manning-moore-carr"
-    },
-    {
-      "headline": "Fantasy baseball stock watch: Louis Varland and Gregory Soto rise while Kenley Jansen falls",
+      "headline": "Washington Nationals vs. Cleveland Guardians: Game Highlights",
       "sport": "baseball",
       "league": "mlb",
-      "published": "2026-05-26T20:58:25Z",
+      "published": "2026-05-27T00:54:54Z",
       "is_alert": false,
-      "url": "https://www.espn.com/fantasy/baseball/story/_/id/48883031/2026-fantasy-baseball-closers-pitchers-rising-falling-may26"
+      "url": "https://www.espn.com/video/clip/_/id/48885867/game-highlights"
     },
     {
-      "headline": "Fantasy baseball lineup advice for Wednesday: Park, performance favor Michael Soroka",
+      "headline": "Rays' Griffin Jax leaves start vs. O's after liner hits back",
       "sport": "baseball",
       "league": "mlb",
-      "published": "2026-05-26T20:52:40Z",
+      "published": "2026-05-27T00:31:56Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/mlb/story/_/id/48885694/rays-griffin-jax-leaves-start-vs-o-liner-hits-back"
+    },
+    {
+      "headline": "Cubs LHP Matthew Boyd scheduled to make two rehab starts",
+      "sport": "baseball",
+      "league": "mlb",
+      "published": "2026-05-27T00:16:24Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/mlb/story/_/id/48885528/cubs-lhp-matthew-boyd-scheduled-make-two-rehab-starts"
+    },
+    {
+      "headline": "Chicago White Sox put Noah Schultz on 15-day injured list",
+      "sport": "baseball",
+      "league": "mlb",
+      "published": "2026-05-26T23:52:54Z",
       "is_alert": true,
-      "url": "https://www.espn.com/fantasy/baseball/story/_/id/48881161/fantasy-baseball-pitcher-rankings-lineup-advice-tips-mlb-daily-notes-may27-games"
+      "url": "https://www.espn.com/mlb/story/_/id/48885449/chicago-white-sox-place-noah-schultz-15-day-injured-list"
     },
     {
-      "headline": "2026 MLB awards tracker: Odds for MVP, Cy Young, Rookie of the Year",
+      "headline": "Reds' Hunter Greene throws first side session after surgery",
       "sport": "baseball",
       "league": "mlb",
-      "published": "2026-05-26T20:47:03Z",
+      "published": "2026-05-26T23:20:22Z",
       "is_alert": false,
-      "url": "https://www.espn.com/espn/betting/story/_/id/48350446/2026-mlb-awards-sports-betting-odds-tracker-mvp-cy-young-rookie-year"
+      "url": "https://www.espn.com/mlb/story/_/id/48885280/reds-hunter-greene-throws-first-side-session-surgery"
     },
     {
-      "headline": "Jacob Misiorowsi on Pok\u00e9mon cards: There's always the chase for the big one",
-      "sport": "baseball",
-      "league": "mlb",
-      "published": "2026-05-26T20:46:58Z",
+      "headline": "Golden Knights seek a sweep of Presidents' Trophy-winning Avalanche in Game 4",
+      "sport": "hockey",
+      "league": "nhl",
+      "published": "2026-05-26T23:21:01Z",
       "is_alert": false,
-      "url": "https://www.espn.com/video/clip/_/id/48884110/there-always-chase-big-one"
-    },
-    {
-      "headline": "Milwaukee Brewers place Logan Henderson on injured list",
-      "sport": "baseball",
-      "league": "mlb",
-      "published": "2026-05-26T21:01:51Z",
-      "is_alert": true,
-      "url": "https://www.espn.com/mlb/story/_/id/48883967/milwaukee-brewers-place-logan-henderson-injured-list"
+      "url": "http://www.espn.com/nhl/recap?gameId=401872906"
     },
     {
       "headline": "Penguins' Malkin signs 1-year deal to return for 21st season",
@@ -13977,7 +13754,7 @@
       "headline": "Avalanche star Nathan MacKinnon will play Game 4 of Western Conference finals",
       "sport": "hockey",
       "league": "nhl",
-      "published": "2026-05-26T19:35:45Z",
+      "published": "2026-05-27T01:01:51Z",
       "is_alert": false,
       "url": "https://www.espn.com/nhl/story/_/id/48883125/avalanche-star-nathan-mackinnon-play-game-4-western-conference-final"
     },
@@ -13990,20 +13767,36 @@
       "url": "https://www.espn.com/olympics/hockey/story/_/id/48882932/us-beats-austria-set-quarterfinal-canada-ice-hockey-worlds"
     },
     {
-      "headline": "Stanley Cup odds: Carolina Hurricanes odds-on favorites over Vegas Golden Knights for Final",
-      "sport": "hockey",
-      "league": "nhl",
-      "published": "2026-05-26T17:57:40Z",
+      "headline": "Canada coach Jesse Marsch signs new 4-year deal before World Cup",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T23:59:16Z",
       "is_alert": false,
-      "url": "https://www.espn.com/espn/betting/story/_/id/44686270/2026-nhl-stanley-cup-playoffs-championship-odds"
+      "url": "https://www.espn.com/soccer/story/_/id/48885028/canada-coach-jesse-marsch-new-contract-world-cup"
     },
     {
       "headline": "World Cup 2026: Which players from your Premier League team are going?",
       "sport": "soccer",
       "league": "fifa.world",
-      "published": "2026-05-26T21:01:28Z",
+      "published": "2026-05-26T23:01:50Z",
       "is_alert": false,
       "url": "https://www.espn.com/soccer/story/_/id/48709856/world-cup-2026-which-players-your-premier-league-team-going"
+    },
+    {
+      "headline": "Argentina coach Scaloni dealing with more than Messi issue",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T23:55:59Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48884769/argentina-coach-scaloni-dealing-more-messi-issue"
+    },
+    {
+      "headline": "Pochettino: 'Amazing' Reyna deserves USMNT World Cup roster spot",
+      "sport": "soccer",
+      "league": "fifa.world",
+      "published": "2026-05-26T23:55:11Z",
+      "is_alert": false,
+      "url": "https://www.espn.com/soccer/story/_/id/48884571/usa-gio-reyna-world-cup-2026-roster-mauricio-pochettino"
     },
     {
       "headline": "Pulisic 'feeling great' ahead of World Cup with the USMNT",
@@ -14012,30 +13805,6 @@
       "published": "2026-05-26T20:56:27Z",
       "is_alert": false,
       "url": "https://www.espn.com/video/clip/_/id/48884232/pulisic-feeling-great-ahead-world-cup-usmnt"
-    },
-    {
-      "headline": "2026 World Cup: List of squads, players announced so far",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:40:40Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/soccer/story/_/id/48757621/2026-world-cup-squad-lists-players-announced-all-48-teams"
-    },
-    {
-      "headline": "Pochettino backs 'amazing' Reyna for World Cup success",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:40:29Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/video/clip/_/id/48884069/pochettino-backs-amazing-reyna-world-cup-success"
-    },
-    {
-      "headline": "USA's 2026 World Cup roster reveal recap: Pulisic, Reyna headline 26-man squad",
-      "sport": "soccer",
-      "league": "fifa.world",
-      "published": "2026-05-26T20:24:09Z",
-      "is_alert": false,
-      "url": "https://www.espn.com/soccer/story/_/id/48838557/live-updates-united-states-national-team-2026-fifa-world-cup-roster-reveal"
     }
   ],
   "crypto": {},
@@ -14046,10 +13815,10 @@
   },
   "sparklines": {},
   "fear_greed": {
-    "value": 34,
-    "label": "Fear",
-    "yesterday": 30,
-    "timestamp": "1779753600"
+    "value": 25,
+    "label": "Extreme Fear",
+    "yesterday": 34,
+    "timestamp": "1779840000"
   },
   "metaculus": [],
   "fred": {},
@@ -14061,32 +13830,32 @@
     {
       "type": "longshot_bias",
       "direction": "BUY YES",
-      "ticker": "KXARTISTSTREAMSY-DRAKE26DEC31-22.5B",
-      "title": "Will Drake have 22500000000 Streams on Luminate during Janua",
-      "price": 98,
-      "rationale": "Favorite value: 98\u00a2 \u2014 market underprices certainty. Buy YES.",
+      "ticker": "KXBTCD-26MAY2622-T75699.99",
+      "title": "Bitcoin price  on May 26, 2026?",
+      "price": 91,
+      "rationale": "Favorite value: 91\u00a2 \u2014 market underprices certainty. Buy YES.",
       "confidence": "low",
-      "kelly_frac": 0.0201,
-      "fee_cents": 0.1372,
+      "kelly_frac": 0.0012,
+      "fee_cents": 0.5733,
       "priority": 2,
       "rank": 1
     },
     {
       "type": "longshot_bias",
       "direction": "BUY NO",
-      "ticker": "KXBTC15M-26MAY261900-00",
-      "title": "BTC price up in next 15 mins?",
-      "price": 6,
-      "rationale": "Longshot bias: 6\u00a2 YES contracts lose 60%+ historically. Buy NO.",
+      "ticker": "KXMLBHIT-26MAY261840CHCPIT-CHCCKELLY15-2",
+      "title": "Carson Kelly: 2+ hits?",
+      "price": 2,
+      "rationale": "Longshot bias: 2\u00a2 YES contracts lose 60%+ historically. Buy NO.",
       "confidence": "medium",
-      "kelly_frac": 0.027,
-      "fee_cents": 0.3948,
+      "kelly_frac": 0.0073,
+      "fee_cents": 0.1372,
       "priority": 3,
       "rank": 2
     }
   ],
   "health": {
-    "run_minute": 52,
+    "run_minute": 5,
     "kalshi": "ok",
     "odds_api": "ok_0_games",
     "coingecko": "skipped_interval",
@@ -14108,6 +13877,6 @@
       "bankroll_cents": 100000,
       "open_count": 0
     },
-    "last_run": "2026-05-26T22:52:46.036329+00:00"
+    "last_run": "2026-05-27T01:05:42.022184+00:00"
   }
 }

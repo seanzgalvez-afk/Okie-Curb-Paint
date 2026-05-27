@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-26 22:52 UTC
+# Generated: 2026-05-27 01:05 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,33 +11,33 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY261900-00                      6c  94c      36  2026-05-26  BTC price up in next 15 mins?
-  KXATPCHALLENGERMATCH-26MAY26MAYBUT-BUT      48c  48c      12  2026-06-09  Will Edas Butvilas win the Mayo vs Butvi
-  KXNBATOTAL-26MAY26SASOKC-209                69c  30c      11  2026-06-10  Game 5: San Antonio at Oklahoma City: To
-  KXMLBGAME-26MAY261840CHCPIT-CHC             18c  81c       8  2026-05-29  Chicago C vs Pittsburgh Winner?
-  KXNBAGAME-26MAY26SASOKC-OKC                 58c  41c       5  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXATPCHALLENGERMATCH-26MAY26MONSHI-SHI      33c  64c       5  2026-06-09  Will Braden Shick win the Monday vs Shic
-  KXATPCHALLENGERMATCH-26MAY26MONSHI-MON      66c  32c       5  2026-06-09  Will Johannus Monday win the Monday vs S
-  KXMLBGAME-26MAY261840CHCPIT-PIT             81c  18c       4  2026-05-29  Chicago C vs Pittsburgh Winner?
-  KXCONMEBOLSUDGAME-26MAY26GPATOR-TOR         53c  46c       4  2026-06-09  Gremio vs Montevideo City Winner?
-  KXMLBTOTAL-26MAY261810WSHCLE-11             46c  53c       3  2026-05-29  Washington vs Cleveland Total Runs?
-  KXCONMEBOLSUDGAME-26MAY26MILOHF-OHF         72c  27c       3  2026-06-09  Millonarios vs O´Higgins Winner?
-  KXMLBGAME-26MAY261940NYYKC-NYY              64c  35c       3  2026-05-29  New York Y vs Kansas City Winner?
-  KXATPMATCH-26MAY28AUGBUR-AUG                70c  28c       3  2026-06-11  Will Felix Auger-Aliassime win the Auger
-  KXMLBSPREAD-26MAY261835TBBAL-TB2            49c  50c       3  2026-05-29  Tampa Bay wins by over 1.5 runs?
-  KXNBAGAME-26MAY26SASOKC-SAS                 41c  58c       3  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXHIGHTSEA-26MAY26-B60.5                    39c  59c       3  2026-05-27  Will the maximum temperature be  60-61° 
-  KXNBARETURN-26JUNOKCJWILLIAMS8-527           8c  78c       3  2026-07-04  Will Jalen Williams play in a game for t
-  KXARTISTSTREAMSY-DRAKE26DEC31-22.5B         98c   1c       2  2027-01-02  Will Drake have 22500000000 Streams on L
-  KXMLBGAME-26MAY261845ATLBOS-ATL             45c  54c       2  2026-05-29  Atlanta vs Boston Winner?
-  KXBTCD-26MAY2619-T75599.99                  53c  46c       2  2026-05-26  Bitcoin price  on May 26, 2026?
+  KXBTC15M-26MAY262115-15                     13c  85c      57  2026-05-27  BTC price up in next 15 mins?
+  KXBTCD-26MAY2622-T75799.99                  80c  19c      14  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXNBAGAME-26MAY26SASOKC-SAS                 38c  61c       9  2026-06-10  Game 5: San Antonio at Oklahoma City Win
+  KXNBA1HSPREAD-26MAY26SASOKC-SAS3            22c  75c       8  2026-06-10  Will San Antonio win the 1H by over 3.5 
+  KXBTCD-26MAY2622-T75999.99                  34c  65c       8  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2622-T75899.99                  59c  40c       8  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXBTCD-26MAY2622-T75699.99                  91c   8c       8  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXRT-PRE-75                                 58c  31c       6  2026-06-01  Pressure Rotten Tomatoes score?
+  KXMLBTOTAL-26MAY261940STLMIL-8              55c  44c       5  2026-05-29  St. Louis vs Milwaukee Total Runs?
+  KXATPCHALLENGERMATCH-26MAY26SWEAGU-SWE      56c  41c       4  2026-06-10  Will Dane Sweeny win the Sweeny vs Aguia
+  KXBTCD-26MAY2622-T76199.99                   8c  91c       4  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXMLBSPREAD-26MAY261840CHCPIT-PIT11         71c  24c       4  2026-05-29  Pirates wins by over 10.5 runs?
+  KXBNB15M-26MAY262115-15                     46c  48c       4  2026-05-27  BNB price up in next 15 mins?
+  KXMLBHIT-26MAY261840CHCPIT-CHCCKELLY15-2     2c   7c       4  2026-05-29  Carson Kelly: 2+ hits?
+  KXMLBGAME-26MAY261840LAADET-LAA             24c  74c       4  2026-05-29  Los Angeles A vs Detroit Winner?
+  KXMLBTOTAL-26MAY261940NYYKC-15              49c  49c       4  2026-05-29  New York Y vs Kansas City Total Runs?
+  KXBTCD-26MAY2622-T76099.99                  17c  82c       3  2026-05-27  Bitcoin price  on May 26, 2026?
+  KXMLBTOTAL-26MAY261940STLMIL-11             25c  74c       2  2026-05-29  St. Louis vs Milwaukee Total Runs?
+  KXMLBTOTAL-26MAY261940STLMIL-9              42c  56c       2  2026-05-29  St. Louis vs Milwaukee Total Runs?
+  KXMLBTOTAL-26MAY261840CHCPIT-14             27c  71c       2  2026-05-29  Chicago C vs Pittsburgh Total Runs?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
 
 ### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Entertainment', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/MOSTSTREAMED.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/MO
+  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Financials', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/DISNEYBOARD.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/DISNEY
 
 ### Direct event ticker fetch attempts:
   miss: KXWC26
@@ -75,27 +75,25 @@
   miss: FIFAWC26
 
 ### Series tickers found in trades feed:
-  KXARTISTSTREAMSY
   KXATPCHALLENGERMATCH
-  KXATPMATCH
+  KXBNB15M
   KXBTC15M
   KXBTCD
-  KXCONMEBOLLIBGAME
-  KXCONMEBOLSUDGAME
-  KXHIGHTSEA
-  KXITFWMATCH
-  KXLLM1
-  KXMLBF5
-  KXMLBF5TOTAL
+  KXHYPE15M
   KXMLBGAME
-  KXMLBRFI
+  KXMLBHIT
   KXMLBSPREAD
   KXMLBTOTAL
-  KXMVECROSSCATEGORY
   KXMVESPORTSMULTIGAMEEXTENDED
   KXNBA1HSPREAD
+  KXNBA3PT
+  KXNBAAST
   KXNBAGAME
-  KXNBARETURN
+  KXNBASPREAD
   KXNBATOTAL
   KXNHL
   KXNHLGAME
+  KXPCECORE
+  KXRT
+  KXTXRSENRUNOFFMOV
+  KXVALORANTGAME
