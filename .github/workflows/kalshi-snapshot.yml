@@ -46,7 +46,7 @@ jobs:
         run: |
           git config user.name  "kalshi-bot"
           git config user.email "bot@kalshi"
-          git add data/snapshot.txt docs/data.json data/demo_trades.json data/price_history.json || true
+          git add data/snapshot.txt docs/data.json data/demo_trades.json data/price_history.json data/signal_history.json data/odds_history.json || true
           if git diff --cached --quiet; then
             echo "No changes"
           else

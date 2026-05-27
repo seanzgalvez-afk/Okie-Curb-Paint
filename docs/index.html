@@ -260,6 +260,22 @@
         <h3 class="text-sm font-semibold text-yellow-400 mb-2">⚠️ Injury Report</h3>
         <div id="injury-list" class="flex flex-wrap gap-2"></div>
       </div>
+
+      <!-- Row 6: playoff series scores -->
+      <div id="playoff-series-section" class="hidden mt-3">
+        <h3 class="text-sm font-semibold text-cyan-400 mb-2">🏆 Active Playoff Series</h3>
+        <div id="playoff-series-list" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+
+    <!-- ── Signal History Sparkline ── -->
+    <div id="signal-history-bar" class="hidden mb-6 rounded-xl p-4 card border border-slate-700/50">
+      <div class="flex items-center justify-between mb-2">
+        <span class="text-xs font-semibold text-slate-400">📊 Signal Activity (last 4h)</span>
+        <span id="sig-hist-summary" class="text-xs text-slate-500"></span>
+      </div>
+      <canvas id="sig-hist-canvas" height="40" style="max-height:40px;width:100%;"></canvas>
+      <div id="sig-hist-persistent" class="mt-2 text-xs text-slate-500"></div>
     </div>
 
     <!-- ── Strategy Signals ── -->
@@ -581,6 +597,7 @@ function renderHealthBar(health, generated) {
 function render(data) {
   renderHealthBar(data.health || {}, data.generated || '');
   renderAlertBanners(data);
+  renderSignalHistory(data.signal_history || []);
   renderSignals(data.strategy_signals || []);
   renderLineMovements(data.line_movements || []);
   renderPriceMovements(data.price_movements || []);
@@ -898,6 +915,26 @@ function renderLiveFeed(data) {
       </span>`;
     }).join('');
   }
+
+  // ── Playoff Series Scores ──
+  const playoffSeries = data.espn_playoff_series || [];
+  if (playoffSeries.length) {
+    feed.classList.remove('hidden');
+    document.getElementById('playoff-series-section').classList.remove('hidden');
+    document.getElementById('playoff-series-list').innerHTML = playoffSeries.map(s => {
+      const hw = s.home_wins || 0; const aw = s.away_wins || 0;
+      const homeLeads = hw > aw;
+      const leaderText = hw === aw ? 'Tied' : `${escHtml(homeLeads ? s.home_team : s.away_team)} leads`;
+      const scoreText  = hw > aw ? `${hw}-${aw}` : `${aw}-${hw}`;
+      const badgeCol   = hw === aw ? 'bg-slate-700 text-slate-300' : 'bg-cyan-900 text-cyan-300 border-cyan-700';
+      const league     = (s.league || '').toUpperCase();
+      const leagueIcon = league === 'NBA' ? '🏀' : league === 'NHL' ? '🏒' : league === 'MLB' ? '⚾' : '🏆';
+      return `<span class="border rounded-lg px-2 py-1 text-xs ${badgeCol}">
+        ${leagueIcon} <strong>${escHtml(s.away_team)}</strong> @ <strong>${escHtml(s.home_team)}</strong>
+        · ${leaderText} ${scoreText}
+      </span>`;
+    }).join('');
+  }
 }
 
 // ── Economic Indicators ────────────────────────────────────────────────────
@@ -1181,6 +1218,67 @@ function renderPriceMovements(moves) {
     el.innerHTML = `<table class="table"><thead><tr>
         <th>Move</th><th>Ticker</th><th>Market</th><th>Price</th><th>Cat</th>
     </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+// ── Signal History Sparkline ──────────────────────────────────────────────────
+function renderSignalHistory(history) {
+  const bar = document.getElementById('signal-history-bar');
+  if (!history || history.length < 3) { if (bar) bar.classList.add('hidden'); return; }
+  if (bar) bar.classList.remove('hidden');
+
+  const canvas = document.getElementById('sig-hist-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth - 32;
+  canvas.width = W; canvas.height = 40;
+
+  const totals = history.map(h => h.total || 0);
+  const highs  = history.map(h => h.high_conf || 0);
+  const maxVal = Math.max(...totals, 1);
+
+  // Draw total signals area
+  ctx.beginPath();
+  totals.forEach((v, i) => {
+    const x = (i / (totals.length - 1)) * W;
+    const y = 40 - (v / maxVal) * 36;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#f59e0b55'; ctx.lineWidth = 1.5; ctx.stroke();
+
+  // Draw high-conf signals in green
+  ctx.beginPath();
+  highs.forEach((v, i) => {
+    const x = (i / (highs.length - 1)) * W;
+    const y = 40 - (v / maxVal) * 36;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#4ade8088'; ctx.lineWidth = 2; ctx.stroke();
+
+  // Summary text
+  const latest = history[history.length - 1];
+  const avg = (totals.reduce((a, b) => a + b, 0) / totals.length).toFixed(1);
+  const summEl = document.getElementById('sig-hist-summary');
+  if (summEl) summEl.textContent = `avg ${avg} signals/run · latest ${latest.total} (${latest.high_conf} high-conf) · ${latest.markets_count || 0} mkts`;
+
+  // Detect persistent signals (appear in ≥3 of last 5 runs)
+  const recent = history.slice(-5);
+  const tickerCounts = {};
+  recent.forEach(h => {
+    (h.top_signals || []).forEach(s => {
+      const key = `${s.ticker}|${s.direction}`;
+      tickerCounts[key] = (tickerCounts[key] || 0) + 1;
+    });
+  });
+  const persistent = Object.entries(tickerCounts)
+    .filter(([, n]) => n >= 3)
+    .map(([k, n]) => { const [ticker, dir] = k.split('|'); return `${dir || '?'} <strong>${ticker}</strong> (${n}/5 runs)`; });
+
+  const persEl = document.getElementById('sig-hist-persistent');
+  if (persEl) {
+    persEl.innerHTML = persistent.length > 0
+      ? '🔁 Persistent: ' + persistent.join(' · ')
+      : 'No persistent signals in last 5 runs';
+  }
 }
 
 // ── Strategy Signals ──────────────────────────────────────────────────────────
