@@ -3409,6 +3409,55 @@ def fetch_supplemental_markets():
     return extra
 
 
+def fetch_game_partner_markets(markets_list):
+    """
+    For each GAME market in markets_list, also fetch its companion contracts
+    (the other team in the same game). This ensures analyze_home_advantage
+    and analyze_bundle_arb can find complete game pairs.
+
+    Example: if KXNBAGAME-26MAY26SASOKC-SAS is in markets_list but
+    KXNBAGAME-26MAY26SASOKC-OKC is NOT, this function fetches OKC.
+    """
+    from collections import defaultdict
+    extra = []
+
+    # Group markets by series (game prefix before last dash)
+    series_contracts = defaultdict(list)
+    for m in markets_list:
+        ticker = m.get("ticker", "")
+        if not any(x in ticker.upper() for x in ["NBAGAME", "NHLGAME", "MLBGAME", "NFLGAME"]):
+            continue
+        parts = ticker.rsplit("-", 1)
+        if len(parts) == 2:
+            series_contracts[parts[0]].append(ticker)
+
+    # For each game series, fetch all contracts for that event
+    seen = {m.get("ticker") for m in markets_list}
+    for series, known_tickers in series_contracts.items():
+        # Use the series prefix as event_ticker (minus the "KX" prefix if present)
+        try:
+            resp = get("/markets", {"event_ticker": series, "limit": 20})
+            if not resp:
+                continue
+            for m in resp.get("markets", []):
+                ticker = m.get("ticker", "")
+                if not ticker or ticker in seen:
+                    continue
+                seen.add(ticker)
+                # Fetch full market details
+                detail = get(f"/markets/{ticker}")
+                if not detail:
+                    continue
+                md = detail.get("market", detail) if isinstance(detail, dict) else detail
+                if isinstance(md, dict):
+                    extra.append(md)
+        except Exception as e:
+            log(f"Game partner fetch error ({series}): {e}")
+
+    log(f"Game partner markets: {len(extra)} fetched to complete {len(series_contracts)} game series")
+    return extra
+
+
 def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets, manifold_markets=None):
     """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt/Manifold."""
     arb = []
@@ -3681,6 +3730,44 @@ if _on_interval(10):  # Every 10 minutes (was 30) — needed for active playoff 
         log(f"Markets list after supplemental: {len(markets_list)}")
     except Exception as e:
         log(f"Supplemental market fetch block error: {e}")
+
+# Always fetch game partner contracts (needed for home_advantage + bundle_arb)
+try:
+    partner_markets = fetch_game_partner_markets(markets_list)
+    existing_tickers = {m["ticker"] for m in markets_list}
+    for m in partner_markets:
+        try:
+            yes_bid  = cents(m.get("yes_bid_dollars")) or m.get("yes_bid")
+            no_bid   = cents(m.get("no_bid_dollars"))  or m.get("no_bid")
+            yes_ask  = cents(m.get("yes_ask_dollars")) or m.get("yes_ask")
+            no_ask   = cents(m.get("no_ask_dollars"))  or m.get("no_ask")
+            last_p   = cents(m.get("last_price_dollars")) or m.get("last_price")
+            yes_price = yes_bid or yes_ask or last_p
+            ticker_str = m.get("ticker", "")
+            if not ticker_str or ticker_str in existing_tickers:
+                continue
+            existing_tickers.add(ticker_str)
+            markets_list.append({
+                "ticker":      ticker_str,
+                "title":       m.get("title", ""),
+                "yes_bid":     yes_bid,
+                "no_bid":      no_bid,
+                "yes_ask":     yes_ask,
+                "no_ask":      no_ask,
+                "last_price":  last_p,
+                "volume":      m.get("volume", 0) or 0,
+                "close_time":  str(m.get("close_time", "")),
+                "category":    "Sports",
+                "_yes_price":  yes_price,
+                "_trade_count": 0,
+                "_supplemental": True,
+            })
+        except Exception:
+            continue
+    if partner_markets:
+        log(f"Markets list after game partners: {len(markets_list)}")
+except Exception as e:
+    log(f"Game partner fetch block error: {e}")
 
 # ================================================================
 # SECTION 2: World Cup discovery (once per hour to save API credits)
