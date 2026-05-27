@@ -3105,6 +3105,121 @@ def analyze_worldcup_edge(markets, vegas_games):
     return signals[:5]
 
 
+def analyze_near_close_edge(markets):
+    """
+    Near-Resolution Mispricing:
+
+    Markets closing in 1-7 days that still show 20-80% YES prices are often
+    interesting because:
+    1. Low-volume markets get forgotten and staleness creates edges
+    2. New information hasn't been priced in
+    3. Binary events approaching resolution have accelerating probability changes
+
+    Strategy:
+    - Find liquid markets (vol > 50) closing in 1-7 days
+    - Where spread is tight (< 5¢) — indicates active market-making
+    - Priced 20-40¢ YES: suggests true underdog chance not priced in
+    - Priced 60-80¢ YES: suggests true favorite underprice
+    - We flag these for human review since direction depends on context
+    """
+    signals = []
+    now_utc = datetime.now(timezone.utc)
+
+    for m in markets:
+        ticker = m.get("ticker", "")
+        title  = m.get("title", ticker)
+        yp     = m.get("_yes_price")
+        vol    = m.get("volume", 0) or 0
+        ct     = m.get("close_time", "")
+
+        if yp is None or not ticker or not ct:
+            continue
+
+        # Parse close time and calculate days remaining
+        try:
+            close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+            if close_dt.tzinfo is None:
+                close_dt = close_dt.replace(tzinfo=timezone.utc)
+            days_left = (close_dt - now_utc).total_seconds() / 86400
+        except Exception:
+            continue
+
+        # Only look at markets closing in 1-7 days
+        if not (1 <= days_left <= 7):
+            continue
+
+        # Need decent volume (active market, not abandoned)
+        if vol < 50:
+            continue
+
+        # Compute spread
+        yb = m.get("yes_bid") or 0
+        nb = m.get("no_bid") or 0
+        ya = m.get("yes_ask") or (100 - nb if nb else 99)
+        spread = ya - yb
+
+        # Need tight spread (active market-making = informed prices, but also liquid)
+        if spread > 8:
+            continue
+
+        # Avoid extreme prices (already at resolution)
+        if yp < 15 or yp > 85:
+            continue
+
+        # Skip GAME markets closing tomorrow — those are tonight's games, normal
+        t_up = ticker.upper()
+        if days_left < 1.5 and any(x in t_up for x in ["GAME", "TONIGHT", "TODAY"]):
+            continue
+
+        # Signal: "elevated uncertainty" in near-resolution market
+        # Edge direction: mean-reversion toward the clear binary outcome
+        # We flag both sides and let the user/advisor decide
+        urgency = "HIGH" if days_left <= 2 else ("MED" if days_left <= 4 else "LOW")
+
+        # Slight bias toward favorites (markets are usually fair, but if
+        # an event is nearly resolved, often price should be higher/lower)
+        if 20 <= yp <= 40:
+            # Possible underpricing of YES — flag for review
+            signals.append({
+                "type":              "near_close_mispricing",
+                "direction":         "BUY YES (review)",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             yp,
+                "rationale":         f"Near close ({days_left:.1f}d) liquid market at {yp}¢. Check for new information. Spread={spread}¢. Urgency={urgency}.",
+                "confidence":        "low",
+                "kelly_frac":        0.005,  # very small position until edge confirmed
+                "fee_cents":         kalshi_fee(yp),
+                "priority":          3,
+                "days_until_close":  round(days_left, 1),
+                "entry_limit_cents": max(1, yp - 1),
+                "take_profit_cents": min(99, yp + 10),
+                "stop_loss_pct":     0.4,
+            })
+        elif 60 <= yp <= 80:
+            # Possible underpricing of YES favorite
+            signals.append({
+                "type":              "near_close_mispricing",
+                "direction":         "BUY YES (review)",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             yp,
+                "rationale":         f"Near close ({days_left:.1f}d) favorite at {yp}¢. Check if outcome already determined. Spread={spread}¢. Urgency={urgency}.",
+                "confidence":        "low",
+                "kelly_frac":        0.005,
+                "fee_cents":         kalshi_fee(yp),
+                "priority":          3,
+                "days_until_close":  round(days_left, 1),
+                "entry_limit_cents": max(1, yp - 1),
+                "take_profit_cents": min(99, yp + 8),
+                "stop_loss_pct":     0.4,
+            })
+
+    signals.sort(key=lambda x: x.get("days_until_close", 99))
+    log(f"Near-close edge: {len(signals)} signals")
+    return signals[:5]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
                         metaculus_qs=None, price_moves=None, vegas_games=None,
                         playoff_series=None):
@@ -3216,6 +3331,12 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
     except Exception as e:
         log(f"Strategy world cup error: {e}")
 
+    # 16. Near-close mispricing (liquid markets closing in 1-7 days)
+    try:
+        all_signals += analyze_near_close_edge(markets)
+    except Exception as e:
+        log(f"Strategy near-close error: {e}")
+
     # Consensus detection: count how many strategies agree per ticker+direction
     from collections import defaultdict
     consensus = defaultdict(list)  # (ticker, direction) → [signal_types]
@@ -3297,8 +3418,10 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             # Volume multiplier: 1.0x at 0 volume, up to 1.5x at 1000+ volume
             vol_mult = min(1.5, 1.0 + vol / 2000.0)
             # Spread tightness: tighter spread = higher quality
+            # Use binary market identity: yes_ask = 100 - no_bid when yes_ask missing
             yb = mkt.get("yes_bid") or 0
-            ya = mkt.get("yes_ask") or 99
+            nb = mkt.get("no_bid") or 0
+            ya = mkt.get("yes_ask") or (100 - nb if nb else 99)
             spread = ya - yb
             spread_mult = max(0.5, 1.0 - spread / 20.0)  # penalize wide spreads
             s["quality_score"] = round(vol_mult * spread_mult, 3)
@@ -3325,8 +3448,30 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         # Add volume and spread_cents from market if not already set
         ticker = s.get("ticker", "")
         mkt = next((m for m in markets if m.get("ticker") == ticker), None)
-        if mkt and "volume" not in s:
-            s["volume"] = mkt.get("volume", 0) or 0
+        if mkt:
+            if "volume" not in s:
+                s["volume"] = mkt.get("volume", 0) or 0
+            # Add days_until_close for urgency assessment
+            ct = mkt.get("close_time", "")
+            if ct:
+                try:
+                    close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+                    if close_dt.tzinfo is None:
+                        close_dt = close_dt.replace(tzinfo=timezone.utc)
+                    days_left = (close_dt - now_utc).total_seconds() / 86400
+                    s["days_until_close"] = round(days_left, 1)
+                except Exception:
+                    pass
+            # Add live bid/ask for execution reference
+            yb = mkt.get("yes_bid")
+            nb = mkt.get("no_bid")
+            ya = mkt.get("yes_ask")
+            if yb is not None and "live_bid" not in s:
+                s["live_bid"] = yb
+            if nb is not None and "live_no_bid" not in s:
+                s["live_no_bid"] = nb
+            if ya is not None and "live_ask" not in s:
+                s["live_ask"] = ya
 
     log(f"Strategy engine: {len(live_signals)} live signals (filtered {len(all_signals)-len(live_signals)} expired)")
     return live_signals[:20]  # top 20
@@ -3605,7 +3750,8 @@ try:
         if not tk: continue
         if tk not in seen:
             seen.add(tk); ordered.append(tk)
-        p = cents(t.get("yes_price_dollars"))
+        # Kalshi V2 API returns integer cents (yes_price), not dollars (yes_price_dollars)
+        p = cents(t.get("yes_price_dollars")) or t.get("yes_price")
         if p is not None: trade_price[tk] = p
         trade_count[tk] = trade_count.get(tk, 0) + 1
     ordered.sort(key=lambda tk: trade_count.get(tk, 0), reverse=True)
@@ -3630,18 +3776,19 @@ try:
     lines.append("  " + "-"*95)
 
     for m in markets_active:
-        y = cents(m.get("yes_bid_dollars")) or cents(m.get("last_price_dollars")) or m.get("_tp")
-        n = cents(m.get("no_bid_dollars"))
+        # Kalshi V2 API returns integer cents fields (yes_bid) not dollars (yes_bid_dollars)
+        y = cents(m.get("yes_bid_dollars")) or m.get("yes_bid") or cents(m.get("last_price_dollars")) or m.get("last_price") or m.get("_tp")
+        n = cents(m.get("no_bid_dollars")) or m.get("no_bid")
         lines.append(f"  {m.get('ticker','')[:42]:<42} {str(y)+'c' if y else '?':>4} "
                      f"{str(n)+'c' if n else '?':>4}  {m.get('_tc',0):>6}  "
                      f"{str(m.get('close_time',''))[:10]}  {m.get('title','')[:40]}")
 
         # Build structured entry for JSON dashboard
-        yes_bid   = cents(m.get("yes_bid_dollars"))  or m.get("_tp")
-        no_bid    = cents(m.get("no_bid_dollars"))
-        yes_ask   = cents(m.get("yes_ask_dollars"))
-        no_ask    = cents(m.get("no_ask_dollars"))
-        last_p    = cents(m.get("last_price_dollars")) or m.get("_tp")
+        yes_bid   = cents(m.get("yes_bid_dollars")) or m.get("yes_bid") or m.get("_tp")
+        no_bid    = cents(m.get("no_bid_dollars"))  or m.get("no_bid")
+        yes_ask   = cents(m.get("yes_ask_dollars")) or m.get("yes_ask")
+        no_ask    = cents(m.get("no_ask_dollars"))  or m.get("no_ask")
+        last_p    = cents(m.get("last_price_dollars")) or m.get("last_price") or m.get("_tp")
         yes_price = yes_bid or yes_ask or last_p
 
         ticker_str = m.get("ticker", "")
@@ -3691,11 +3838,12 @@ if _on_interval(10):  # Every 10 minutes (was 30) — needed for active playoff 
         existing_tickers = {m["ticker"] for m in markets_list}
         for m in supp_markets:
             try:
-                yes_bid  = cents(m.get("yes_bid_dollars"))
-                no_bid   = cents(m.get("no_bid_dollars"))
-                yes_ask  = cents(m.get("yes_ask_dollars"))
-                no_ask   = cents(m.get("no_ask_dollars"))
-                last_p   = cents(m.get("last_price_dollars"))
+                # Kalshi V2 API returns integer cents (yes_bid) not dollars (yes_bid_dollars)
+                yes_bid  = cents(m.get("yes_bid_dollars"))  or m.get("yes_bid")
+                no_bid   = cents(m.get("no_bid_dollars"))   or m.get("no_bid")
+                yes_ask  = cents(m.get("yes_ask_dollars"))  or m.get("yes_ask")
+                no_ask   = cents(m.get("no_ask_dollars"))   or m.get("no_ask")
+                last_p   = cents(m.get("last_price_dollars")) or m.get("last_price")
                 yes_price = yes_bid or yes_ask or last_p
                 ticker_str = m.get("ticker", "")
                 if not ticker_str or ticker_str in existing_tickers:

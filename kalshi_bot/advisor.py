@@ -38,18 +38,24 @@ def _fmt_strategy_signals(signals: list) -> str:
     if not signals:
         return "  No strategy signals available."
     lines = [
-        f"  {'#':<3} {'Type':<20} {'Dir':<8} {'Ticker':<36} {'P':>3} {'Kelly':>6}  Conf   Rationale"
+        f"  {'#':<3} {'Type':<20} {'Dir':<8} {'Ticker':<36} {'P':>3} {'Kelly':>6}  Conf  Days  Rationale"
     ]
-    lines.append("  " + "-" * 105)
+    lines.append("  " + "-" * 112)
     for i, s in enumerate(signals[:15], 1):
         direction_short = "YES" if "YES" in s.get("direction", "") else (
             "NO" if "NO" in s.get("direction", "") else "ALL")
         kelly_str = f"{s.get('kelly_frac', 0) * 100:.1f}%"
         conf = (s.get("confidence", "?")[:3]).upper()
-        rationale = s.get("rationale", "")[:55]
+        days = s.get("days_until_close")
+        days_str = f"{days:.0f}d" if days is not None else "  ? "
+        rationale = s.get("rationale", "")[:50]
+        # Live bid/ask for execution reference
+        lb = s.get("live_bid")
+        la = s.get("live_ask")
+        live_str = f" [{lb}↔{la}]" if lb and la else ""
         lines.append(
             f"  {i:<3} {s.get('type', '?')[:20]:<20} {direction_short:<8} "
-            f"{s.get('ticker', '?')[:36]:<36} {s.get('price', 0):>3}¢ {kelly_str:>6}  {conf:<6}  {rationale}"
+            f"{s.get('ticker', '?')[:36]:<36} {s.get('price', 0):>3}¢ {kelly_str:>6}  {conf:<5} {days_str:<5}  {rationale}{live_str}"
         )
     return "\n".join(lines)
 
