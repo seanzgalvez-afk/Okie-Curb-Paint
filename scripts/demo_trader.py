@@ -507,6 +507,16 @@ def main():
         "closed_trades":  state["closed"][-20:],  # last 20
         "stats":          portfolio_stats,
         "last_run":       datetime.now(timezone.utc).isoformat(),
+        "run_summary": {
+            "signals_evaluated": len(high_priority[:10]),
+            "new_orders_attempted": new_orders,
+            "signals_skipped_expired": sum(
+                1 for s in high_priority[:10]
+                if not market_is_live((s.get("contracts") or [s.get("ticker","")])[0])
+            ),
+            "signals_skipped_priority": len([s for s in signals if s.get("priority",9) > 2]),
+            "api_key_set": bool(KEY_ID),
+        },
     }
 
     # 8. Save state

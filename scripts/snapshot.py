@@ -1751,7 +1751,7 @@ try:
     ordered.sort(key=lambda tk: trade_count.get(tk, 0), reverse=True)
 
     markets_active = []
-    for ticker in ordered[:20]:
+    for ticker in ordered[:40]:  # Fetch top 40 for richer strategy signals
         try:
             resp = get(f"/markets/{ticker}")
             if not resp: continue
