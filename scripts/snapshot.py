@@ -1105,26 +1105,69 @@ def analyze_longshot_bias(markets):
             })
     return signals
 
+def _is_exhaustive_series(series, suffixes):
+    """
+    Check if the contracts in a series form an exhaustive/mutually-exclusive set.
+
+    For 2-contract series: assume exhaustive UNLESS it's a SPREAD market
+    (spread outcomes are stacked, not complementary).
+
+    For SPREAD markets (e.g., OKC6, OKC20, SAS1): NOT exhaustive because:
+    - OKC6 = "OKC wins by 6+" and OKC20 = "OKC wins by 20+" OVERLAP
+    - Missing outcome: "OKC wins by 1-5"
+
+    For GAME/1H/WINNER markets (e.g., SAS, OKC): exactly one wins, exhaustive.
+    """
+    s = series.upper()
+    # Spread markets are NOT exhaustive (overlapping outcomes)
+    if "SPREAD" in s:
+        return False
+    # TOTAL markets can be non-exhaustive (e.g., 10, 11, 12 run options overlap if not adjacent)
+    if "TOTAL" in s and len(suffixes) > 2:
+        # Check if they look like a ladder (numeric-only suffixes)
+        try:
+            vals = sorted(int(x) for x in suffixes)
+            # If they're sequential integers, they might be adjacent buckets — allow
+            return all(vals[i+1] == vals[i] + 1 for i in range(len(vals)-1))
+        except ValueError:
+            return False
+    # GAME, WINNER, 1H, FUTURES markets with exactly 2 outcomes are exhaustive
+    if len(suffixes) == 2:
+        exhaustive_types = ["GAME", "WINNER", "1H", "FUTURES", "CHAMP", "ELEC", "POL",
+                            "PRES", "SEN", "GOV", "MVE", "MVP"]
+        if any(t in s for t in exhaustive_types):
+            return True
+        # 2-contract non-spread series: assume exhaustive if suffixes look like team names
+        if all(len(x) <= 5 and x.isalpha() for x in suffixes):
+            return True
+    return False
+
+
 def analyze_bundle_arb(markets):
     """
-    Bundle arbitrage: if YES + NO prices sum to less than 100 - fees,
-    buying both locks in risk-free profit.
-    Scans multi-outcome ladder markets where sum of buckets < 100.
+    Bundle arbitrage: if sum of YES prices for exhaustive mutually-exclusive
+    outcomes < 100 - fees, buying all contracts locks in risk-free profit.
+
+    Key constraint: ONLY flags true exhaustive sets (e.g., SAS or OKC wins).
+    Explicitly rejects SPREAD markets (overlapping outcomes) to prevent false arbs.
     """
     signals = []
-    # Group by series (everything before the last hyphen segment)
     from collections import defaultdict
     series_groups = defaultdict(list)
     for m in markets:
         ticker = m.get("ticker", "")
-        # Extract series prefix (e.g., KXBTCD-26MAY2618 from KXBTCD-26MAY2618-T75999.99)
         parts = ticker.rsplit("-", 1)
         if len(parts) == 2:
             series_groups[parts[0]].append(m)
 
-    # Check each multi-outcome series
     for series, contracts in series_groups.items():
         if len(contracts) < 2: continue
+
+        # Exhaustiveness check — skip non-exhaustive series
+        suffixes = [c.get("ticker", "").rsplit("-", 1)[-1] for c in contracts]
+        if not _is_exhaustive_series(series, suffixes):
+            continue
+
         yes_prices = []
         valid = True
         for c in contracts:
@@ -1134,12 +1177,14 @@ def analyze_bundle_arb(markets):
         if not valid: continue
 
         total = sum(yes_prices)
-        # In a mutually exclusive exhaustive set, prices should sum to ~100
-        # If sum < 95 (after accounting for fees), bundle arb exists
+        # Prices should sum near 100; a gap = guaranteed profit
+        # Reject if total > 100 (overpriced) or suspiciously low (<50% = game unlikely)
+        if total >= 97 or total < 50:
+            continue
         total_fee = sum(kalshi_fee(yp) for yp in yes_prices)
         net_profit = 100 - total - total_fee
 
-        if net_profit > 2.0:  # at least 2¢ net profit
+        if net_profit > 2.0:  # at least 2¢ net profit after fees
             signals.append({
                 "type":       "bundle_arb",
                 "direction":  "BUY ALL",
