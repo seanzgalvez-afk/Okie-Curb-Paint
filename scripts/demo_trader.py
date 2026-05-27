@@ -493,9 +493,9 @@ def main():
             log(f"  Bundle arb: {len(contracts)} legs, qty={qty}, total_cost≈{total_cost}¢")
             placed_legs = 0
             for leg_ticker in contracts:
-                # Get live price for this contract
-                leg_price = market_prices.get(leg_ticker, 50)
-                limit_price = max(1, min(99, leg_price))  # at market for arb speed
+                # Use entry_limit if available, otherwise use market price
+                leg_price = signal.get("entry_limit_cents") or market_prices.get(leg_ticker, 50)
+                limit_price = max(1, min(99, leg_price))
                 order = place_limit_order(
                     ticker=leg_ticker,
                     side="yes",
@@ -505,7 +505,10 @@ def main():
                     rationale=signal.get("rationale", "")[:100],
                 )
                 if order:
-                    order["bundle_series"] = ticker
+                    order["bundle_series"]     = ticker
+                    order["take_profit_cents"] = signal.get("take_profit_cents")
+                    order["stop_loss_pct"]     = signal.get("stop_loss_pct")
+                    order["fair_value_cents"]  = signal.get("take_profit_cents")
                     state["orders"].append(order)
                     new_orders += 1
                     placed_legs += 1
@@ -519,6 +522,10 @@ def main():
         should, side, price, qty = should_trade_signal(signal, state)
         if not should:
             continue
+
+        # Override price with entry_limit_cents from signal when available
+        if signal.get("entry_limit_cents"):
+            price = max(1, min(99, signal["entry_limit_cents"]))
 
         # Get live market price to verify signal still valid
         book = get_market_info(ticker)
@@ -534,6 +541,9 @@ def main():
             rationale=signal.get("rationale", ""),
         )
         if order:
+            order["take_profit_cents"] = signal.get("take_profit_cents")
+            order["stop_loss_pct"]     = signal.get("stop_loss_pct")
+            order["fair_value_cents"]  = signal.get("take_profit_cents")
             state["orders"].append(order)
             new_orders += 1
             log(f"  → Tracked: {ticker}")

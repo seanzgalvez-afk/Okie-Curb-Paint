@@ -985,6 +985,22 @@ function renderSignals(signals) {
       const spreadCol = s.spread_cents <= 2 ? '#4ade80' : s.spread_cents <= 5 ? '#fbbf24' : '#f87171';
       extraRows += `<div class="mt-1 text-xs" style="color:${spreadCol};">↔ Bid-ask spread: <strong>${s.spread_cents}¢</strong>${s.spread_cents > 5 ? ' (wide — use limit orders)' : ''}</div>`;
     }
+    if (s.entry_limit_cents != null) {
+      const tp   = s.take_profit_cents || '—';
+      const diff = s.take_profit_cents && s.entry_limit_cents
+        ? `+${s.take_profit_cents - s.entry_limit_cents}¢ potential` : '';
+      extraRows += `<div class="mt-2 rounded-lg p-2 text-xs" style="background:#0f172a;border:1px solid #334155;">
+    <div class="flex justify-between items-center">
+      <span class="text-slate-400">🎯 Entry limit</span>
+      <span class="font-bold text-cyan-400">${s.entry_limit_cents}¢</span>
+    </div>
+    <div class="flex justify-between items-center mt-1">
+      <span class="text-slate-400">💰 Take profit</span>
+      <span class="font-bold text-green-400">${tp}¢ ${diff}</span>
+    </div>
+    ${s.stop_loss_pct ? `<div class="flex justify-between items-center mt-1"><span class="text-slate-400">🛑 Stop loss</span><span class="font-bold text-red-400">-${(s.stop_loss_pct*100).toFixed(0)}%</span></div>` : ''}
+  </div>`;
+    }
 
     // Close time if available
     const closeTime = s.close_time ? `<span class="text-slate-500">· closes ${s.close_time.slice(0,10)}</span>` : '';

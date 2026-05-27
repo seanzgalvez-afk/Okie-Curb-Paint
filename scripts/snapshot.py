@@ -1334,18 +1334,21 @@ def analyze_cross_platform_arb(cross_arb):
         if net_profit < 1.0: continue  # not profitable after fees
 
         signals.append({
-            "type":       "cross_platform_arb",
-            "direction":  a.get("direction", ""),
-            "ticker":     a.get("kalshi_ticker", ""),
-            "title":      a.get("kalshi_title", "")[:60],
-            "price":      kalshi_p,
-            "rationale":  f"{source.title()}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
-            "confidence": "medium",
-            "kelly_frac": 0.03,  # small fixed size — settlement risk
-            "fee_cents":  kalshi_fee_val,
-            "net_profit": round(net_profit, 2),
-            "priority":   1 if net_profit >= 5 else 2,
-            "warning":    "Verify settlement language matches before entering both legs.",
+            "type":              "cross_platform_arb",
+            "direction":         a.get("direction", ""),
+            "ticker":            a.get("kalshi_ticker", ""),
+            "title":             a.get("kalshi_title", "")[:60],
+            "price":             kalshi_p,
+            "rationale":         f"{source.title()}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
+            "confidence":        "medium",
+            "kelly_frac":        0.03,  # small fixed size — settlement risk
+            "fee_cents":         kalshi_fee_val,
+            "net_profit":        round(net_profit, 2),
+            "priority":          1 if net_profit >= 5 else 2,
+            "warning":           "Verify settlement language matches before entering both legs.",
+            "entry_limit_cents": max(1, kalshi_p - 2),
+            "take_profit_cents": min(99, int(other_p)),
+            "stop_loss_pct":     0.4,
         })
     return signals
 
@@ -1836,16 +1839,19 @@ def analyze_fred_edge(markets, fred_data):
                 # Fed unlikely to hike if rate already high (>5.5%)
                 if fed_rate > 5.5 and yp > 40:
                     signals.append({
-                        "type":        "fred_edge",
-                        "direction":   "BUY NO",
-                        "ticker":      m.get("ticker", ""),
-                        "title":       m.get("title", ""),
-                        "price":       yp,
-                        "rationale":   f"FRED: Fed Funds Rate = {fed_rate:.2f}%. Rate hike unlikely at this level. Kalshi prices {yp}¢.",
-                        "confidence":  "medium",
-                        "kelly_frac":  0.01,
-                        "fee_cents":   kalshi_fee(100 - yp),
-                        "priority":    2,
+                        "type":              "fred_edge",
+                        "direction":         "BUY NO",
+                        "ticker":            m.get("ticker", ""),
+                        "title":             m.get("title", ""),
+                        "price":             yp,
+                        "rationale":         f"FRED: Fed Funds Rate = {fed_rate:.2f}%. Rate hike unlikely at this level. Kalshi prices {yp}¢.",
+                        "confidence":        "medium",
+                        "kelly_frac":        0.01,
+                        "fee_cents":         kalshi_fee(100 - yp),
+                        "priority":          2,
+                        "entry_limit_cents": max(1, yp - 2),
+                        "take_profit_cents": min(99, yp + 5),
+                        "stop_loss_pct":     0.4,
                     })
 
         # Unemployment markets
@@ -1854,16 +1860,19 @@ def analyze_fred_edge(markets, fred_data):
                 # High unrate > 5% usually means "will unemployment stay above X?" YES
                 if unrate > 5.0 and "ABOVE" in title and yp < 40:
                     signals.append({
-                        "type":        "fred_edge",
-                        "direction":   "BUY YES",
-                        "ticker":      m.get("ticker", ""),
-                        "title":       m.get("title", ""),
-                        "price":       yp,
-                        "rationale":   f"FRED: Unemployment = {unrate:.1f}%. Historical persistence suggests above-threshold likely.",
-                        "confidence":  "low",
-                        "kelly_frac":  0.01,
-                        "fee_cents":   kalshi_fee(yp),
-                        "priority":    3,
+                        "type":              "fred_edge",
+                        "direction":         "BUY YES",
+                        "ticker":            m.get("ticker", ""),
+                        "title":             m.get("title", ""),
+                        "price":             yp,
+                        "rationale":         f"FRED: Unemployment = {unrate:.1f}%. Historical persistence suggests above-threshold likely.",
+                        "confidence":        "low",
+                        "kelly_frac":        0.01,
+                        "fee_cents":         kalshi_fee(yp),
+                        "priority":          3,
+                        "entry_limit_cents": max(1, yp - 2),
+                        "take_profit_cents": min(99, yp + 5),
+                        "stop_loss_pct":     0.4,
                     })
 
     log(f"FRED edge: {len(signals)} signals")
