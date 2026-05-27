@@ -1283,8 +1283,10 @@ def analyze_longshot_bias(markets):
 
         if yp is None or not ticker:
             continue
-        # Skip illiquid markets — bias is less reliable with low volume
-        if vol < 5:
+        # Skip completely empty markets — but allow supplemental markets with vol=0
+        # (their volume may just be missing from API, not truly zero)
+        # Only skip if both volume AND trade_count are 0 AND it's a non-supplemental market
+        if vol < 1 and not m.get("_supplemental"):
             continue
 
         if yp <= 10:
@@ -2259,7 +2261,7 @@ def analyze_momentum_edge(markets):
 
         # Mid-range underdog: 20-35¢ YES in a binary game market
         # Research: these markets slightly underprice the trailing team
-        if 20 <= yp <= 35 and vol > 20:
+        if 20 <= yp <= 35 and vol >= 5:
             true_prob = yp + 3  # small structural edge
             kelly = kelly_size(true_prob, yp, maker=True, fraction=0.25)
             if kelly > 0.001:
@@ -2281,7 +2283,7 @@ def analyze_momentum_edge(markets):
 
         # Heavy favorite slight overpricing: 72-82¢ (crowd bias)
         # At round numbers the crowd tends to overweight favorites
-        if 72 <= yp <= 82 and vol > 15:
+        if 72 <= yp <= 82 and vol >= 5:
             no_price = 100 - yp
             true_prob = no_price + 2  # slight edge for NO
             kelly = kelly_size(true_prob, no_price, maker=True, fraction=0.25)
@@ -2356,8 +2358,8 @@ def analyze_metaculus_edge(markets, metaculus_qs):
                 best_overlap = overlap
                 best_market = mkt
 
-        # Require at least 4 keyword matches for a confident match
-        if best_overlap < 4 or best_market is None:
+        # Require at least 3 keyword matches for a match (lowered from 4)
+        if best_overlap < 3 or best_market is None:
             continue
 
         kalshi_price = best_market.get("_yes_price", 50)

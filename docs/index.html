@@ -1357,8 +1357,15 @@ function renderSignals(signals) {
   </div>`;
     }
 
-    // Close time if available
-    const closeTime = s.close_time ? `<span class="text-slate-500">· closes ${s.close_time.slice(0,10)}</span>` : '';
+    // Close time if available — show days remaining
+    let closeTime = '';
+    if (s.close_time) {
+      const closeDate = new Date(s.close_time);
+      const daysLeft = Math.ceil((closeDate - Date.now()) / (1000 * 60 * 60 * 24));
+      const closeColor = daysLeft <= 1 ? '#f87171' : daysLeft <= 3 ? '#fbbf24' : '#64748b';
+      const closeLabel = daysLeft <= 0 ? 'expiring now' : daysLeft === 1 ? '1 day left' : `${daysLeft}d left`;
+      closeTime = `<span style="color:${closeColor};">⏰ ${closeLabel}</span>`;
+    }
     // Consensus badge
     const consensusBadge = s.consensus_count >= 2
       ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#fbbf2433;color:#fbbf24;border:1px solid #fbbf2466;">🤝 ${s.consensus_count} strategies agree</span>`
