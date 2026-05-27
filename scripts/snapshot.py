@@ -1509,35 +1509,40 @@ def analyze_vegas_divergence(edges):
 def analyze_cross_platform_arb(cross_arb):
     """
     Convert cross-market arb into strategy signals with fee-adjusted profitability.
-    Minimum viable spread: ~3¢ after fees for Kalshi-PolyMarket,
+    Minimum viable spread: ~3¢ after fees for Kalshi-PolyMarket/Manifold,
                            ~17¢ for anything involving PredictIt.
     """
     signals = []
     for a in cross_arb:
         gap = abs(a.get("gap", 0))
-        source = a.get("source", "")
+        # find_cross_market_arb uses 'platform' and 'platform_price' (not source/other_price)
+        platform = a.get("platform", a.get("source", "")).lower()
         kalshi_p = a.get("kalshi_price", 50)
-        other_p  = a.get("other_price", 50)
+        other_p  = a.get("platform_price", a.get("other_price", 50))
 
-        # Fee thresholds
+        # Fee thresholds by platform
         kalshi_fee_val = kalshi_fee(kalshi_p, maker=True)
-        if source == "predictit":
+        if "predictit" in platform:
             min_viable = 17.0  # PredictIt 15% effective fee kills most arb
             other_fee  = 15.0
-        else:  # polymarket
+        elif "manifold" in platform:
+            min_viable = 4.0  # Manifold lower liquidity = higher threshold
+            other_fee  = 0.5
+        else:  # PolyMarket
             min_viable = 3.0
             other_fee  = 0.02
 
         net_profit = gap - kalshi_fee_val - other_fee
         if net_profit < 1.0: continue  # not profitable after fees
 
+        platform_display = a.get("platform", platform.title() if platform else "Other")
         signals.append({
             "type":              "cross_platform_arb",
             "direction":         a.get("direction", ""),
             "ticker":            a.get("kalshi_ticker", ""),
             "title":             a.get("kalshi_title", "")[:60],
             "price":             kalshi_p,
-            "rationale":         f"{source.title()}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
+            "rationale":         f"{platform_display}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
             "confidence":        "medium",
             "kelly_frac":        0.03,  # small fixed size — settlement risk
             "fee_cents":         kalshi_fee_val,
