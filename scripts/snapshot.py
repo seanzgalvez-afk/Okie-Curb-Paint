@@ -232,6 +232,66 @@ def detect_line_movements(games, history):
     movements.sort(key=lambda x: abs(x["prob_move"]), reverse=True)
     return movements[:10]
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Kalshi price history — track price changes between runs for trend detection
+# ═══════════════════════════════════════════════════════════════════════════════
+PRICE_HISTORY_FILE = Path(__file__).parent.parent / "data" / "price_history.json"
+
+def load_price_history():
+    """Load saved Kalshi market prices from last run."""
+    if PRICE_HISTORY_FILE.exists():
+        try:
+            return json.loads(PRICE_HISTORY_FILE.read_text())
+        except Exception:
+            pass
+    return {}
+
+def save_price_history(markets_list):
+    """Save current Kalshi market prices for next run price comparison."""
+    try:
+        snapshot = {}
+        ts = datetime.now(timezone.utc).isoformat()
+        for m in markets_list:
+            tk = m.get("ticker", "")
+            yp = m.get("_yes_price") or m.get("yes_bid") or m.get("last_price")
+            if tk and yp is not None:
+                snapshot[tk] = {"price": yp, "ts": ts}
+        PRICE_HISTORY_FILE.parent.mkdir(exist_ok=True)
+        PRICE_HISTORY_FILE.write_text(json.dumps(snapshot, indent=2))
+        log(f"Saved price history: {len(snapshot)} markets")
+    except Exception as e:
+        log(f"Price history save error: {e}")
+
+def detect_price_movements(markets_list, history):
+    """
+    Compare current Kalshi prices to previous snapshot.
+    Returns list of significant moves (≥4¢) as a price trend signal.
+    Kalshi prices rarely move in thin markets, so ≥4¢ is meaningful.
+    """
+    moves = []
+    for m in markets_list:
+        tk = m.get("ticker", "")
+        if not tk or tk not in history:
+            continue
+        prev_price = history[tk].get("price")
+        curr_price = m.get("_yes_price") or m.get("yes_bid") or m.get("last_price")
+        if prev_price is None or curr_price is None:
+            continue
+        move = curr_price - prev_price
+        if abs(move) >= 4:
+            moves.append({
+                "ticker":     tk,
+                "title":      m.get("title", ""),
+                "prev_price": prev_price,
+                "curr_price": curr_price,
+                "move":       round(move, 1),
+                "direction":  "shortening" if move > 0 else "drifting",
+                "prev_ts":    history[tk].get("ts", ""),
+                "category":   m.get("category", "Other"),
+            })
+    moves.sort(key=lambda x: abs(x["move"]), reverse=True)
+    return moves[:15]
+
 def fetch_event_player_props(sport, event_id):
     """Fetch player prop odds for a specific game (uses per-event endpoint).
     Markets: player_points, player_rebounds, player_assists.
@@ -742,71 +802,110 @@ def fetch_fear_greed():
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def fetch_metaculus_questions(search_terms=None):
-    """Fetch top active Metaculus questions. Tries multiple API versions."""
+    """Fetch top active Metaculus questions. Tries multiple API versions.
+    Metaculus has changed their API structure multiple times; we try several formats.
+    """
     try:
-        headers = {"Accept": "application/json"}
-        # Try multiple endpoints in order
+        headers = {
+            "Accept":     "application/json",
+            "User-Agent": "kalshi-bot/1.0 (prediction market analysis)",
+        }
+        # Try multiple endpoints in priority order
+        # v3 posts API (newest), v2 questions API (older), v2 with has_group filter
         endpoints = [
-            ("https://www.metaculus.com/api/posts/?statuses=open&order_by=-activity&limit=20&post_type=question", "results"),
-            ("https://www.metaculus.com/api2/questions/?status=open&order_by=-activity&limit=20", "results"),
+            # v3 posts API — returns type:"question" objects with nested question data
+            ("https://www.metaculus.com/api/posts/?statuses=open&order_by=-activity&limit=50&post_type=question", "results"),
+            # v3 with different params
+            ("https://www.metaculus.com/api/posts/?status=open&order_by=-hotness&limit=50", "results"),
+            # v2 questions API (older, may still work)
+            ("https://www.metaculus.com/api2/questions/?status=open&order_by=-activity&limit=50", "results"),
+            # v2 binary questions only
+            ("https://www.metaculus.com/api2/questions/?status=open&type=binary&order_by=-activity&limit=50", "results"),
         ]
         raw = []
         for url, key in endpoints:
             try:
-                r = httpx.get(url, headers=headers, timeout=10)
-                log(f"Metaculus {url[:60]} -> {r.status_code}")
+                r = httpx.get(url, headers=headers, timeout=15)
+                log(f"Metaculus {url[:70]} -> {r.status_code}")
                 if r.status_code == 200:
                     data = r.json()
-                    raw = data.get(key, data if isinstance(data, list) else [])
+                    if isinstance(data, list):
+                        raw = data
+                    else:
+                        raw = data.get(key) or data.get("items") or []
                     if raw:
-                        log(f"Metaculus: got {len(raw)} results from {url[:40]}")
+                        log(f"Metaculus: got {len(raw)} results")
                         break
-                    log(f"Metaculus: empty results from {url[:40]}")
+                    log(f"Metaculus: empty results from {url[:50]}")
+                elif r.status_code in (429, 403):
+                    log(f"Metaculus rate-limited/forbidden — skipping remaining endpoints")
+                    break
             except Exception as e:
                 log(f"Metaculus endpoint error: {e}")
                 continue
 
         if not raw:
+            log("Metaculus: no results from any endpoint")
             return []
 
         questions = []
         for q in raw:
-            # v3 nests under "question" key; v2 has fields at top level
-            inner = q.get("question", q)
+            # Handle both v3 (nested) and v2 (flat) formats
+            # v3: {"type": "question", "title": "...", "question": {...}}
+            # v2: {"id": ..., "title": "...", "community_prediction": {...}}
+            inner = q.get("question") or q  # v3 nests under "question"; v2 is flat
             title = inner.get("title") or q.get("title", "")
-            qid   = inner.get("id") or q.get("id")
+            qid   = inner.get("id") or q.get("id") or q.get("question_id")
 
-            # Probability — try multiple field names
+            # Probability — try multiple field paths across API versions
             prob = None
-            for field in ["community_prediction", "cp", "probability"]:
-                val = inner.get(field) or q.get(field)
-                if val is None:
-                    continue
-                if isinstance(val, (int, float)):
-                    prob = float(val)
-                    break
-                if isinstance(val, dict):
-                    prob = val.get("full", {}).get("q2") or val.get("q2") or val.get("median")
-                    if prob is not None:
+            # v3 format: community_weighting or cp_reveal_time
+            for path in [
+                # v3 nested fields
+                lambda i: i.get("cp"),
+                lambda i: i.get("community_prediction", {}).get("full", {}).get("q2") if isinstance(i.get("community_prediction"), dict) else None,
+                lambda i: i.get("community_prediction") if isinstance(i.get("community_prediction"), (int, float)) else None,
+                # v2 flat fields
+                lambda i: i.get("probability"),
+                lambda i: i.get("community_median_prediction"),
+                # v3 top-level (some endpoints put it here)
+                lambda i: q.get("cp"),
+                lambda i: q.get("probability"),
+            ]:
+                try:
+                    val = path(inner)
+                    if val is not None:
+                        prob = float(val)
+                        # Metaculus probabilities are already 0-1
+                        if prob > 1:
+                            prob = prob / 100.0  # some endpoints return 0-100
                         break
+                except Exception:
+                    continue
 
-            close_time = (inner.get("scheduled_close_time") or
-                         inner.get("close_time") or
-                         q.get("close_time") or
-                         q.get("scheduled_close_time") or "")
+            close_time = (
+                inner.get("scheduled_close_time") or
+                inner.get("close_time") or
+                q.get("close_time") or
+                q.get("scheduled_close_time") or
+                q.get("resolution_criteria", {}).get("close_time") if isinstance(q.get("resolution_criteria"), dict) else None or
+                ""
+            )
 
             if not title or not qid:
                 continue
             questions.append({
                 "id":         qid,
                 "title":      title,
-                "prob":       round(float(prob) * 100, 1) if prob is not None else None,
+                "prob":       round(prob * 100, 1) if prob is not None else None,
                 "close_time": str(close_time)[:10],
                 "url":        f"https://www.metaculus.com/questions/{qid}/",
             })
 
-        log(f"Metaculus: {len(questions)} questions parsed")
-        return questions
+        # Only keep questions that have a probability (needed for edge analysis)
+        with_prob = [q for q in questions if q.get("prob") is not None]
+        log(f"Metaculus: {len(questions)} parsed, {len(with_prob)} have probability")
+        return with_prob
     except Exception as e:
         log(f"Metaculus error: {e}")
         return []
@@ -961,6 +1060,74 @@ def fetch_predictit_markets():
         return result
     except Exception as e:
         log(f"PredictIt error: {e}")
+        return []
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Manifold Markets — free prediction market, no API key needed
+# ═══════════════════════════════════════════════════════════════════════════════
+def fetch_manifold_markets():
+    """Fetch active Manifold Markets for cross-platform price comparison.
+    Manifold is a free prediction market with wide topic coverage.
+    No API key needed. Runs every 15 min."""
+    if not _on_interval(15):
+        log("Manifold: skipping")
+        return []
+    try:
+        result = []
+        # Fetch top markets by liquidity + activity
+        for sort in ["liquidity", "score"]:
+            try:
+                r = httpx.get(
+                    "https://api.manifold.markets/v0/markets",
+                    params={"limit": 200, "sort": sort, "filter": "open"},
+                    timeout=15
+                )
+                if r.status_code != 200:
+                    log(f"Manifold {sort} -> {r.status_code}")
+                    continue
+                markets = r.json()
+                seen_ids = {m["id"] for m in result}
+                for m in markets:
+                    try:
+                        # Only use binary (CPMM) markets with a probability
+                        if m.get("mechanism") not in ("cpmm-1", "cpmm-2"):
+                            continue
+                        prob = m.get("probability")
+                        if prob is None:
+                            continue
+                        yes_price = round(float(prob) * 100, 1)
+                        vol = float(m.get("volume", 0) or 0)
+                        mkt_id = str(m.get("id", ""))
+                        if mkt_id in seen_ids:
+                            continue
+                        seen_ids.add(mkt_id)
+                        # Parse close time
+                        close_ms = m.get("closeTime")
+                        close_str = ""
+                        if close_ms:
+                            from datetime import datetime, timezone
+                            close_dt = datetime.fromtimestamp(close_ms / 1000, tz=timezone.utc)
+                            close_str = close_dt.strftime("%Y-%m-%d")
+                        result.append({
+                            "id":        mkt_id,
+                            "question":  m.get("question", ""),
+                            "yes_price": yes_price,
+                            "volume":    vol,
+                            "end_date":  close_str,
+                            "url":       m.get("url", f"https://manifold.markets/M/{m.get('slug','')}"),
+                        })
+                    except Exception:
+                        continue
+                if result:
+                    break  # Got results from first sort, stop
+            except Exception as e:
+                log(f"Manifold {sort} error: {e}")
+                continue
+
+        log(f"Manifold: {len(result)} markets")
+        return result[:200]
+    except Exception as e:
+        log(f"Manifold error: {e}")
         return []
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -2364,8 +2531,93 @@ def analyze_series_momentum(markets, espn_games):
     return signals[:3]
 
 
+def analyze_price_trend(markets, price_moves):
+    """
+    Price Trend / Sharp Money Detection: Recent Kalshi price moves ≥4¢ signal informed
+    money entering the market. Follow sharp bettors who have just moved prices.
+
+    Logic:
+    - If a market moves UP sharply (price increased), smart money is buying YES → BUY YES
+    - If a market moves DOWN sharply (price decreased), smart money is buying NO → BUY YES
+      on the inverse (BUY NO on YES side)
+    - Only act on markets not too close to resolution (100¢ or 0¢)
+    - Combine with volume data to filter noise
+
+    This is a classic "follow the sharp money" strategy used in sports betting.
+    """
+    signals = []
+    if not price_moves or not markets:
+        return signals
+
+    # Build market lookup
+    mkt_by_ticker = {m.get("ticker", ""): m for m in markets}
+
+    for move in price_moves:
+        tk = move.get("ticker", "")
+        if not tk:
+            continue
+        m = mkt_by_ticker.get(tk)
+        if not m:
+            continue
+
+        curr_price = move.get("curr_price", 50)
+        move_size  = move.get("move", 0)
+        prev_price = move.get("prev_price", 50)
+
+        # Skip markets at extreme prices (already near resolution)
+        if curr_price >= 90 or curr_price <= 10:
+            continue
+        # Skip tiny markets
+        vol = m.get("volume", 0) or m.get("_trade_count", 0) or 0
+        if vol < 2:
+            continue
+
+        # Determine direction and probability estimate
+        if move_size > 0:
+            # Price went up — smart money bought YES
+            # They moved the price from prev to curr; true prob is near or above curr
+            direction = "BUY YES"
+            true_prob = min(95, curr_price + abs(move_size) * 0.5)  # momentum extension
+            price     = curr_price
+        else:
+            # Price went down — smart money bought NO
+            direction = "BUY NO"
+            true_prob = max(5, curr_price - abs(move_size) * 0.5)
+            true_prob = 100 - true_prob  # flip to NO side probability
+            price     = curr_price
+
+        kelly = kelly_size(true_prob, price if direction == "BUY YES" else (100 - price),
+                           maker=True, fraction=0.25)
+        if kelly <= 0:
+            continue
+
+        abs_move = abs(move_size)
+        confidence = "high" if abs_move >= 10 else ("medium" if abs_move >= 6 else "low")
+
+        signals.append({
+            "type":              "price_trend",
+            "direction":         direction,
+            "ticker":            tk,
+            "title":             m.get("title", ""),
+            "price":             round(curr_price, 1),
+            "prev_price":        round(prev_price, 1),
+            "price_move":        round(move_size, 1),
+            "rationale":         f"Sharp move {move_size:+.0f}¢ ({prev_price:.0f}→{curr_price:.0f}¢) — follow smart money. Vol={vol}.",
+            "confidence":        confidence,
+            "kelly_frac":        kelly,
+            "fee_cents":         kalshi_fee(price),
+            "priority":          1 if abs_move >= 8 else 2,
+            "entry_limit_cents": max(1, int(curr_price + (2 if direction == "BUY YES" else -2))),
+            "take_profit_cents": min(99, int(curr_price + abs_move * 0.8)) if direction == "BUY YES" else max(1, int(curr_price - abs_move * 0.8)),
+            "stop_loss_pct":     0.3,
+        })
+
+    log(f"Price trend: {len(signals)} signals")
+    return signals[:5]
+
+
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
-                        metaculus_qs=None):
+                        metaculus_qs=None, price_moves=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -2457,6 +2709,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_series_momentum(markets, espn_games)
     except Exception as e:
         log(f"Strategy series momentum error: {e}")
+
+    # 14. Price trend (follow sharp money — recent significant price moves)
+    try:
+        if price_moves:
+            all_signals += analyze_price_trend(markets, price_moves)
+    except Exception as e:
+        log(f"Strategy price trend error: {e}")
 
     # Consensus detection: count how many strategies agree per ticker+direction
     from collections import defaultdict
@@ -2631,8 +2890,8 @@ def fetch_supplemental_markets():
     return extra
 
 
-def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
-    """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt."""
+def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets, manifold_markets=None):
+    """Find price gaps ≥5¢ between Kalshi and PolyMarket/PredictIt/Manifold."""
     arb = []
 
     # Index PolyMarket by question words
@@ -2648,16 +2907,29 @@ def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
                 words = set((m["name"] + " " + c["name"]).lower().split())
                 pi_idx.append((words, m, c, price))
 
+    # Index Manifold Markets by question words
+    manifold_idx = []
+    for m in (manifold_markets or []):
+        yp = m.get("yes_price")
+        if yp is not None:
+            words = set(m.get("question", "").lower().split())
+            manifold_idx.append((words, m, yp))
+
     for km in kalshi_markets:
         kp = km.get("yes_bid") or km.get("last_price")
         if kp is None:
             continue
         kwords = set(km.get("title", "").lower().split())
+        # Remove very common stopwords that hurt precision
+        stopwords = {"will", "the", "a", "an", "in", "of", "on", "at", "to", "for",
+                     "and", "or", "is", "be", "by", "with", "from", "than", "that"}
+        kwords -= stopwords
 
         # vs PolyMarket
         for pwords, pm in poly_idx:
-            common = len(kwords & pwords)
-            total  = len(kwords | pwords)
+            pw = pwords - stopwords
+            common = len(kwords & pw)
+            total  = len(kwords | pw)
             if total == 0 or common / total < 0.35:
                 continue
             gap = round(pm["yes_price"] - kp, 1)
@@ -2677,8 +2949,9 @@ def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
 
         # vs PredictIt
         for piwords, pm, c, pi_price in pi_idx:
-            common = len(kwords & piwords)
-            total  = len(kwords | piwords)
+            pw = piwords - stopwords
+            common = len(kwords & pw)
+            total  = len(kwords | pw)
             if total == 0 or common / total < 0.3:
                 continue
             gap = round(pi_price - kp, 1)
@@ -2696,8 +2969,33 @@ def find_cross_market_arb(kalshi_markets, poly_markets, pi_markets):
                 "similarity":     round(common / total, 2),
             })
 
+        # vs Manifold Markets
+        for mwords, mm, mf_price in manifold_idx:
+            mw = mwords - stopwords
+            if len(mw) < 2:
+                continue
+            common = len(kwords & mw)
+            total  = len(kwords | mw)
+            if total == 0 or common / total < 0.3:
+                continue
+            gap = round(mf_price - kp, 1)
+            if abs(gap) < 7:  # slightly higher threshold for Manifold (lower liquidity)
+                continue
+            arb.append({
+                "kalshi_ticker":  km["ticker"],
+                "kalshi_title":   km["title"],
+                "kalshi_price":   kp,
+                "platform":       "Manifold",
+                "platform_price": mf_price,
+                "gap":            gap,
+                "direction":      "BUY YES on Kalshi" if gap > 0 else "BUY NO on Kalshi",
+                "platform_url":   mm.get("url", ""),
+                "similarity":     round(common / total, 2),
+                "manifold_vol":   mm.get("volume", 0),
+            })
+
     arb.sort(key=lambda x: abs(x["gap"]), reverse=True)
-    return arb[:15]
+    return arb[:20]
 
 ts_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 lines  = [f"# Kalshi Market Snapshot\n# Generated: {ts_str}\n" + "="*70]
@@ -3032,8 +3330,16 @@ try:
 except Exception as e:
     log(f"PredictIt error: {e}")
 
+manifold_markets = []
 try:
-    cross_market_arb = find_cross_market_arb(markets_list, poly_markets, pi_markets)
+    manifold_markets = fetch_manifold_markets()
+    log(f"Manifold: {len(manifold_markets)} markets")
+except Exception as e:
+    log(f"Manifold error: {e}")
+
+try:
+    cross_market_arb = find_cross_market_arb(markets_list, poly_markets, pi_markets,
+                                              manifold_markets=manifold_markets)
     log(f"Cross-market arb: {len(cross_market_arb)} opportunities")
 except Exception as e:
     log(f"Cross-market arb error: {e}")
@@ -3045,6 +3351,20 @@ try:
     log(f"Weather: {len(weather_data)} cities")
 except Exception as e:
     log(f"Weather error: {e}")
+
+# ── Kalshi price history (track inter-run price movements) ───────────────────
+kalshi_price_moves = []
+try:
+    prev_prices = load_price_history()
+    if prev_prices:
+        kalshi_price_moves = detect_price_movements(markets_list, prev_prices)
+        if kalshi_price_moves:
+            log(f"Kalshi price moves: {len(kalshi_price_moves)} detected")
+            for mv in kalshi_price_moves[:3]:
+                log(f"  MOVE {mv['move']:+.1f}¢  {mv['ticker']}  {mv['prev_price']:.0f}→{mv['curr_price']:.0f}¢")
+    save_price_history(markets_list)
+except Exception as e:
+    log(f"Price history error: {e}")
 
 # ── Vegas vs Kalshi divergences ───────────────────────────────────────────────
 edges = []
@@ -3077,7 +3397,8 @@ except Exception as e:
 strategy_signals = []
 try:
     strategy_signals = run_strategy_engine(markets_list, edges, cross_market_arb, weather_data,
-                                            espn_games=espn_games, metaculus_qs=metaculus_qs)
+                                            espn_games=espn_games, metaculus_qs=metaculus_qs,
+                                            price_moves=kalshi_price_moves)
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")
@@ -3096,8 +3417,10 @@ health = {
     "fred":         ("ok" if fred_data else ("skipped_interval" if not _on_interval(60) else "no_key_or_error")) if FRED_API_KEY else "no_key",
     "polymarket":   ("ok" if poly_markets else ("skipped_interval" if not _on_interval(15) else "error")),
     "predictit":    ("ok" if pi_markets else ("skipped_interval" if not _on_interval(15) else "error")),
+    "manifold":     f"ok_{len(manifold_markets)}" if manifold_markets else ("skipped_interval" if not _on_interval(15) else "error"),
     "metaculus":    f"ok_{len(metaculus_qs)}" if metaculus_qs else "empty_or_error",
     "line_movements":  f"ok_{len(line_movements)}" if ODDS_API_KEY else "no_key",
+    "price_moves":  len(kalshi_price_moves),
     "vegas_games":  vegas_games_count,
     "espn":         "ok" if espn_games else "empty",
     "weather":     f"ok_{len(weather_data)}" if weather_data else ("skipped_interval" if not _on_interval(30) else "error"),
@@ -3119,29 +3442,31 @@ signal_summary = {
 }
 
 (docs_dir / "data.json").write_text(json.dumps({
-    "generated":     ts_str,
-    "balance_cents": balance_cents,
-    "positions":     positions_list,
-    "markets":       clean_markets,
-    "best_picks":    best_picks,
-    "edges":         edges,
-    "espn_games":    espn_games,
-    "espn_injuries": espn_injuries,
-    "espn_news":     espn_news,
-    "crypto":        crypto_prices,
-    "crypto_global": crypto_global,
-    "crypto_movers": crypto_movers,
-    "sparklines":    crypto_sparklines,
-    "fear_greed":    fear_greed,
-    "metaculus":     metaculus_qs,
-    "fred":           fred_data,
-    "polymarket":     poly_markets,
-    "predictit":      pi_markets,
-    "cross_arb":      cross_market_arb,
-    "weather":          weather_data,
-    "line_movements":   line_movements,
-    "strategy_signals": strategy_signals,
-    "signal_summary":   signal_summary,
-    "health":         health,
+    "generated":         ts_str,
+    "balance_cents":     balance_cents,
+    "positions":         positions_list,
+    "markets":           clean_markets,
+    "best_picks":        best_picks,
+    "edges":             edges,
+    "espn_games":        espn_games,
+    "espn_injuries":     espn_injuries,
+    "espn_news":         espn_news,
+    "crypto":            crypto_prices,
+    "crypto_global":     crypto_global,
+    "crypto_movers":     crypto_movers,
+    "sparklines":        crypto_sparklines,
+    "fear_greed":        fear_greed,
+    "metaculus":         metaculus_qs,
+    "fred":              fred_data,
+    "polymarket":        poly_markets,
+    "predictit":         pi_markets,
+    "manifold":          manifold_markets[:50],  # top 50 by liquidity
+    "cross_arb":         cross_market_arb,
+    "weather":           weather_data,
+    "line_movements":    line_movements,
+    "price_movements":   kalshi_price_moves,
+    "strategy_signals":  strategy_signals,
+    "signal_summary":    signal_summary,
+    "health":            health,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")

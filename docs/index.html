@@ -257,10 +257,20 @@
       <p id="signals-empty" class="hidden text-slate-500 text-sm mt-2">No signals right now — check back after markets update.</p>
     </section>
 
+    <!-- ── Kalshi Price Movements ── -->
+    <section class="mb-10" id="price-movements-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span>💸</span> Kalshi Price Moves
+        <span class="text-xs bg-slate-700 text-slate-300 rounded-full px-2 py-0.5 font-mono" id="pm-count">–</span>
+      </h2>
+      <p style="color:#aaa;font-size:0.9em" class="mb-4">Kalshi market prices that moved ≥4¢ since last snapshot — follow sharp money</p>
+      <div id="price-movements"></div>
+    </section>
+
     <!-- ── Line Movements ── -->
     <section class="mb-10" id="line-movements-section">
       <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
-        <span>📈</span> Line Movements
+        <span>📈</span> Vegas Line Movements
         <span class="text-xs bg-slate-700 text-slate-300 rounded-full px-2 py-0.5 font-mono" id="lm-count">–</span>
       </h2>
       <p style="color:#aaa;font-size:0.9em" class="mb-4">Sharp money signals: moves ≥3 probability points vs prior snapshot</p>
@@ -531,6 +541,7 @@ function render(data) {
   renderAlertBanners(data);
   renderSignals(data.strategy_signals || []);
   renderLineMovements(data.line_movements || []);
+  renderPriceMovements(data.price_movements || []);
   renderHeader(data);
   renderBestPicks(data.best_picks || []);
   renderEdges(data.edges || []);
@@ -884,7 +895,7 @@ function renderCrossArb(arb) {
     const isBuyKalshi = a.direction.includes('YES on Kalshi');
     const gapAbs  = Math.abs(a.gap);
     const gapCol  = gapAbs >= 15 ? 'text-red-400' : gapAbs >= 10 ? 'text-yellow-400' : 'text-cyan-400';
-    const platCol = a.platform === 'PolyMarket' ? 'text-purple-400' : 'text-blue-400';
+    const platCol = a.platform === 'PolyMarket' ? 'text-purple-400' : a.platform === 'Manifold' ? 'text-pink-400' : 'text-blue-400';
     const badge   = isBuyKalshi ? 'bg-green-500 text-slate-900' : 'bg-orange-500 text-slate-900';
     return `
       <div class="card rounded-2xl p-5 pick-card flex flex-col gap-3 border border-yellow-500/20">
@@ -1094,6 +1105,34 @@ function renderLineMovements(moves) {
     </tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+// ── Kalshi Price Movements ─────────────────────────────────────────────────────
+function renderPriceMovements(moves) {
+    const el = document.getElementById('price-movements');
+    if (!el) return;
+    const badge = document.getElementById('pm-count');
+    if (badge) badge.textContent = moves.length;
+    if (!moves.length) {
+        el.innerHTML = '<p style="color:#888;text-align:center;padding:1rem">No significant Kalshi price moves since last run</p>';
+        return;
+    }
+    const rows = moves.map(m => {
+        const dir   = m.move > 0 ? '🔺' : '🔻';
+        const mag   = Math.abs(m.move).toFixed(1);
+        const color = m.move > 0 ? '#4ade80' : '#f87171';
+        const signal= Math.abs(m.move) >= 8 ? '🔥' : (Math.abs(m.move) >= 6 ? '⚡' : '');
+        return `<tr>
+            <td><span style="color:${color};font-weight:bold">${dir} ${mag}¢</span> ${signal}</td>
+            <td style="font-size:0.8em;color:#94a3b8">${m.ticker || ''}</td>
+            <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.title || ''}</td>
+            <td><span style="color:#64748b">${m.prev_price||'?'}¢</span> → <span style="color:${color}">${m.curr_price||'?'}¢</span></td>
+            <td><span class="px-2 py-0.5 rounded text-xs" style="background:#1e293b;color:#94a3b8">${m.category||''}</span></td>
+        </tr>`;
+    }).join('');
+    el.innerHTML = `<table class="table"><thead><tr>
+        <th>Move</th><th>Ticker</th><th>Market</th><th>Price</th><th>Cat</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 // ── Strategy Signals ──────────────────────────────────────────────────────────
 function renderSignals(signals) {
   const grid  = document.getElementById('signals-grid');
@@ -1111,11 +1150,11 @@ function renderSignals(signals) {
   const summaryTypeColors = {bundle_arb:'#22c55e',vegas_divergence:'#06b6d4',weather_edge:'#a855f7',
     cross_platform_arb:'#f59e0b',longshot_bias:'#ef4444',volume_spike:'#f97316',
     espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e',
-    metaculus_edge:'#818cf8',home_advantage:'#34d399'};
+    metaculus_edge:'#818cf8',home_advantage:'#34d399',series_momentum:'#f59e0b',price_trend:'#facc15'};
   const summaryTypeLabels = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',weather_edge:'Weather',
     cross_platform_arb:'Cross-Plat',longshot_bias:'Longshot',volume_spike:'Volume',
     espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum',
-    metaculus_edge:'Metaculus',home_advantage:'Home Adv'};
+    metaculus_edge:'Metaculus',home_advantage:'Home Adv',series_momentum:'Series',price_trend:'Sharp $'};
 
   const summaryBar = Object.entries(typeCounts).map(([type, count]) =>
     `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:${summaryTypeColors[type]||'#94a3b8'}22;color:${summaryTypeColors[type]||'#94a3b8'};border:1px solid ${summaryTypeColors[type]||'#94a3b8'}44">${summaryTypeLabels[type]||type} ×${count}</span>`
@@ -1144,6 +1183,8 @@ function renderSignals(signals) {
     momentum_edge:     '#f43f5e',  // rose
     metaculus_edge:    '#818cf8',  // indigo
     home_advantage:    '#34d399',  // emerald
+    series_momentum:   '#fb923c',  // orange
+    price_trend:       '#facc15',  // yellow (sharp money = gold)
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -1158,6 +1199,8 @@ function renderSignals(signals) {
     momentum_edge:     '⚡ Momentum',
     metaculus_edge:    '🔮 Metaculus',
     home_advantage:    '🏠 Home Edge',
+    series_momentum:   '🏆 Series',
+    price_trend:       '💸 Sharp $',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',
