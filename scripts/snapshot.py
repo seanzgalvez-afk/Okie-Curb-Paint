@@ -2193,7 +2193,16 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
     except Exception as e:
         log(f"Strategy metaculus error: {e}")
 
+    # Consensus detection: count how many strategies agree per ticker+direction
+    from collections import defaultdict
+    consensus = defaultdict(list)  # (ticker, direction) → [signal_types]
+    for s in all_signals:
+        key = (s.get("ticker", ""), s.get("direction", ""))
+        if key[0]:
+            consensus[key].append(s.get("type", ""))
+
     # Deduplicate: keep highest-priority signal per ticker
+    # BUT boost confidence when multiple strategies agree
     seen_tickers = {}
     deduped = []
     for s in all_signals:
@@ -2212,6 +2221,27 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
                 deduped = [x for x in deduped if x.get("ticker") != ticker]
                 seen_tickers[ticker] = s
                 deduped.append(s)
+
+    # Boost confidence for consensus signals (≥2 strategies agree on direction)
+    for s in deduped:
+        key = (s.get("ticker", ""), s.get("direction", ""))
+        agreeing = consensus.get(key, [])
+        n_agree = len(set(agreeing))  # unique strategy types in agreement
+        if n_agree >= 2:
+            s["consensus_count"] = n_agree
+            s["consensus_types"] = list(set(agreeing))
+            # Boost: 2+ agreement → upgrade confidence level
+            if s.get("confidence") == "low":
+                s["confidence"] = "medium"
+            elif s.get("confidence") == "medium":
+                s["confidence"] = "high"
+            # Also boost priority (move closer to 1)
+            s["priority"] = max(1, s.get("priority", 3) - 1)
+            # Boost kelly by 10% per extra strategy agreeing
+            boost = 1.0 + (n_agree - 1) * 0.10
+            s["kelly_frac"] = round(s.get("kelly_frac", 0) * boost, 4)
+            log(f"Consensus: {ticker} {s['direction']} — {n_agree} strategies agree: {s['consensus_types']}")
+
     all_signals = deduped
 
     # Filter out expired / closing-soon markets (need > 2 hours to place & fill)

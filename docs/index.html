@@ -1127,13 +1127,18 @@ function renderSignals(signals) {
 
     // Close time if available
     const closeTime = s.close_time ? `<span class="text-slate-500">· closes ${s.close_time.slice(0,10)}</span>` : '';
+    // Consensus badge
+    const consensusBadge = s.consensus_count >= 2
+      ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#fbbf2433;color:#fbbf24;border:1px solid #fbbf2466;">🤝 ${s.consensus_count} strategies agree</span>`
+      : '';
 
     return `
-    <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${color}55;">
+    <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${s.consensus_count >= 2 ? '#fbbf24' : color}55;">
       <!-- Header bar -->
       <div class="px-4 py-2 flex items-center justify-between" style="background:${color}18;border-bottom:1px solid ${color}33;">
         <span class="text-xs font-bold" style="color:${color};">${label}</span>
         <div class="flex items-center gap-2">
+          ${consensusBadge}
           <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'} confidence</span>
           <span class="text-xs text-slate-500">#${s.rank || '?'}</span>
         </div>
