@@ -1098,16 +1098,19 @@ def analyze_longshot_bias(markets):
             no_price  = 100 - yp
             kelly = kelly_size(edge_prob, no_price, maker=True)
             signals.append({
-                "type":        "longshot_bias",
-                "direction":   "BUY NO",
-                "ticker":      ticker,
-                "title":       title,
-                "price":       yp,
-                "rationale":   f"Longshot bias: {yp}¢ YES contracts win only ~5% historically. Buy NO @ {no_price}¢.",
-                "confidence":  "high",
-                "kelly_frac":  kelly * 0.5,
-                "fee_cents":   kalshi_fee(no_price),
-                "priority":    2,
+                "type":              "longshot_bias",
+                "direction":         "BUY NO",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             yp,
+                "rationale":         f"Longshot bias: {yp}¢ YES contracts win only ~5% historically. Buy NO @ {no_price}¢.",
+                "confidence":        "high",
+                "kelly_frac":        kelly * 0.5,
+                "fee_cents":         kalshi_fee(no_price),
+                "priority":          2,
+                "entry_limit_cents": max(1, no_price - 1),
+                "take_profit_cents": 97,
+                "stop_loss_pct":     0.3,
             })
         elif yp <= 15:
             # Moderate longshot: still biased but less extreme
@@ -1115,16 +1118,19 @@ def analyze_longshot_bias(markets):
             no_price  = 100 - yp
             kelly = kelly_size(edge_prob, no_price, maker=True)
             signals.append({
-                "type":        "longshot_bias",
-                "direction":   "BUY NO",
-                "ticker":      ticker,
-                "title":       title,
-                "price":       yp,
-                "rationale":   f"Longshot bias: {yp}¢ YES contracts lose 60%+ historically. Buy NO.",
-                "confidence":  "medium",
-                "kelly_frac":  kelly * 0.5,
-                "fee_cents":   kalshi_fee(no_price),
-                "priority":    2,
+                "type":              "longshot_bias",
+                "direction":         "BUY NO",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             yp,
+                "rationale":         f"Longshot bias: {yp}¢ YES contracts lose 60%+ historically. Buy NO.",
+                "confidence":        "medium",
+                "kelly_frac":        kelly * 0.5,
+                "fee_cents":         kalshi_fee(no_price),
+                "priority":          2,
+                "entry_limit_cents": max(1, no_price - 1),
+                "take_profit_cents": 97,
+                "stop_loss_pct":     0.3,
             })
         elif yp >= 92:
             # Extreme favorite value: >92¢ YES slightly underpriced historically
@@ -1133,16 +1139,19 @@ def analyze_longshot_bias(markets):
             kelly = kelly_size(edge_prob, yp, maker=True)
             if kelly > 0.001:
                 signals.append({
-                    "type":        "longshot_bias",
-                    "direction":   "BUY YES",
-                    "ticker":      ticker,
-                    "title":       title,
-                    "price":       yp,
-                    "rationale":   f"Extreme favourite value: {yp}¢ YES historically wins ~96%. Small edge.",
-                    "confidence":  "low",
-                    "kelly_frac":  kelly * 0.3,
-                    "fee_cents":   kalshi_fee(yp),
-                    "priority":    3,  # lower priority for small edge
+                    "type":              "longshot_bias",
+                    "direction":         "BUY YES",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             yp,
+                    "rationale":         f"Extreme favourite value: {yp}¢ YES historically wins ~96%. Small edge.",
+                    "confidence":        "low",
+                    "kelly_frac":        kelly * 0.3,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          3,  # lower priority for small edge
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(98, yp + 5),
+                    "stop_loss_pct":     0.3,
                 })
         elif yp >= 85:
             # Moderate favourite: slight underpricing documented
@@ -1150,16 +1159,19 @@ def analyze_longshot_bias(markets):
             kelly = kelly_size(edge_prob, yp, maker=True)
             if kelly > 0.001:
                 signals.append({
-                    "type":        "longshot_bias",
-                    "direction":   "BUY YES",
-                    "ticker":      ticker,
-                    "title":       title,
-                    "price":       yp,
-                    "rationale":   f"Favorite value: {yp}¢ — market underprices certainty. Buy YES.",
-                    "confidence":  "low",
-                    "kelly_frac":  kelly * 0.3,
-                    "fee_cents":   kalshi_fee(yp),
-                    "priority":    3,
+                    "type":              "longshot_bias",
+                    "direction":         "BUY YES",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             yp,
+                    "rationale":         f"Favorite value: {yp}¢ — market underprices certainty. Buy YES.",
+                    "confidence":        "low",
+                    "kelly_frac":        kelly * 0.3,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          3,
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(98, yp + 5),
+                    "stop_loss_pct":     0.3,
                 })
 
     return signals
@@ -1245,18 +1257,21 @@ def analyze_bundle_arb(markets):
 
         if net_profit > 2.0:  # at least 2¢ net profit after fees
             signals.append({
-                "type":       "bundle_arb",
-                "direction":  "BUY ALL",
-                "ticker":     series,
-                "title":      f"Bundle arb: {len(contracts)} contracts sum to {total:.1f}¢",
-                "price":      total,
-                "rationale":  f"Sum of {len(contracts)} mutually exclusive contracts = {total:.1f}¢ (pays 100¢). Net after fees: +{net_profit:.1f}¢",
-                "confidence": "high",
-                "kelly_frac": 0.05,  # conservative fixed size for arb
-                "fee_cents":  total_fee,
-                "net_profit": round(net_profit, 1),
-                "priority":   1,
-                "contracts":  [c.get("ticker") for c in contracts],
+                "type":              "bundle_arb",
+                "direction":         "BUY ALL",
+                "ticker":            series,
+                "title":             f"Bundle arb: {len(contracts)} contracts sum to {total:.1f}¢",
+                "price":             total,
+                "rationale":         f"Sum of {len(contracts)} mutually exclusive contracts = {total:.1f}¢ (pays 100¢). Net after fees: +{net_profit:.1f}¢",
+                "confidence":        "high",
+                "kelly_frac":        0.05,  # conservative fixed size for arb
+                "fee_cents":         total_fee,
+                "net_profit":        round(net_profit, 1),
+                "priority":          1,
+                "contracts":         [c.get("ticker") for c in contracts],
+                "entry_limit_cents": total,
+                "take_profit_cents": 100,
+                "stop_loss_pct":     None,
             })
     return signals
 
@@ -1275,18 +1290,21 @@ def analyze_vegas_divergence(edges):
         kelly = kelly_size(vp, kp, maker=True, fraction=0.25)
 
         signals.append({
-            "type":       "vegas_divergence",
-            "direction":  e.get("direction", ""),
-            "ticker":     e.get("ticker", ""),
-            "title":      e.get("title", "")[:60],
-            "price":      kp,
-            "rationale":  f"Vegas implies {vp:.1f}¢, Kalshi at {kp}¢. Gap: {gap:+.1f}¢. Use LIMIT order.",
-            "confidence": "high" if abs(gap) >= 10 else "medium",
-            "kelly_frac": kelly,
-            "fee_cents":  kalshi_fee(kp, maker=True),
-            "priority":   1 if abs(gap) >= 10 else 2,
-            "game":       e.get("game", ""),
-            "books":      e.get("books", []),
+            "type":              "vegas_divergence",
+            "direction":         e.get("direction", ""),
+            "ticker":            e.get("ticker", ""),
+            "title":             e.get("title", "")[:60],
+            "price":             kp,
+            "rationale":         f"Vegas implies {vp:.1f}¢, Kalshi at {kp}¢. Gap: {gap:+.1f}¢. Use LIMIT order.",
+            "confidence":        "high" if abs(gap) >= 10 else "medium",
+            "kelly_frac":        kelly,
+            "fee_cents":         kalshi_fee(kp, maker=True),
+            "priority":          1 if abs(gap) >= 10 else 2,
+            "game":              e.get("game", ""),
+            "books":             e.get("books", []),
+            "entry_limit_cents": max(1, kp - 3),
+            "take_profit_cents": min(99, int(vp)),
+            "stop_loss_pct":     0.4,
         })
     return signals
 
@@ -1406,18 +1424,23 @@ def analyze_weather_edge(markets, weather_data):
         if abs(diff) >= 3:
             direction = "BUY YES" if diff >= 0 else "BUY NO"
             city_name = weather_data[matched_city].get("name", matched_city)
+            kalshi_prob = yes_p
+            model_prob  = int(round(kalshi_prob + diff * 3))  # rough model-implied probability
             signals.append({
-                "type":       "weather_edge",
-                "direction":  direction,
-                "ticker":     ticker,
-                "title":      title[:60],
-                "price":      yes_p,
-                "rationale":  f"Model forecasts {model_high}°F high for {city_name}. Market bucket: {low_temp:.0f}-{high_temp:.0f}°F. Diff: {diff:+.1f}°. Use LIMIT order.",
-                "confidence": "high" if abs(diff) >= 5 else "medium",
-                "kelly_frac": kelly_size(85 if abs(diff) >= 5 else 70, yes_p, maker=True, fraction=0.25),
-                "fee_cents":  kalshi_fee(yes_p, maker=True),
-                "priority":   1 if abs(diff) >= 5 else 2,
-                "model_high": model_high,
+                "type":              "weather_edge",
+                "direction":         direction,
+                "ticker":            ticker,
+                "title":             title[:60],
+                "price":             yes_p,
+                "rationale":         f"Model forecasts {model_high}°F high for {city_name}. Market bucket: {low_temp:.0f}-{high_temp:.0f}°F. Diff: {diff:+.1f}°. Use LIMIT order.",
+                "confidence":        "high" if abs(diff) >= 5 else "medium",
+                "kelly_frac":        kelly_size(85 if abs(diff) >= 5 else 70, yes_p, maker=True, fraction=0.25),
+                "fee_cents":         kalshi_fee(yes_p, maker=True),
+                "priority":          1 if abs(diff) >= 5 else 2,
+                "model_high":        model_high,
+                "entry_limit_cents": max(1, int(kalshi_prob - 5)),
+                "take_profit_cents": max(1, min(99, model_prob)),
+                "stop_loss_pct":     0.4,
             })
     return signals
 
@@ -1467,52 +1490,61 @@ def analyze_volume_spikes(markets):
             side_price = price if "YES" in direction else (100 - price)
             kelly = kelly_size(price, side_price, maker=True)
             signals.append({
-                "type":        "volume_spike",
-                "direction":   direction,
-                "ticker":      ticker,
-                "title":       title,
-                "price":       price,
-                "rationale":   f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning.",
-                "confidence":  "medium",
-                "kelly_frac":  kelly * 0.5,  # half-Kelly for momentum
-                "fee_cents":   kalshi_fee(price),
-                "priority":    2,
-                "volume":      vol,
-                "vol_ratio":   round(vol_ratio, 1),
+                "type":              "volume_spike",
+                "direction":         direction,
+                "ticker":            ticker,
+                "title":             title,
+                "price":             price,
+                "rationale":         f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning.",
+                "confidence":        "medium",
+                "kelly_frac":        kelly * 0.5,  # half-Kelly for momentum
+                "fee_cents":         kalshi_fee(price),
+                "priority":          2,
+                "volume":            vol,
+                "vol_ratio":         round(vol_ratio, 1),
+                "entry_limit_cents": max(1, price - 2),
+                "take_profit_cents": min(99, price + 5),
+                "stop_loss_pct":     0.35,
             })
         elif price > 85:
             # Heavy volume on near-certainty = high confidence follow
             kelly = kelly_size(price, price, maker=True)
             signals.append({
-                "type":        "volume_spike",
-                "direction":   "BUY YES",
-                "ticker":      ticker,
-                "title":       title,
-                "price":       price,
-                "rationale":   f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ favourite. Heavy confirmation.",
-                "confidence":  "high",
-                "kelly_frac":  kelly * 0.3,
-                "fee_cents":   kalshi_fee(price),
-                "priority":    2,
-                "volume":      vol,
-                "vol_ratio":   round(vol_ratio, 1),
+                "type":              "volume_spike",
+                "direction":         "BUY YES",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             price,
+                "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ favourite. Heavy confirmation.",
+                "confidence":        "high",
+                "kelly_frac":        kelly * 0.3,
+                "fee_cents":         kalshi_fee(price),
+                "priority":          2,
+                "volume":            vol,
+                "vol_ratio":         round(vol_ratio, 1),
+                "entry_limit_cents": max(1, price - 2),
+                "take_profit_cents": min(99, price + 5),
+                "stop_loss_pct":     0.35,
             })
         elif price < 15:
             # High volume longshot — but longshot bias says fades, so BUY NO
             kelly = kelly_size(100 - price, 100 - price, maker=True)
             signals.append({
-                "type":        "volume_spike",
-                "direction":   "BUY NO",
-                "ticker":      ticker,
-                "title":       title,
-                "price":       price,
-                "rationale":   f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade.",
-                "confidence":  "medium",
-                "kelly_frac":  kelly * 0.3,
-                "fee_cents":   kalshi_fee(100 - price),
-                "priority":    2,
-                "volume":      vol,
-                "vol_ratio":   round(vol_ratio, 1),
+                "type":              "volume_spike",
+                "direction":         "BUY NO",
+                "ticker":            ticker,
+                "title":             title,
+                "price":             price,
+                "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade.",
+                "confidence":        "medium",
+                "kelly_frac":        kelly * 0.3,
+                "fee_cents":         kalshi_fee(100 - price),
+                "priority":          2,
+                "volume":            vol,
+                "vol_ratio":         round(vol_ratio, 1),
+                "entry_limit_cents": max(1, price - 2),
+                "take_profit_cents": min(99, price + 5),
+                "stop_loss_pct":     0.35,
             })
 
     return signals
@@ -1641,18 +1673,21 @@ def analyze_espn_odds_edge(espn_games, markets):
                 continue
 
             signals.append({
-                "type":        "espn_odds_edge",
-                "direction":   direction,
-                "ticker":      matched_market.get("ticker", ""),
-                "title":       matched_market.get("title", ""),
-                "price":       round(kalshi_price, 1),
-                "rationale":   f"ESPN/DK: {team_name} {ml:+d} ({espn_prob:.0f}%) vs Kalshi {kalshi_price:.0f}¢. Gap: {gap:+.1f}¢ — {game.get('short_name','')}",
-                "confidence":  "high" if abs(gap) >= 10 else "medium",
-                "kelly_frac":  kelly * 0.5,
-                "fee_cents":   kalshi_fee(price),
-                "priority":    1 if abs(gap) >= 10 else 2,
-                "espn_prob":   round(espn_prob, 1),
-                "gap":         round(gap, 1),
+                "type":              "espn_odds_edge",
+                "direction":         direction,
+                "ticker":            matched_market.get("ticker", ""),
+                "title":             matched_market.get("title", ""),
+                "price":             round(kalshi_price, 1),
+                "rationale":         f"ESPN/DK: {team_name} {ml:+d} ({espn_prob:.0f}%) vs Kalshi {kalshi_price:.0f}¢. Gap: {gap:+.1f}¢ — {game.get('short_name','')}",
+                "confidence":        "high" if abs(gap) >= 10 else "medium",
+                "kelly_frac":        kelly * 0.5,
+                "fee_cents":         kalshi_fee(price),
+                "priority":          1 if abs(gap) >= 10 else 2,
+                "espn_prob":         round(espn_prob, 1),
+                "gap":               round(gap, 1),
+                "entry_limit_cents": max(1, kalshi_price - 3),
+                "take_profit_cents": min(99, int(espn_prob)),
+                "stop_loss_pct":     0.35,
             })
 
     signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
@@ -1724,17 +1759,20 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
             continue
 
         signals.append({
-            "type":        "fear_greed_edge",
-            "direction":   direction,
-            "ticker":      m.get("ticker", ""),
-            "title":       m.get("title", ""),
-            "price":       price,
-            "rationale":   rationale,
-            "confidence":  "high" if (fg <= 10 or fg >= 90) else "medium",
-            "kelly_frac":  kelly * 0.4,
-            "fee_cents":   kalshi_fee(price),
-            "priority":    2,
-            "fear_greed":  fg,
+            "type":              "fear_greed_edge",
+            "direction":         direction,
+            "ticker":            m.get("ticker", ""),
+            "title":             m.get("title", ""),
+            "price":             price,
+            "rationale":         rationale,
+            "confidence":        "high" if (fg <= 10 or fg >= 90) else "medium",
+            "kelly_frac":        kelly * 0.4,
+            "fee_cents":         kalshi_fee(price),
+            "priority":          2,
+            "fear_greed":        fg,
+            "entry_limit_cents": max(1, price - 2),
+            "take_profit_cents": min(99, price + 5),
+            "stop_loss_pct":     0.4,
         })
 
     signals.sort(key=lambda x: x.get("kelly_frac", 0), reverse=True)
