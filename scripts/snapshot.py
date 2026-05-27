@@ -83,10 +83,20 @@ TEAM_HINTS = {
     "KC":  "kansas city",   "SF":  "san francisco","BUF": "buffalo",
     "NE":  "new england",   "GB":  "green bay",    "SEA": "seattle",
     "BAL": "baltimore",     "CIN": "cincinnati",   "PIT": "pittsburgh",
-    # Soccer
+    # Soccer — World Cup 2026 (48 teams, hosted by USA/Canada/Mexico)
     "MEX": "mexico",        "USA": "united states","BRA": "brazil",
     "ARG": "argentina",     "FRA": "france",       "ENG": "england",
     "GER": "germany",       "ESP": "spain",        "POR": "portugal",
+    "NED": "netherlands",   "URU": "uruguay",      "COL": "colombia",
+    "ECU": "ecuador",       "CAN": "canada",       "AUS": "australia",
+    "JPN": "japan",         "KOR": "korea",        "MAR": "morocco",
+    "SEN": "senegal",       "NGA": "nigeria",      "BEL": "belgium",
+    "ITA": "italy",         "SUI": "switzerland",  "CRO": "croatia",
+    "SWE": "sweden",        "DEN": "denmark",      "POL": "poland",
+    "UKR": "ukraine",       "SRB": "serbia",       "AUT": "austria",
+    "KSA": "saudi arabia",  "IRN": "iran",         "QAT": "qatar",
+    "CRC": "costa rica",    "PAN": "panama",       "CHI": "chile",
+    "PER": "peru",          "PAR": "paraguay",
 }
 
 def am_to_decimal(odds):
@@ -3493,13 +3503,8 @@ else:
         lines.append(f"  ERROR: {e}")
     traceback.print_exc(file=sys.stderr)
 
-snapshot = "\n".join(lines)
-out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
-if out:
-    Path(out).write_text(snapshot)
-    log(f"Saved text -> {out}")
-else:
-    print(snapshot)
+# NOTE: snapshot text is assembled AFTER strategy engine runs (see below)
+# so that strategy signals are included in data/snapshot.txt
 
 # ── Best picks scoring ────────────────────────────────────────────────────────
 today       = datetime.now(timezone.utc).date()
@@ -3795,3 +3800,53 @@ signal_summary = {
     "health":            health,
 }, indent=2))
 log(f"Saved JSON -> {docs_dir / 'data.json'}")
+
+# ── Append strategy signals to snapshot text ─────────────────────────────────
+# Now that strategy engine has run, add signals to the text snapshot for
+# the `kalshi advise` CLI command / AI analysis sessions.
+if strategy_signals:
+    lines.append("\n" + "="*70)
+    lines.append("## STRATEGY SIGNALS — TOP PICKS")
+    lines.append("="*70)
+    lines.append(f"  {len(strategy_signals)} signals from 15 research modules "
+                 f"({signal_summary['high_conf']} high-conf, top Kelly {signal_summary['top_kelly']}%)")
+    lines.append(f"  {'Rank':<4} {'Type':<22} {'Dir':<8} {'Ticker':<36} {'P':>3} {'Kelly':>6}  Conf   Rationale")
+    lines.append("  " + "-"*110)
+    for i, s in enumerate(strategy_signals[:15], 1):
+        direction_short = "YES" if "YES" in s.get("direction","") else ("NO" if "NO" in s.get("direction","") else "ALL")
+        kelly_str = f"{s.get('kelly_frac',0)*100:.1f}%"
+        conf = s.get("confidence","?")[:3].upper()
+        rationale_short = s.get("rationale","")[:55]
+        lines.append(f"  {i:<4} {s.get('type','?')[:22]:<22} {direction_short:<8} "
+                     f"{s.get('ticker','?')[:36]:<36} {s.get('price',0):>3}¢ {kelly_str:>6}  {conf:<4}  {rationale_short}")
+
+if best_picks:
+    lines.append("\n## BEST PICKS SUMMARY")
+    lines.append("  (High/medium confidence signals + top volume markets)")
+    for p in best_picks:
+        conf_tag = f"[{p.get('confidence','').upper()[:3]}]" if p.get("confidence") else ""
+        lines.append(f"  {p.get('side','?'):3} {p.get('price',0):>3}¢  {conf_tag:5}  {p.get('ticker','')[:36]:<36}  {p.get('title','')[:45]}")
+
+if edges:
+    lines.append("\n## VEGAS EDGE ALERTS")
+    for e in edges[:5]:
+        lines.append(f"  {e.get('direction','?'):12}  {e.get('ticker','')[:36]:<36}  Kalshi={e.get('kalshi_price')}¢ Vegas={e.get('vegas_prob')}¢  Gap={e.get('gap',0):+.1f}¢")
+
+if kalshi_price_moves:
+    lines.append("\n## SHARP PRICE MOVES (inter-run)")
+    for mv in kalshi_price_moves[:5]:
+        lines.append(f"  {mv.get('move',0):+.1f}¢  {mv.get('ticker','')[:36]:<36}  {mv.get('prev_price',0):.0f}→{mv.get('curr_price',0):.0f}¢  {mv.get('title','')[:45]}")
+
+if cross_market_arb:
+    lines.append("\n## CROSS-PLATFORM ARB")
+    for a in cross_market_arb[:5]:
+        lines.append(f"  {a.get('direction','?')[:22]:<22}  {a.get('kalshi_ticker','')[:30]:<30}  Kalshi={a.get('kalshi_price')}¢ {a.get('platform','?')}={a.get('platform_price')}¢  Gap={a.get('gap',0):+.1f}¢")
+
+# ── Write snapshot text ───────────────────────────────────────────────────────
+snapshot = "\n".join(lines)
+out = sys.argv[2] if len(sys.argv) > 2 and sys.argv[1] == "-o" else None
+if out:
+    Path(out).write_text(snapshot)
+    log(f"Saved text -> {out}")
+else:
+    print(snapshot)
