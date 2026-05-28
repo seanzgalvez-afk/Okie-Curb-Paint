@@ -285,7 +285,7 @@
         <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 rounded-full px-2 py-0.5 font-mono" id="sig-count">–</span>
         <span class="text-xs font-normal text-slate-500 ml-1">— ranked by priority &amp; Kelly size</span>
       </h2>
-      <p class="text-xs text-slate-500 mb-3">16 research-backed strategies. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper than taker.</p>
+      <p class="text-xs text-slate-500 mb-3">17 research-backed strategies. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper than taker.</p>
       <!-- Filter toolbar -->
       <div class="flex flex-wrap gap-2 mb-4 items-center" id="signals-filter-bar">
         <span class="text-xs text-slate-500 mr-1">Filter:</span>
@@ -1359,7 +1359,8 @@ function renderSignalHistory(history) {
         const typeLabelsPerf = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',longshot_bias:'Longshot',
           momentum_edge:'Momentum',home_advantage:'Home Edge',series_momentum:'Series',
           volume_spike:'Vol Spike',espn_odds_edge:'ESPN',fear_greed_edge:'F&G',
-          near_close_mispricing:'Near Close',price_trend:'Sharp $',worldcup_edge:'World Cup'};
+          near_close_mispricing:'Near Close',price_trend:'Sharp $',worldcup_edge:'World Cup',
+          crypto_price_target:'₿ Price'};
         html += '<div class="mt-2"><div class="text-xs text-slate-500 mb-1">Strategy performance (last 10 runs):</div><div class="flex flex-wrap gap-1">';
         rows.slice(0, 8).forEach(r => {
           const kColor = r.avgKelly > 1 ? '#4ade80' : r.avgKelly > 0.3 ? '#fbbf24' : '#94a3b8';
@@ -1397,12 +1398,12 @@ function renderSignals(signals) {
     cross_platform_arb:'#f59e0b',longshot_bias:'#ef4444',volume_spike:'#f97316',
     espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e',
     metaculus_edge:'#818cf8',home_advantage:'#34d399',series_momentum:'#f59e0b',price_trend:'#facc15',
-    near_close_mispricing:'#fb7185'};
+    near_close_mispricing:'#fb7185',crypto_price_target:'#f59e0b'};
   const summaryTypeLabels = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',weather_edge:'Weather',
     cross_platform_arb:'Cross-Plat',longshot_bias:'Longshot',volume_spike:'Volume',
     espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum',
     metaculus_edge:'Metaculus',home_advantage:'Home Adv',series_momentum:'Series',price_trend:'Sharp $',
-    near_close_mispricing:'Near Close'};
+    near_close_mispricing:'Near Close',crypto_price_target:'₿ Price'};
 
   const summaryBar = Object.entries(typeCounts).map(([type, count]) =>
     `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:${summaryTypeColors[type]||'#94a3b8'}22;color:${summaryTypeColors[type]||'#94a3b8'};border:1px solid ${summaryTypeColors[type]||'#94a3b8'}44">${summaryTypeLabels[type]||type} ×${count}</span>`
@@ -1447,6 +1448,7 @@ function renderSignals(signals) {
     price_trend:       '#facc15',  // yellow (sharp money = gold)
     worldcup_edge:     '#4ade80',  // bright green (soccer pitch)
     near_close_mispricing: '#fb7185',  // rose-red (urgency)
+    crypto_price_target:   '#f59e0b',  // amber (crypto)
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -1465,6 +1467,7 @@ function renderSignals(signals) {
     price_trend:       '💸 Sharp $',
     worldcup_edge:     '⚽ World Cup',
     near_close_mispricing: '⏰ Near Close',
+    crypto_price_target:   '₿ Price Model',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',
@@ -1548,6 +1551,18 @@ function renderSignals(signals) {
       const urgCol = d <= 1 ? '#f87171' : d <= 3 ? '#fbbf24' : d <= 7 ? '#fb923c' : '#64748b';
       const urgLabel = d <= 1 ? '🔴 CLOSING TOMORROW' : d <= 3 ? '🟠 closing soon' : `${d.toFixed(0)}d remaining`;
       extraRows += `<div class="mt-1 text-xs" style="color:${urgCol};">⏱ ${urgLabel}</div>`;
+    }
+    if (s.model_prob != null && s.target_price != null) {
+      // crypto_price_target signals — show model vs market
+      const tgt = s.target_price >= 1000 ? '$' + s.target_price.toLocaleString() : '$' + s.target_price.toFixed(2);
+      const curr = s.current_price >= 1000 ? '$' + s.current_price.toLocaleString(undefined,{maximumFractionDigits:0}) : '$' + s.current_price.toFixed(2);
+      const gap = (s.model_prob - s.price).toFixed(0);
+      const gapColor = gap > 0 ? '#4ade80' : '#f87171';
+      extraRows += `<div class="mt-2 rounded p-2 text-xs" style="background:#0f172a;border:1px solid #334155;">
+        <div class="flex justify-between"><span class="text-slate-400">Now:</span><span class="text-cyan-300 font-bold">${curr}</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Target:</span><span class="text-slate-200">${tgt}</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Model P:</span><span style="color:${gapColor};">${s.model_prob}¢ vs market ${s.price}¢ (gap <strong>${gap > 0 ? '+' : ''}${gap}¢</strong>)</span></div>
+      </div>`;
     }
     if (s.price_move != null) {
       // price_trend signals — show the raw move

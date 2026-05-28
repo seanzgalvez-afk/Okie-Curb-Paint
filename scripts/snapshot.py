@@ -3118,6 +3118,167 @@ def analyze_worldcup_edge(markets, vegas_games):
     return signals[:5]
 
 
+def analyze_crypto_price_target(markets, crypto_prices):
+    """
+    Crypto Price Target Strategy:
+
+    Kalshi lists BTC/ETH/SOL markets like "Will BTC close above $115,000 this week?"
+    Using live prices + a simplified lognormal volatility model, we estimate whether
+    the current Kalshi price fairly reflects reality.
+
+    Model: P(S_T > X) using lognormal with:
+      - BTC: 3.5% daily log-vol
+      - ETH: 5% daily log-vol
+      - SOL: 7% daily log-vol
+      - Momentum adjustment: current 24h % change biases the drift
+
+    Edge: when our model probability differs from the Kalshi market price by ≥10¢.
+    """
+    import math, re as _re
+
+    signals = []
+    if not crypto_prices or not markets:
+        return signals
+
+    DAILY_VOL = {"btc": 0.035, "eth": 0.050, "sol": 0.070}
+    coins = {}
+    for sym in ["btc", "eth", "sol"]:
+        c = crypto_prices.get(sym) or {}
+        price = c.get("usd") if isinstance(c, dict) else None
+        change_24h = c.get("change_24h", 0) if isinstance(c, dict) else 0
+        if price:
+            coins[sym] = {"price": price, "change_24h": change_24h}
+
+    # Also try legacy flat keys
+    if "btc" not in coins and crypto_prices.get("btc_usd"):
+        coins["btc"] = {"price": crypto_prices["btc_usd"], "change_24h": crypto_prices.get("btc_24h_change", 0)}
+    if "eth" not in coins and crypto_prices.get("eth_usd"):
+        coins["eth"] = {"price": crypto_prices["eth_usd"], "change_24h": crypto_prices.get("eth_24h_change", 0)}
+    if "sol" not in coins and crypto_prices.get("sol_usd"):
+        coins["sol"] = {"price": crypto_prices["sol_usd"], "change_24h": crypto_prices.get("sol_24h_change", 0)}
+
+    if not coins:
+        return signals
+
+    now_utc = datetime.now(timezone.utc)
+
+    for m in markets:
+        ticker = m.get("ticker", "").upper()
+        title  = (m.get("title") or "").upper()
+        yp     = m.get("_yes_price")
+        ct     = m.get("close_time", "")
+        if yp is None or not ct:
+            continue
+
+        # Only crypto price direction markets
+        coin_sym = None
+        if "BTC" in ticker or "BITCOIN" in ticker:
+            coin_sym = "btc"
+        elif "ETH" in ticker or "ETHER" in ticker:
+            coin_sym = "eth"
+        elif "SOL" in ticker or "SOLANA" in ticker:
+            coin_sym = "sol"
+        if coin_sym not in coins:
+            continue
+
+        # Must have "ABOVE" or "OVER" / "BELOW" / "UNDER" direction
+        is_above = any(x in title or x in ticker for x in ("ABOVE", "OVER", "HIGH", "UP"))
+        is_below = any(x in title or x in ticker for x in ("BELOW", "UNDER", "LOW", "DOWN"))
+        if not is_above and not is_below:
+            continue
+
+        # Parse target price from title (e.g., "$115,000" or "$115K" or "115000")
+        target = None
+        for pattern in [r'\$([0-9,]+(?:\.[0-9]+)?)[Kk]?\b', r'([0-9]{3,}[,]?[0-9]{3})']:
+            m_r = _re.search(pattern, title.replace(",", ""))
+            if m_r:
+                raw = m_r.group(1).replace(",", "")
+                try:
+                    val = float(raw)
+                    if "K" in title[m_r.start():m_r.end()+2].upper():
+                        val *= 1000
+                    # Sanity check for BTC (should be 50k-500k range)
+                    if coin_sym == "btc" and 30000 <= val <= 1000000:
+                        target = val; break
+                    elif coin_sym == "eth" and 500 <= val <= 30000:
+                        target = val; break
+                    elif coin_sym == "sol" and 10 <= val <= 3000:
+                        target = val; break
+                except ValueError:
+                    pass
+
+        if target is None:
+            continue
+
+        # Calculate days to close
+        try:
+            close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+            if close_dt.tzinfo is None:
+                close_dt = close_dt.replace(tzinfo=timezone.utc)
+            days_left = max(0.1, (close_dt - now_utc).total_seconds() / 86400)
+        except Exception:
+            continue
+
+        # Lognormal probability model
+        S = coins[coin_sym]["price"]
+        X = target
+        vol_day = DAILY_VOL[coin_sym]
+        # Momentum drift: if up 3% today, add slight positive drift
+        drift_adj = coins[coin_sym]["change_24h"] / 100.0 * 0.3  # dampen momentum
+        sigma = vol_day * math.sqrt(days_left)
+        mu = drift_adj * days_left  # drift term
+
+        if S <= 0 or X <= 0:
+            continue
+
+        log_ratio = math.log(X / S) - mu
+        # P(S_T > X) = 1 - Phi(log_ratio / sigma)
+        # Simplified: use logistic approximation to normal CDF
+        z = log_ratio / sigma
+        # Logistic approximation: Phi(z) ≈ 1/(1 + exp(-1.7 * z))
+        prob_above = 1.0 / (1.0 + math.exp(min(50, max(-50, 1.7 * z))))
+
+        model_prob = prob_above * 100 if is_above else (1 - prob_above) * 100
+        model_prob = max(2, min(98, model_prob))
+
+        gap = model_prob - yp
+        if abs(gap) < 10:  # need ≥10¢ discrepancy
+            continue
+
+        direction = "BUY YES" if gap > 0 else "BUY NO"
+        side_price = yp if direction == "BUY YES" else (100 - yp)
+        kelly = kelly_size(model_prob if direction == "BUY YES" else (100 - model_prob),
+                           side_price, maker=True)
+        if kelly <= 0:
+            continue
+
+        price_str = f"${S:,.0f}" if S >= 1000 else f"${S:.2f}"
+        tgt_str   = f"${target:,.0f}" if target >= 1000 else f"${target:.2f}"
+        signals.append({
+            "type":              "crypto_price_target",
+            "direction":         direction,
+            "ticker":            m.get("ticker", ""),
+            "title":             m.get("title", ""),
+            "price":             yp,
+            "rationale":         f"{coin_sym.upper()} at {price_str} vs target {tgt_str} ({days_left:.1f}d). Model P={model_prob:.0f}¢ vs market {yp}¢. Gap={gap:+.0f}¢.",
+            "confidence":        "medium" if abs(gap) >= 15 else "low",
+            "kelly_frac":        kelly * 0.5,
+            "fee_cents":         kalshi_fee(side_price),
+            "priority":          2,
+            "days_until_close":  round(days_left, 1),
+            "entry_limit_cents": max(1, side_price - 2),
+            "take_profit_cents": min(99, side_price + max(5, int(abs(gap) * 0.5))),
+            "stop_loss_pct":     0.4,
+            "model_prob":        round(model_prob, 1),
+            "current_price":     S,
+            "target_price":      target,
+        })
+
+    signals.sort(key=lambda x: abs(x.get("model_prob", 50) - x.get("price", 50)), reverse=True)
+    log(f"Crypto price target: {len(signals)} signals")
+    return signals[:4]
+
+
 def analyze_near_close_edge(markets):
     """
     Near-Resolution Mispricing:
@@ -3235,7 +3396,8 @@ def analyze_near_close_edge(markets):
 
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
                         metaculus_qs=None, price_moves=None, vegas_games=None,
-                        playoff_series=None, fear_greed=None, fred_data=None):
+                        playoff_series=None, fear_greed=None, fred_data=None,
+                        crypto_prices=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -3349,6 +3511,13 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         all_signals += analyze_near_close_edge(markets)
     except Exception as e:
         log(f"Strategy near-close error: {e}")
+
+    # 17. Crypto price target (lognormal model vs live BTC/ETH/SOL prices)
+    try:
+        if crypto_prices:
+            all_signals += analyze_crypto_price_target(markets, crypto_prices)
+    except Exception as e:
+        log(f"Strategy crypto price target error: {e}")
 
     # Consensus detection: count how many strategies agree per ticker+direction
     from collections import defaultdict
@@ -4188,7 +4357,8 @@ try:
                                             price_moves=kalshi_price_moves,
                                             vegas_games=(vegas_games if ODDS_API_KEY else []),
                                             playoff_series=espn_playoff_series,
-                                            fear_greed=fear_greed, fred_data=fred_data)
+                                            fear_greed=fear_greed, fred_data=fred_data,
+                                            crypto_prices=crypto_prices)
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")
@@ -4422,7 +4592,7 @@ if strategy_signals:
     lines.append("\n" + "="*70)
     lines.append("## STRATEGY SIGNALS — TOP PICKS")
     lines.append("="*70)
-    lines.append(f"  {len(strategy_signals)} signals from 16 research modules "
+    lines.append(f"  {len(strategy_signals)} signals from 17 research modules "
                  f"({signal_summary['high_conf']} high-conf, top Kelly {signal_summary['top_kelly']}%)")
     lines.append(f"  {'Rank':<4} {'Type':<22} {'Dir':<8} {'Ticker':<36} {'P':>3} {'Kelly':>6}  Conf   Rationale")
     lines.append("  " + "-"*110)
