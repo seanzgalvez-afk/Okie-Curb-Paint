@@ -512,6 +512,109 @@ def score_market(m, all_volumes, today):
 
     return round(score, 2), (" + ".join(reasons) if reasons else "Liquid market")
 
+
+def build_top_opportunities(markets, strategy_signals, n=10):
+    """
+    Return the top N market opportunities regardless of whether a strategy
+    signal fired.  Every market gets scored; signals upgrade their market's
+    score but are NOT required.  Useful as a human-readable "plays of the day"
+    list on the dashboard.
+    """
+    sig_by_ticker = {s.get("ticker", ""): s for s in strategy_signals if s.get("ticker")}
+    now_utc = datetime.now(timezone.utc)
+    scored = []
+    for m in markets:
+        ticker = m.get("ticker", "")
+        yp = m.get("_yes_price")
+        vol = m.get("volume", 0) or 0
+        if yp is None or not ticker:
+            continue
+
+        # Base score: volume percentile (0-5)
+        base = 0.0
+        all_vols = [mx.get("volume", 0) or 0 for mx in markets if mx.get("volume")]
+        max_v = max(all_vols) if all_vols else 1
+        base += min(5.0, (vol / max_v) * 5)
+
+        # Price zone bonus
+        if yp <= 12 or yp >= 88:
+            base += 1.5   # extreme prices have asymmetric payoff
+        elif 20 <= yp <= 40 or 60 <= yp <= 80:
+            base += 2.5   # underdog/favorite sweet spot
+        elif 40 < yp < 60:
+            base += 1.0   # near-50¢ = uncertain
+
+        # Spread tightness (tighter = more liquid = better)
+        yb = m.get("yes_bid") or 0
+        nb = m.get("no_bid") or 0
+        ya = m.get("yes_ask") or (100 - nb if nb else 99)
+        spread = ya - yb
+        if spread <= 2:   base += 2.0
+        elif spread <= 5: base += 1.0
+        elif spread > 15: base -= 1.0
+
+        # Urgency: closing soon is a catalyst
+        ct = m.get("close_time", "")
+        days_left = None
+        if ct:
+            try:
+                close_dt = datetime.fromisoformat(ct.replace("Z", "+00:00"))
+                if close_dt.tzinfo is None:
+                    close_dt = close_dt.replace(tzinfo=timezone.utc)
+                days_left = (close_dt - now_utc).total_seconds() / 86400
+                if 0.1 <= days_left <= 3:   base += 2.5
+                elif days_left <= 7:        base += 1.5
+                elif days_left <= 14:       base += 0.5
+            except Exception:
+                pass
+
+        # Strategy signal bonus (signal fires = more confidence)
+        sig = sig_by_ticker.get(ticker)
+        has_signal = sig is not None
+        if sig:
+            conf_bonus = {"high": 3.0, "medium": 2.0, "low": 1.0}.get(sig.get("confidence", "low"), 1.0)
+            base += conf_bonus
+            # Consensus extra
+            base += (sig.get("consensus_count", 0) or 0) * 0.5
+
+        # Determine recommended action
+        if sig:
+            direction = sig.get("direction", "BUY YES")
+            action_price = sig.get("entry_limit_cents") or yp
+        elif yp <= 15:
+            direction = "BUY NO"
+            action_price = 100 - yp
+        elif yp >= 85:
+            direction = "BUY YES"
+            action_price = yp
+        elif yp < 50:
+            direction = "BUY YES"
+            action_price = yp
+        else:
+            direction = "BUY NO"
+            action_price = 100 - yp
+
+        scored.append({
+            "ticker":         ticker,
+            "title":          m.get("title", ticker),
+            "yes_price":      yp,
+            "direction":      direction,
+            "action_price":   action_price,
+            "volume":         vol,
+            "spread":         spread,
+            "days_left":      round(days_left, 1) if days_left is not None else None,
+            "score":          round(base, 2),
+            "has_signal":     has_signal,
+            "signal_type":    sig.get("type") if sig else None,
+            "signal_conf":    sig.get("confidence") if sig else None,
+            "kelly_pct":      round((sig.get("kelly_frac", 0) or 0) * 100, 1) if sig else None,
+            "rationale":      sig.get("rationale", "")[:80] if sig else f"vol={vol} spread={spread}¢ {int(yp)}¢ YES",
+        })
+
+    scored.sort(key=lambda x: -x["score"])
+    return scored[:n]
+
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # ESPN — multi-sport data: injuries, scoreboard, odds, news, win probability
 # Free, no API key required.
@@ -3905,12 +4008,24 @@ def fetch_supplemental_markets():
         # ── Other Sports ──
         {"event_ticker": "KXMLBWINNER", "limit": 5},
         # ── World Cup 2026 ── (try multiple possible event ticker formats)
-        {"event_ticker": "KXMENWORLDCUP",   "limit": 20},
-        {"event_ticker": "KXWORLDCUP",      "limit": 10},
-        {"event_ticker": "KXWC26",          "limit": 10},
-        {"event_ticker": "KXWC2026",        "limit": 10},
-        {"event_ticker": "KXFIFAWC26",      "limit": 10},
-        {"event_ticker": "KXMENWC26",       "limit": 10},
+        {"event_ticker": "KXMENWORLDCUP",   "limit": 25},
+        {"event_ticker": "KXWORLDCUP",      "limit": 15},
+        {"event_ticker": "KXWC26",          "limit": 15},
+        {"event_ticker": "KXWC2026",        "limit": 15},
+        {"event_ticker": "KXFIFAWC26",      "limit": 15},
+        {"event_ticker": "KXMENWC26",       "limit": 15},
+        # ── Soccer — Leagues & Cups ──
+        {"event_ticker": "KXMLS",           "limit": 10},
+        {"event_ticker": "KXPREMIER",       "limit": 10},  # EPL
+        {"event_ticker": "KXLALIGA",        "limit": 10},
+        {"event_ticker": "KXBUNDESLIGA",    "limit": 10},
+        {"event_ticker": "KXSERIEA",        "limit": 10},
+        {"event_ticker": "KXLIGUE1",        "limit": 10},
+        {"event_ticker": "KXCHAMPIONS",     "limit": 15},  # UEFA Champions League
+        {"event_ticker": "KXEUROPALEAGUE",  "limit": 10},
+        {"event_ticker": "KXEURO",          "limit": 10},  # UEFA Euro
+        {"event_ticker": "KXSOCCER",        "limit": 15},  # catch-all
+        {"event_ticker": "KXWOMENWC",       "limit": 10},  # Women's WC
     ]
 
     seen = set()
@@ -4791,12 +4906,30 @@ try:
 except Exception as e:
     log(f"Signal history save error: {e}")
 
+# ── Top 10 Opportunities (unconditional — no signal threshold) ─────────────────
+top_opportunities = build_top_opportunities(markets_list, strategy_signals, n=10)
+log(f"Top opportunities: {len(top_opportunities)} markets ranked")
+
+# ── Soccer markets ─────────────────────────────────────────────────────────────
+_SOCCER_KEYWORDS = ["WORLDCUP","WC26","WC2026","FIFA","MLS","SOCCER","SOC",
+                    "PREMIER","LALIGA","BUNDESLIGA","SERIEA","LIGUE1",
+                    "CHAMPIONS","EUROPA","EURO","WOMENWC","KXWC","KXFIFA"]
+soccer_markets = [
+    {k: v for k, v in m.items() if not k.startswith("_")}
+    for m in markets_list
+    if any(kw in m.get("ticker", "").upper() or kw in m.get("title", "").upper()
+           for kw in _SOCCER_KEYWORDS)
+]
+log(f"Soccer markets: {len(soccer_markets)} found")
+
 (docs_dir / "data.json").write_text(json.dumps({
     "generated":         ts_str,
     "balance_cents":     balance_cents,
     "positions":         positions_list,
     "markets":           clean_markets,
     "best_picks":        best_picks,
+    "top_opportunities": top_opportunities,
+    "soccer_markets":    soccer_markets,
     "edges":             edges,
     "espn_games":        espn_games,
     "espn_injuries":     espn_injuries,

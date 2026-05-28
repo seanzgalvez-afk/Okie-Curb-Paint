@@ -279,6 +279,29 @@
     </div>
 
     <!-- ── Strategy Signals ── -->
+    <!-- ── Top 10 Plays ── -->
+    <section class="mb-10" id="top-plays-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span>🎯</span> Top 10 Plays
+        <span class="text-xs font-normal text-slate-500 ml-1">— best markets right now, signal or not</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-3">Ranked by volume, spread tightness, price zone, and urgency. Markets with a strategy signal are highlighted.</p>
+      <div id="top-plays-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+      <p id="top-plays-empty" class="hidden text-slate-500 text-sm mt-2">Loading top plays…</p>
+    </section>
+
+    <!-- ── Soccer Markets ── -->
+    <section class="mb-10" id="soccer-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span>⚽</span> Soccer Markets
+        <span class="text-xs bg-green-500/20 text-green-400 border border-green-500/40 rounded-full px-2 py-0.5 font-mono" id="soccer-count">–</span>
+        <span class="text-xs font-normal text-slate-500 ml-1">— World Cup, Champions League, MLS &amp; more</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-3">All soccer prediction markets on Kalshi. Click to trade. Green border = has a strategy signal.</p>
+      <div id="soccer-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
+      <p id="soccer-empty" class="hidden text-slate-500 text-sm mt-2">No soccer markets found — check back after the next data refresh.</p>
+    </section>
+
     <section class="mb-10" id="signals-section">
       <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
         <span style="color:#f59e0b;">⚡</span> Strategy Signals
@@ -304,6 +327,9 @@
         <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
           data-filter="persistent" style="background:#7c3aed22;color:#a78bfa;border-color:#7c3aed44;"
           onclick="filterSignals('persistent')">🔁 Persistent</button>
+        <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="soccer" style="background:#22c55e22;color:#4ade80;border-color:#22c55e44;"
+          onclick="filterSignals('soccer')">⚽ Soccer</button>
         <span id="sig-ev-display" class="ml-auto text-xs text-slate-500"></span>
       </div>
       <div id="signals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -613,6 +639,8 @@ function render(data) {
   renderAlertBanners(data);
   renderSignalHistory(data.signal_history || []);
   renderSignals(data.strategy_signals || []);
+  renderTopPlays(data.top_opportunities || [], data.strategy_signals || []);
+  renderSoccerMarkets(data.soccer_markets || [], data.strategy_signals || []);
   renderLineMovements(data.line_movements || []);
   renderPriceMovements(data.price_movements || []);
   renderHeader(data);
@@ -745,6 +773,117 @@ function renderHeader(data) {
   }
 
   startRefreshCountdown();
+}
+
+// ── Top 10 Plays ────────────────────────────────────────────────────────────
+function renderTopPlays(plays, signals) {
+  const grid = document.getElementById('top-plays-grid');
+  const empty = document.getElementById('top-plays-empty');
+  if (!grid) return;
+  if (!plays.length) {
+    grid.innerHTML = '';
+    if (empty) { empty.classList.remove('hidden'); empty.textContent = 'No data yet — check back after the next refresh.'; }
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+  const sigTickers = new Set((signals || []).map(s => s.ticker));
+
+  grid.innerHTML = plays.map((p, i) => {
+    const hasSignal = p.has_signal || sigTickers.has(p.ticker);
+    const isYes = p.direction === 'BUY YES' || p.direction === 'BUY ALL';
+    const color = isYes ? '#4ade80' : '#f87171';
+    const borderCol = hasSignal ? '#f59e0b' : color;
+    const price = p.action_price ?? p.yes_price ?? 50;
+    const daysStr = p.days_left != null ? `${p.days_left}d left` : '';
+    const signalBadge = hasSignal
+      ? `<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44;">⚡ ${p.signal_conf || 'signal'}</span>`
+      : '';
+    const kellyStr = p.kelly_pct ? `Kelly ${p.kelly_pct}%` : '';
+    return `
+    <a href="https://kalshi.com/markets/${p.ticker}" target="_blank" class="block rounded-xl border p-3 transition hover:opacity-90"
+       style="background:#1e293b;border-color:${borderCol}55;text-decoration:none;">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-xs font-bold text-slate-400">#${i+1}</span>
+        <div class="flex gap-1 items-center">
+          ${signalBadge}
+          <span class="text-xs font-mono text-slate-500">${daysStr}</span>
+        </div>
+      </div>
+      <p class="text-xs font-semibold text-white leading-tight mb-1 line-clamp-2">${escHtml(p.title || p.ticker)}</p>
+      <p class="text-xs font-mono text-slate-500 mb-2">${p.ticker}</p>
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-black" style="color:${color};">${p.direction.replace('BUY ', '')} @ ${price}¢</span>
+        <span class="text-xs text-slate-400">${kellyStr || `vol ${(p.volume||0).toLocaleString()}`}</span>
+      </div>
+      <p class="text-xs text-slate-500 mt-1 line-clamp-1">${escHtml(p.rationale || '')}</p>
+    </a>`;
+  }).join('');
+}
+
+// ── Soccer Markets ──────────────────────────────────────────────────────────
+function renderSoccerMarkets(soccerMkts, signals) {
+  const grid = document.getElementById('soccer-grid');
+  const empty = document.getElementById('soccer-empty');
+  const countEl = document.getElementById('soccer-count');
+  if (!grid) return;
+
+  if (countEl) countEl.textContent = soccerMkts.length || '–';
+
+  if (!soccerMkts.length) {
+    grid.innerHTML = '';
+    if (empty) empty.classList.remove('hidden');
+    return;
+  }
+  if (empty) empty.classList.add('hidden');
+
+  const sigMap = {};
+  (signals || []).forEach(s => { if (s.ticker) sigMap[s.ticker] = s; });
+
+  // Sort: has signal first, then by volume desc
+  const sorted = [...soccerMkts].sort((a, b) => {
+    const aHas = sigMap[a.ticker] ? 1 : 0;
+    const bHas = sigMap[b.ticker] ? 1 : 0;
+    if (bHas !== aHas) return bHas - aHas;
+    return (b.volume || 0) - (a.volume || 0);
+  });
+
+  grid.innerHTML = sorted.map(m => {
+    const sig = sigMap[m.ticker];
+    const yp = m.yes_bid || m.yes_ask || m.last_price || 50;
+    const isYes = sig ? sig.direction.includes('YES') : yp < 50;
+    const color = isYes ? '#4ade80' : '#f87171';
+    const borderCol = sig ? '#f59e0b' : '#334155';
+    const actionPrice = sig ? (sig.entry_limit_cents || yp) : yp;
+    const action = sig ? sig.direction : (yp < 50 ? 'BUY YES' : 'BUY NO');
+    const displayPrice = action.includes('NO') ? (100 - yp) : yp;
+    const vol = (m.volume || 0).toLocaleString();
+    const sigBadge = sig
+      ? `<span class="text-xs px-1.5 py-0.5 rounded font-bold" style="background:#f59e0b22;color:#f59e0b;border:1px solid #f59e0b44;">⚡ ${sig.confidence}</span>`
+      : '';
+    // Detect category
+    const tk = (m.ticker || '').toUpperCase();
+    const cat = tk.includes('WC') || tk.includes('FIFA') || tk.includes('WORLDCUP') ? '🏆 WC26'
+              : tk.includes('MLS') ? '🇺🇸 MLS'
+              : tk.includes('CHAMPIONS') ? '⭐ UCL'
+              : tk.includes('PREMIER') ? '🏴󠁧󠁢󠁥󠁮󠁧󠁿 EPL'
+              : tk.includes('LALIGA') ? '🇪🇸 LaLiga'
+              : '⚽ Soccer';
+    return `
+    <a href="https://kalshi.com/markets/${m.ticker}" target="_blank" class="block rounded-xl border p-3 transition hover:opacity-90"
+       style="background:#1e293b;border-color:${borderCol};text-decoration:none;">
+      <div class="flex items-center justify-between mb-1">
+        <span class="text-xs font-bold" style="color:#94a3b8;">${cat}</span>
+        <div class="flex gap-1">${sigBadge}</div>
+      </div>
+      <p class="text-xs font-semibold text-white leading-tight mb-1 line-clamp-2">${escHtml(m.title || m.ticker)}</p>
+      <p class="text-xs font-mono text-slate-500 mb-2">${m.ticker}</p>
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-black" style="color:${color};">${action.replace('BUY ','')} @ ${displayPrice}¢</span>
+        <span class="text-xs text-slate-400">vol ${vol}</span>
+      </div>
+      ${sig ? `<p class="text-xs text-slate-400 mt-1 line-clamp-1">${escHtml(sig.rationale || '')}</p>` : ''}
+    </a>`;
+  }).join('');
 }
 
 // ── Best Picks ─────────────────────────────────────────────────────────────
@@ -1724,6 +1863,15 @@ function filterSignals(filter) {
     filtered = signals.filter(s => s.consensus_count >= 2);
   } else if (filter === 'persistent') {
     filtered = signals.filter(s => (s.persistence_count || 0) >= 3);
+  } else if (filter === 'soccer') {
+    const soccerKw = ['WORLDCUP','WC26','WC2026','FIFA','MLS','SOCCER','SOC',
+                      'PREMIER','LALIGA','BUNDESLIGA','SERIEA','LIGUE1',
+                      'CHAMPIONS','EUROPA','EURO','WOMENWC','KXWC','KXFIFA'];
+    filtered = signals.filter(s => {
+      const tk = (s.ticker || '').toUpperCase();
+      const ti = (s.title || '').toUpperCase();
+      return soccerKw.some(kw => tk.includes(kw) || ti.includes(kw));
+    });
   }
 
   if (filtered.length === 0) {
