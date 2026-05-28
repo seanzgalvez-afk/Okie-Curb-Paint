@@ -1,5 +1,5 @@
 # Kalshi Market Snapshot
-# Generated: 2026-05-27 01:18 UTC
+# Generated: 2026-05-28 20:54 UTC
 ======================================================================
 
 ## Balance: unavailable
@@ -11,86 +11,8 @@
 ======================================================================
   Ticker                                      YES   NO  Trades  Closes  Title
   -----------------------------------------------------------------------------------------------
-  KXBTC15M-26MAY262130-30                      9c  91c      26  2026-05-27  BTC price up in next 15 mins?
-  KXMLBGAME-26MAY262005HOUTEX-HOU              7c  92c      22  2026-05-30  Houston vs Texas Winner?
-  KXNBAGAME-26MAY26SASOKC-SAS                 29c  70c      19  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXMLBGAME-26MAY262005HOUTEX-TEX             92c   6c      13  2026-05-30  Houston vs Texas Winner?
-  KXNBAGAME-26MAY26SASOKC-OKC                 70c  29c       6  2026-06-10  Game 5: San Antonio at Oklahoma City Win
-  KXNBASPREAD-26MAY26SASOKC-SAS1              26c  72c       6  2026-06-10  San Antonio wins by over 1.5 points?
-  KXMLBTOTAL-26MAY261910CINNYM-11             43c  55c       5  2026-05-29  Cincinnati vs New York M Total Runs?
-  KXMLBSPREAD-26MAY262005HOUTEX-TEX4          56c  41c       5  2026-05-30  Texas wins by over 3.5 runs?
-  KXNBASPREAD-26MAY26SASOKC-OKC20             12c  87c       5  2026-06-10  Oklahoma City wins by over 20.5 points?
-  KXMLBSPREAD-26MAY261910CINNYM-CIN4          62c  37c       4  2026-05-29  Cincinnati wins by over 3.5 runs?
-  KXNBA1HSPREAD-26MAY26SASOKC-OKC6            50c  48c       4  2026-06-10  Will Oklahoma City win the 1H by over 6.
-  KXMLBSPREAD-26MAY261910CINNYM-CIN5          35c  64c       3  2026-05-29  Reds wins by over 4.5 runs?
-  KXNBASPREAD-26MAY26SASOKC-OKC6              50c  48c       3  2026-06-10  Oklahoma City wins by over 6.5 points?
-  KXMLBGAME-26MAY261845ATLBOS-ATL             93c   6c       3  2026-05-29  Atlanta vs Boston Winner?
-  KXSOL15M-26MAY262130-30                     21c  78c       3  2026-05-27  SOL price up in next 15 mins?
-  KXMLBTOTAL-26MAY262005HOUTEX-18             32c  36c       3  2026-05-30  Houston vs Texas Total Runs?
-  KXHANNITYMENTION-26MAY21-BORD               12c  26c       2  2026-06-05  What will Sean Hannity say during Fox Ne
-  KXNHLGAME-26MAY26COLVGK-VGK                 49c  50c       2  2026-06-10  Game 4: Colorado at Vegas Winner?
-  KXMLBTOTAL-26MAY261910CINNYM-12             27c  67c       2  2026-05-29  Cincinnati vs New York M Total Runs?
-  KXMLBTOTAL-26MAY261910CINNYM-10             61c  38c       2  2026-05-29  Cincinnati vs New York M Total Runs?
 
 ======================================================================
 ## FIFA WORLD CUP 2026 — DISCOVERY
 ======================================================================
-
-### /series endpoint scan:
-  /series returned: {'series': [{'additional_prohibitions': ['Persons who are employed by any of the Source Agencies are not permitted to trade on the Contract.', 'Persons who hold any material, non-public information on the Underlying are not permitted to trade on the Contract.'], 'category': 'Politics', 'contract_terms_url': 'https://kalshi-public-docs.s3.amazonaws.com/contract_terms/CRIMECHARGE.pdf', 'contract_url': 'https://kalshi-public-docs.s3.us-east-1.amazonaws.com/regulatory/product-certifications/CRIMECHA
-
-### Direct event ticker fetch attempts:
-  miss: KXWC26
-  miss: KXWC2026
-  miss: KXFIFAWC26
-  miss: KXFIFAWC2026
-  miss: KXWC26FUTURES
-  miss: KXWC2026FUTURES
-  miss: KXFIFAWC26FUTURES
-  miss: KXWC26WINNER
-  miss: KXWC26CHAMP
-  miss: KXWC26CHAMPION
-  miss: KXWC26GROUPA
-  miss: KXWC26GROUPB
-  miss: KXWC26GROUPC
-  miss: KXWC26-GROUPA
-  miss: KXWC26-GROUPB
-  miss: KXWC26GROUPAWINNER
-  miss: KXWC26GROUPBWINNER
-  miss: KXWC26FURTHEST
-  miss: KXWC26ELIM
-  miss: KXWC26STAGE
-  miss: KXWC26HOST
-  miss: KXWC26USA
-  miss: KXWC26AWARDS
-  miss: KXWC26GOALS
-  miss: KXWC26TOURGOALS
-  miss: KXWC26SQUAD
-  miss: KXWC26SPEC
-  miss: KXWC26SPECIAL
-  miss: KXSOCWC26
-  miss: KXSOC26
-  miss: KXSOCCERWC26
-  miss: WC26FUTURES
-  miss: FIFAWC26
-
-### Series tickers found in trades feed:
-  KXBTC15M
-  KXBTCD
-  KXETH15M
-  KXHANNITYMENTION
-  KXMENWORLDCUP
-  KXMLBGAME
-  KXMLBHIT
-  KXMLBSPREAD
-  KXMLBTOTAL
-  KXMVECROSSCATEGORY
-  KXMVESPORTSMULTIGAMEEXTENDED
-  KXNBA1HSPREAD
-  KXNBA2HSPREAD
-  KXNBAGAME
-  KXNBAMENTION
-  KXNBAOVERTIME
-  KXNBASPREAD
-  KXNHLGAME
-  KXSOL15M
+  [Skipped — runs every 60 min to conserve API credits]
