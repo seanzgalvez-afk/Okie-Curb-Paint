@@ -1111,7 +1111,8 @@ def fetch_polymarket_markets():
         return []
     try:
         r = httpx.get("https://gamma-api.polymarket.com/markets",
-            params={"active": "true", "closed": "false", "limit": 100},
+            params={"active": "true", "closed": "false", "limit": 200,
+                    "order": "volume", "ascending": "false"},
             timeout=15)
         if r.status_code != 200:
             log(f"PolyMarket -> {r.status_code}")
