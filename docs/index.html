@@ -1626,15 +1626,20 @@ function renderSignals(signals) {
     const persistBadge = pc >= 3
       ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#7c3aed33;color:#a78bfa;border:1px solid #7c3aed66;">🔁 ${pc}× persistent</span>`
       : '';
+    // Conflict badge (another strategy recommends opposite direction)
+    const conflictBadge = s.conflict_detected
+      ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#ef444433;color:#f87171;border:1px solid #ef444466;" title="${escHtml(s.warning||'')}">⚠️ conflict</span>`
+      : '';
 
     return `
-    <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${s.consensus_count >= 2 ? '#fbbf24' : color}55;">
+    <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${s.conflict_detected ? '#ef4444' : s.consensus_count >= 2 ? '#fbbf24' : color}55;">
       <!-- Header bar -->
       <div class="px-4 py-2 flex items-center justify-between" style="background:${color}18;border-bottom:1px solid ${color}33;">
         <span class="text-xs font-bold" style="color:${color};">${label}</span>
         <div class="flex items-center gap-2">
           ${consensusBadge}
           ${persistBadge}
+          ${conflictBadge}
           <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'} confidence</span>
           <span class="text-xs text-slate-500">#${s.rank || '?'}</span>
         </div>
@@ -1691,10 +1696,10 @@ function renderSignals(signals) {
   window._allSignalsHtml = summaryHtml + cardsHtml;
   grid.innerHTML = summaryHtml + cardsHtml;
 
-  // Show total expected value
+  // Show total expected value — use entry_limit_cents as basis for both YES and NO signals
   const totalEV = signals.reduce((sum, s) => {
-    if (!s.kelly_frac || !s.take_profit_cents || !s.price) return sum;
-    const ev = s.kelly_frac * (s.take_profit_cents - s.price) / 100;
+    if (!s.kelly_frac || !s.take_profit_cents || !s.entry_limit_cents) return sum;
+    const ev = s.kelly_frac * (s.take_profit_cents - s.entry_limit_cents) / 100;
     return sum + ev;
   }, 0);
   const evEl = document.getElementById('sig-ev-display');

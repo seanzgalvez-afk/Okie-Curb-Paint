@@ -3690,6 +3690,18 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         if key[0]:
             consensus[key].append(s.get("type", ""))
 
+    # Conflict detection: mark tickers where strategies disagree on direction
+    # BUY YES vs BUY NO on the same ticker = genuine uncertainty
+    ticker_directions = defaultdict(set)
+    for s in all_signals:
+        tk = s.get("ticker", "")
+        if tk and s.get("direction"):
+            # Normalize direction to YES/NO
+            d = "YES" if "YES" in s.get("direction", "").upper() else ("NO" if "NO" in s.get("direction", "").upper() else None)
+            if d:
+                ticker_directions[tk].add(d)
+    conflicted_tickers = {tk for tk, dirs in ticker_directions.items() if len(dirs) > 1}
+
     # Deduplicate: keep highest-priority signal per ticker
     # BUT boost confidence when multiple strategies agree
     seen_tickers = {}
@@ -3732,6 +3744,21 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             log(f"Consensus: {ticker} {s['direction']} — {n_agree} strategies agree: {s['consensus_types']}")
 
     all_signals = deduped
+
+    # Apply conflict metadata: mark signals where other strategies disagree on direction
+    for s in all_signals:
+        tk = s.get("ticker", "")
+        if tk and tk in conflicted_tickers:
+            s["conflict_detected"] = True
+            s["warning"] = "Conflicting signal: another strategy recommends the opposite direction"
+            # Downgrade confidence one level — uncertainty is real
+            if s.get("confidence") == "high":
+                s["confidence"] = "medium"
+            elif s.get("confidence") == "medium":
+                s["confidence"] = "low"
+            # Push priority back toward middle (don't hard-skip, just deprioritize)
+            s["priority"] = min(4, s.get("priority", 3) + 1)
+            log(f"Conflict: {tk} {s.get('direction')} — opposing strategies detected")
 
     # Filter out expired / closing-soon markets (need > 2 hours to place & fill)
     now_utc = datetime.now(timezone.utc)
