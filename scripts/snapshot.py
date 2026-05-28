@@ -1496,15 +1496,23 @@ def _is_exhaustive_series(series, suffixes):
             return all(vals[i+1] == vals[i] + 1 for i in range(len(vals)-1))
         except ValueError:
             return False
-    # GAME, WINNER, 1H, FUTURES markets with exactly 2 outcomes are exhaustive
-    if len(suffixes) == 2:
-        exhaustive_types = ["GAME", "WINNER", "1H", "FUTURES", "CHAMP", "ELEC", "POL",
-                            "PRES", "SEN", "GOV", "MVE", "MVP"]
-        if any(t in s for t in exhaustive_types):
-            return True
-        # 2-contract non-spread series: assume exhaustive if suffixes look like team names
+    # GAME markets are always 2-outcome exhaustive sets
+    if "GAME" in s or "1H" in s:
+        return len(suffixes) == 2 and all(len(x) <= 5 and x.isalpha() for x in suffixes)
+
+    # WINNER/CHAMP/FINALS markets are exhaustive if ALL remaining teams are present
+    # (prices summing to ~100 confirms exhaustiveness — checked in the caller)
+    winner_types = ["WINNER", "CHAMP", "FINALS", "FUTURES", "ELEC", "POL",
+                    "PRES", "SEN", "GOV", "MVE", "MVP", "WORLDCUP"]
+    if any(t in s for t in winner_types):
+        # Allow any count of team/candidate suffixes that look like abbreviations
         if all(len(x) <= 5 and x.isalpha() for x in suffixes):
             return True
+
+    # 2-contract non-spread series: assume exhaustive if suffixes look like team names
+    if len(suffixes) == 2 and all(len(x) <= 5 and x.isalpha() for x in suffixes):
+        return True
+
     return False
 
 

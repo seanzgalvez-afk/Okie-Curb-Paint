@@ -457,10 +457,19 @@ def main():
     new_orders = 0
     max_new_orders = 5  # max new orders per run
 
-    high_priority = [s for s in signals
-                     if s.get("priority", 9) <= 2
-                     or (s.get("priority", 9) == 3 and s.get("confidence") == "high")]
-    log(f"High-priority signals to evaluate: {len(high_priority)}")
+    # Consensus signals (multi-strategy agreement) get top priority
+    # Sort: consensus_count DESC, then priority ASC, then kelly_frac DESC
+    consensus_signals = sorted(
+        [s for s in signals if (s.get("consensus_count") or 0) >= 2],
+        key=lambda s: (-s.get("consensus_count", 0), s.get("priority", 9), -s.get("kelly_frac", 0))
+    )
+    high_priority = consensus_signals + [
+        s for s in signals
+        if s.get("ticker") not in {x.get("ticker") for x in consensus_signals}
+        and (s.get("priority", 9) <= 2
+             or (s.get("priority", 9) == 3 and s.get("confidence") == "high"))
+    ]
+    log(f"High-priority signals: {len(high_priority)} ({len(consensus_signals)} consensus)")
 
     # Pull current Kalshi markets for live prices + close times
     # Note: data.json has "clean_markets" (no _-prefixed fields), so use what's available
