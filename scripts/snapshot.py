@@ -1391,9 +1391,11 @@ def kelly_size(prob_pct, price_cents, maker=False, fraction=0.25):
     fraction: Kelly multiplier (default quarter-Kelly = 0.25)
     Returns: fraction of bankroll to risk (0.0-0.25), or 0 if no edge.
     """
-    # Minimum edge threshold: under 2 cent edge after fees = not worth trading
+    # Minimum edge threshold: positive edge after fees is required.
+    # Drop pre-fee guard to 0.5¢ so small but real edges survive.
+    # The post-fee net_edge_yes/no check below handles negative-EV cases.
     edge = prob_pct - price_cents  # in probability units (0-100)
-    if edge < 2:
+    if edge < 0.5:
         return 0.0
 
     p  = prob_pct / 100.0
@@ -1446,6 +1448,8 @@ def analyze_longshot_bias(markets):
             edge_prob = 100 - 7  # historical NO win rate ≈ 93-96%
             no_price  = 100 - yp
             kelly = kelly_size(edge_prob, no_price, maker=True)
+            if kelly <= 0:
+                continue
             signals.append({
                 "type":              "longshot_bias",
                 "direction":         "BUY NO",
@@ -1466,6 +1470,8 @@ def analyze_longshot_bias(markets):
             edge_prob = 100 - 12
             no_price  = 100 - yp
             kelly = kelly_size(edge_prob, no_price, maker=True)
+            if kelly <= 0:
+                continue
             signals.append({
                 "type":              "longshot_bias",
                 "direction":         "BUY NO",
@@ -2508,22 +2514,23 @@ def analyze_momentum_edge(markets):
             continue
 
         t_up = ticker.upper()
-        # Look at GAME, WINNER, 1H markets (binary outcomes) + SERIES/PLAYOFF
-        if not any(x in t_up for x in ["GAME", "WINNER", "1H", "SERIES", "PLAYOFF"]):
-            continue
+        # Kalshi markets are all binary; apply to all types.
+        # Sports markets: use 3¢ underdog boost (research-backed).
+        # Non-sports: use 2¢ boost (generic crowd-underpricing bias).
+        is_sports = any(x in t_up for x in ["GAME", "WINNER", "1H", "SERIES", "PLAYOFF"])
+        underdog_boost = 3 if is_sports else 2
 
-        # Require some volume (lowered for playoff markets)
+        # Require some volume
         if vol < 5:
             continue
 
-        # Tight spread required (< 8¢ — was 4¢, too strict for lower-volume markets)
-        if spread > 8:
+        # Tight spread required (< 10¢ to keep liquid markets only)
+        if spread > 10:
             continue
 
-        # Mid-range underdog: 20-35¢ YES in a binary game market
-        # Research: these markets slightly underprice the trailing team
+        # Mid-range underdog: 20-35¢ YES
         if 20 <= yp <= 35 and vol >= 5:
-            true_prob = yp + 3  # small structural edge
+            true_prob = yp + underdog_boost
             kelly = kelly_size(true_prob, yp, maker=True, fraction=0.25)
             if kelly > 0.001:
                 signals.append({
@@ -2532,7 +2539,7 @@ def analyze_momentum_edge(markets):
                     "ticker":            ticker,
                     "title":             title,
                     "price":             yp,
-                    "rationale":         f"Mid-range underdog at {yp}¢ in liquid market (vol={vol}). Research shows 20-35¢ game underdogs win ~3pts more than implied. Spread {spread}¢.",
+                    "rationale":         f"Mid-range underdog at {yp}¢ in liquid market (vol={vol}). Crowd tends to underprice outcomes in 20-35¢ range. Est edge ~{underdog_boost}pts. Spread {spread}¢.",
                     "confidence":        "low",
                     "kelly_frac":        kelly,
                     "fee_cents":         kalshi_fee(yp),
@@ -2555,7 +2562,7 @@ def analyze_momentum_edge(markets):
                     "ticker":            ticker,
                     "title":             title,
                     "price":             yp,
-                    "rationale":         f"Heavy favorite at {yp}¢ may be crowd-overpriced (vol={vol}). Crowd bias pushes favorites past fair value in range 70-82¢. Spread {spread}¢.",
+                    "rationale":         f"Heavy favorite at {yp}¢ may be crowd-overpriced (vol={vol}). Crowd bias pushes favorites past fair value at 72-82¢. Est edge ~2pts on NO. Spread {spread}¢.",
                     "confidence":        "low",
                     "kelly_frac":        kelly,
                     "fee_cents":         kalshi_fee(no_price),
@@ -3485,8 +3492,8 @@ def analyze_near_close_edge(markets):
         if not (1 <= days_left <= 7):
             continue
 
-        # Need decent volume (active market, not abandoned)
-        if vol < 50:
+        # Need some volume (active market, not abandoned)
+        if vol < 10:
             continue
 
         # Compute spread
@@ -3773,7 +3780,7 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
                 if close_dt.tzinfo is None:
                     close_dt = close_dt.replace(tzinfo=timezone.utc)
                 mins_left = (close_dt - now_utc).total_seconds() / 60
-                if mins_left < 120:
+                if mins_left < 60:
                     log(f"Strategy: skip {ticker} — closes in {mins_left:.0f} min")
                     continue
             except Exception:
@@ -3857,7 +3864,7 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
                 s["live_ask"] = ya
 
     log(f"Strategy engine: {len(live_signals)} live signals (filtered {len(all_signals)-len(live_signals)} expired)")
-    return live_signals[:20]  # top 20
+    return live_signals[:25]  # top 25
 
 def fetch_supplemental_markets():
     """
