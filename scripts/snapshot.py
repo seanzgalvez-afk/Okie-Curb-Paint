@@ -1875,14 +1875,21 @@ def analyze_volume_spikes(markets):
             # Direction: buy YES if price is above 50, NO if below
             direction = "BUY YES" if price >= 50 else "BUY NO"
             side_price = price if direction == "BUY YES" else (100 - price)
-            kelly = kelly_size(price, side_price, maker=True)
+            # Volume-adjusted probability: smart money increases implied certainty
+            # Each unit of vol_ratio above 2x adds ~3% probability boost (capped at +15%)
+            vol_boost = min(15, (vol_ratio - 2) * 3)
+            if direction == "BUY YES":
+                true_prob = min(95, price + vol_boost)
+            else:  # BUY NO — use NO probability
+                true_prob = min(95, (100 - price) + vol_boost)
+            kelly = kelly_size(true_prob, side_price, maker=True)
             signals.append({
                 "type":              "volume_spike",
                 "direction":         direction,
                 "ticker":            ticker,
                 "title":             title,
                 "price":             price,
-                "rationale":         f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning.",
+                "rationale":         f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning. True prob est: {true_prob:.0f}¢.",
                 "confidence":        "medium",
                 "kelly_frac":        kelly * 0.5,  # half-Kelly for momentum
                 "fee_cents":         kalshi_fee(side_price),
@@ -1895,45 +1902,52 @@ def analyze_volume_spikes(markets):
             })
         elif price > 85:
             # Heavy volume on near-certainty = high confidence follow
-            kelly = kelly_size(price, price, maker=True)
-            signals.append({
-                "type":              "volume_spike",
-                "direction":         "BUY YES",
-                "ticker":            ticker,
-                "title":             title,
-                "price":             price,
-                "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ favourite. Heavy confirmation.",
-                "confidence":        "high",
-                "kelly_frac":        kelly * 0.3,
-                "fee_cents":         kalshi_fee(price),
-                "priority":          2,
-                "volume":            vol,
-                "vol_ratio":         round(vol_ratio, 1),
-                "entry_limit_cents": max(1, price - 2),
-                "take_profit_cents": min(99, price + 5),
-                "stop_loss_pct":     0.35,
-            })
+            # Volume spike on >85¢ favourite: estimated true prob slightly higher
+            vol_boost = min(5, (vol_ratio - 2) * 1.5)  # small boost, already near ceiling
+            true_prob = min(98, price + vol_boost)
+            kelly = kelly_size(true_prob, price, maker=True)
+            if kelly > 0:
+                signals.append({
+                    "type":              "volume_spike",
+                    "direction":         "BUY YES",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             price,
+                    "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ favourite. Heavy confirmation. Est. true P={true_prob:.0f}¢.",
+                    "confidence":        "high",
+                    "kelly_frac":        kelly * 0.3,
+                    "fee_cents":         kalshi_fee(price),
+                    "priority":          2,
+                    "volume":            vol,
+                    "vol_ratio":         round(vol_ratio, 1),
+                    "entry_limit_cents": max(1, price - 2),
+                    "take_profit_cents": min(99, price + 5),
+                    "stop_loss_pct":     0.35,
+                })
         elif price < 15:
             # High volume longshot — longshot bias says fade, so BUY NO
-            no_price = 100 - price
-            kelly = kelly_size(no_price, no_price, maker=True)
-            signals.append({
-                "type":              "volume_spike",
-                "direction":         "BUY NO",
-                "ticker":            ticker,
-                "title":             title,
-                "price":             price,
-                "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade.",
-                "confidence":        "medium",
-                "kelly_frac":        kelly * 0.3,
-                "fee_cents":         kalshi_fee(no_price),
-                "priority":          2,
-                "volume":            vol,
-                "vol_ratio":         round(vol_ratio, 1),
-                "entry_limit_cents": max(1, no_price - 2),
-                "take_profit_cents": min(99, no_price + 3),
-                "stop_loss_pct":     0.35,
-            })
+            # Longshot bias: 10¢ contracts win ~4-7%, so NO probability ~93-96%
+            no_price  = 100 - price
+            true_prob = min(97, no_price + min(5, (vol_ratio - 2) * 1.5))  # bias + vol boost
+            kelly = kelly_size(true_prob, no_price, maker=True)
+            if kelly > 0:
+                signals.append({
+                    "type":              "volume_spike",
+                    "direction":         "BUY NO",
+                    "ticker":            ticker,
+                    "title":             title,
+                    "price":             price,
+                    "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade. NO true P≈{true_prob:.0f}¢.",
+                    "confidence":        "medium",
+                    "kelly_frac":        kelly * 0.3,
+                    "fee_cents":         kalshi_fee(no_price),
+                    "priority":          2,
+                    "volume":            vol,
+                    "vol_ratio":         round(vol_ratio, 1),
+                    "entry_limit_cents": max(1, no_price - 2),
+                    "take_profit_cents": min(99, no_price + 3),
+                    "stop_loss_pct":     0.35,
+                })
 
     return signals
 
