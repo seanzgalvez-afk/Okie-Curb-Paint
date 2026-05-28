@@ -1315,11 +1315,16 @@ function renderSignalHistory(history) {
   if (summEl) summEl.textContent = `avg ${avg} signals/run · latest ${latest.total} (${latest.high_conf} high-conf) · ${latest.markets_count || 0} mkts`;
 
   // Detect persistent signals (appear in ≥3 of last 5 runs)
+  // Use full tickers list when available (new format), else fall back to top_signals
   const recent = history.slice(-5);
   const tickerCounts = {};
   recent.forEach(h => {
-    (h.top_signals || []).forEach(s => {
-      const key = `${s.ticker}|${s.direction}`;
+    const sources = h.tickers  // new format: [[ticker, direction], ...]
+      ? h.tickers
+      : (h.top_signals || []).map(s => [s.ticker, s.direction]);
+    sources.forEach(([ticker, dir]) => {
+      if (!ticker) return;
+      const key = `${ticker}|${dir}`;
       tickerCounts[key] = (tickerCounts[key] || 0) + 1;
     });
   });
@@ -1360,7 +1365,8 @@ function renderSignalHistory(history) {
           momentum_edge:'Momentum',home_advantage:'Home Edge',series_momentum:'Series',
           volume_spike:'Vol Spike',espn_odds_edge:'ESPN',fear_greed_edge:'F&G',
           near_close_mispricing:'Near Close',price_trend:'Sharp $',worldcup_edge:'World Cup',
-          crypto_price_target:'₿ Price'};
+          crypto_price_target:'₿ Price',fred_edge:'FRED',metaculus_edge:'Metaculus',
+          weather_edge:'Weather',cross_platform_arb:'Cross Arb'};
         html += '<div class="mt-2"><div class="text-xs text-slate-500 mb-1">Strategy performance (last 10 runs):</div><div class="flex flex-wrap gap-1">';
         rows.slice(0, 8).forEach(r => {
           const kColor = r.avgKelly > 1 ? '#4ade80' : r.avgKelly > 0.3 ? '#fbbf24' : '#94a3b8';
@@ -1565,15 +1571,21 @@ function renderSignals(signals) {
       </div>`;
     }
     if (s.price_move != null) {
-      // price_trend signals — show the raw move
+      // price_trend signals — show the raw move + 1h trend if available
       const mv = s.price_move;
       const mvCol = mv > 0 ? '#4ade80' : '#f87171';
       const mvDir = mv > 0 ? '🔺' : '🔻';
+      const m1h = s.move_1h;
+      const sustained = m1h != null && Math.sign(m1h) === Math.sign(mv) && Math.abs(m1h) >= 5;
+      const trendStr = m1h != null
+        ? `<span class="ml-2 px-1.5 py-0.5 rounded text-xs" style="background:${sustained?'#14532d':'#1e293b'};color:${sustained?'#4ade80':'#64748b'};">1h: ${m1h > 0 ? '+' : ''}${m1h.toFixed(0)}¢${sustained ? ' sustained' : ''}</span>`
+        : '';
       extraRows += `<div class="mt-2 rounded p-2 text-xs" style="background:#0f172a;border:1px solid #334155;">
         <span class="text-slate-400">Sharp move: </span>
         <span style="color:${mvCol};font-weight:bold;">${mvDir} ${Math.abs(mv).toFixed(1)}¢</span>
         <span class="text-slate-500"> (${s.prev_price||'?'}¢ → ${s.curr_price||s.price||'?'}¢)</span>
-        <span class="text-slate-400 ml-2">Follow smart money entering this market</span>
+        ${trendStr}
+        <span class="text-slate-400 ml-2 block mt-1">Follow smart money entering this market</span>
       </div>`;
     }
     if (s.entry_limit_cents != null) {

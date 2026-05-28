@@ -248,7 +248,12 @@ def detect_line_movements(games, history):
 PRICE_HISTORY_FILE = Path(__file__).parent.parent / "data" / "price_history.json"
 
 def load_price_history():
-    """Load saved Kalshi market prices from last run."""
+    """
+    Load saved Kalshi market prices. Supports two formats:
+    - Legacy: {ticker: {price, ts}}
+    - Multi-horizon: {ticker: [{price, ts}, ...]}  (last 12 snapshots, newest last)
+    Returns the raw dict (callers handle both formats).
+    """
     if PRICE_HISTORY_FILE.exists():
         try:
             return json.loads(PRICE_HISTORY_FILE.read_text())
@@ -257,49 +262,95 @@ def load_price_history():
     return {}
 
 def save_price_history(markets_list):
-    """Save current Kalshi market prices for next run price comparison."""
+    """
+    Save current Kalshi market prices for inter-run comparison.
+    Maintains a rolling buffer of the last 12 snapshots per ticker (~1 hour).
+    """
     try:
-        snapshot = {}
+        existing = load_price_history()
         ts = datetime.now(timezone.utc).isoformat()
+        new_snapshot: dict = {}
         for m in markets_list:
             tk = m.get("ticker", "")
             yp = m.get("_yes_price") or m.get("yes_bid") or m.get("last_price")
-            if tk and yp is not None:
-                snapshot[tk] = {"price": yp, "ts": ts}
+            if not tk or yp is None:
+                continue
+            entry = {"price": yp, "ts": ts}
+            prev = existing.get(tk)
+            if prev is None:
+                new_snapshot[tk] = [entry]
+            elif isinstance(prev, list):
+                # Multi-horizon format: append and keep last 12
+                buf = prev[-11:] + [entry]
+                new_snapshot[tk] = buf
+            else:
+                # Legacy single-entry format → upgrade to list
+                new_snapshot[tk] = [prev, entry]
         PRICE_HISTORY_FILE.parent.mkdir(exist_ok=True)
-        PRICE_HISTORY_FILE.write_text(json.dumps(snapshot, indent=2))
-        log(f"Saved price history: {len(snapshot)} markets")
+        PRICE_HISTORY_FILE.write_text(json.dumps(new_snapshot, indent=2))
+        log(f"Saved price history: {len(new_snapshot)} markets (rolling 12-snapshot buffer)")
     except Exception as e:
         log(f"Price history save error: {e}")
 
+def _get_prev_entry(hist_val, lookback_steps: int = 1):
+    """
+    Extract a previous price entry from the history value.
+    hist_val may be a list (multi-horizon) or a dict (legacy single-entry).
+    lookback_steps=1 → most recent prior snapshot
+    lookback_steps=12 → ~1 hour ago (12 × 5-min runs)
+    """
+    if isinstance(hist_val, list) and hist_val:
+        idx = max(0, len(hist_val) - lookback_steps - 1)
+        return hist_val[idx]
+    elif isinstance(hist_val, dict):
+        return hist_val
+    return None
+
 def detect_price_movements(markets_list, history):
     """
-    Compare current Kalshi prices to previous snapshot.
-    Returns list of significant moves (≥4¢) as a price trend signal.
-    Kalshi prices rarely move in thin markets, so ≥4¢ is meaningful.
+    Compare current Kalshi prices to previous snapshot AND to 1-hour-ago snapshot.
+    Returns list of significant moves (≥4¢ over 5 min, OR ≥8¢ over 1 hour).
+    Includes `move_1h` field for the 1-hour trend when available.
     """
     moves = []
     for m in markets_list:
         tk = m.get("ticker", "")
         if not tk or tk not in history:
             continue
-        prev_price = history[tk].get("price")
+        hist_val   = history[tk]
         curr_price = m.get("_yes_price") or m.get("yes_bid") or m.get("last_price")
-        if prev_price is None or curr_price is None:
+        if curr_price is None:
+            continue
+
+        # Short-term: compare to last snapshot (5 min)
+        prev_entry = _get_prev_entry(hist_val, 1)
+        if prev_entry is None:
+            continue
+        prev_price = prev_entry.get("price")
+        if prev_price is None:
             continue
         move = curr_price - prev_price
-        if abs(move) >= 4:
+
+        # Long-term: compare to ~1-hour-ago snapshot (12 steps back)
+        old_entry  = _get_prev_entry(hist_val, 12)
+        move_1h    = None
+        if old_entry and old_entry.get("price") is not None and old_entry is not prev_entry:
+            move_1h = round(curr_price - old_entry["price"], 1)
+
+        # Emit if 5-min move ≥4¢ OR 1-hour move ≥8¢ (sustained trend)
+        if abs(move) >= 4 or (move_1h is not None and abs(move_1h) >= 8):
             moves.append({
                 "ticker":     tk,
                 "title":      m.get("title", ""),
                 "prev_price": prev_price,
                 "curr_price": curr_price,
                 "move":       round(move, 1),
+                "move_1h":    move_1h,
                 "direction":  "shortening" if move > 0 else "drifting",
-                "prev_ts":    history[tk].get("ts", ""),
+                "prev_ts":    prev_entry.get("ts", ""),
                 "category":   m.get("category", "Other"),
             })
-    moves.sort(key=lambda x: abs(x["move"]), reverse=True)
+    moves.sort(key=lambda x: abs(x.get("move_1h") or x["move"]), reverse=True)
     return moves[:15]
 
 def fetch_event_player_props(sport, event_id):
@@ -2971,33 +3022,44 @@ def analyze_price_trend(markets, price_moves):
         if vol < 2:
             continue
 
+        # 1-hour trend enrichment: if price also moved in same direction over 1h, boost confidence
+        move_1h    = move.get("move_1h")
+        sustained  = move_1h is not None and (move_1h > 0) == (move_size > 0) and abs(move_1h) >= 5
+
         # Determine direction and probability estimate
+        # Use 1h trend magnitude if available to better estimate true momentum
         abs_move = abs(move_size)
+        abs_1h   = abs(move_1h) if move_1h is not None else abs_move
         if move_size > 0:
             # Price went up — smart money bought YES
             direction  = "BUY YES"
             side_price = curr_price
-            true_prob  = min(95, curr_price + abs_move * 0.5)  # momentum extension
+            # If 1h trend confirms, extend probability estimate using 1h magnitude
+            true_prob  = min(95, curr_price + (abs_1h if sustained else abs_move) * 0.5)
         else:
             # Price went down — smart money bought NO
             direction  = "BUY NO"
             side_price = 100 - curr_price  # NO price
-            no_true_p  = max(5, curr_price - abs_move * 0.5)
+            no_true_p  = max(5, curr_price - (abs_1h if sustained else abs_move) * 0.5)
             true_prob  = 100 - no_true_p  # flip to NO side probability
 
         kelly = kelly_size(true_prob, side_price, maker=True, fraction=0.25)
         if kelly <= 0:
             continue
 
-        confidence = "high" if abs_move >= 10 else ("medium" if abs_move >= 6 else "low")
+        # Confidence: boost to "high" if 5-min move ≥10¢ OR sustained 1h trend
+        confidence = "high" if (abs_move >= 10 or sustained) else ("medium" if abs_move >= 6 else "low")
 
         if direction == "BUY YES":
             entry_lmt = max(1, int(curr_price - 2))   # buy YES 2¢ below YES ask
-            tp_cents  = min(99, int(curr_price + abs_move * 0.8))
+            tp_cents  = min(99, int(curr_price + (abs_1h if sustained else abs_move) * 0.8))
         else:
             entry_lmt = max(1, int(side_price - 2))   # buy NO 2¢ below NO ask
-            tp_cents  = min(99, int(side_price + abs_move * 0.8))
+            tp_cents  = min(99, int(side_price + (abs_1h if sustained else abs_move) * 0.8))
 
+        # Build rationale with 1h context
+        trend_str = f" | 1h trend: {move_1h:+.0f}¢ (sustained)" if sustained else (
+                    f" | 1h: {move_1h:+.0f}¢" if move_1h is not None else "")
         signals.append({
             "type":              "price_trend",
             "direction":         direction,
@@ -3006,11 +3068,12 @@ def analyze_price_trend(markets, price_moves):
             "price":             round(curr_price, 1),
             "prev_price":        round(prev_price, 1),
             "price_move":        round(move_size, 1),
-            "rationale":         f"Sharp move {move_size:+.0f}¢ ({prev_price:.0f}→{curr_price:.0f}¢) — follow smart money. Vol={vol}.",
+            "move_1h":           move_1h,
+            "rationale":         f"Sharp move {move_size:+.0f}¢ ({prev_price:.0f}→{curr_price:.0f}¢) — follow smart money. Vol={vol}.{trend_str}",
             "confidence":        confidence,
             "kelly_frac":        kelly,
             "fee_cents":         kalshi_fee(side_price),
-            "priority":          1 if abs_move >= 8 else 2,
+            "priority":          1 if (abs_move >= 8 or sustained) else 2,
             "entry_limit_cents": entry_lmt,
             "take_profit_cents": tp_cents,
             "stop_loss_pct":     0.3,
