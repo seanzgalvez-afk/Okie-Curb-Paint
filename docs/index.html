@@ -285,7 +285,7 @@
         <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 rounded-full px-2 py-0.5 font-mono" id="sig-count">–</span>
         <span class="text-xs font-normal text-slate-500 ml-1">— ranked by priority &amp; Kelly size</span>
       </h2>
-      <p class="text-xs text-slate-500 mb-3">15 research-backed strategies. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper than taker.</p>
+      <p class="text-xs text-slate-500 mb-3">16 research-backed strategies. Always use <strong class="text-amber-400">LIMIT orders</strong> — maker fees are 75% cheaper than taker.</p>
       <!-- Filter toolbar -->
       <div class="flex flex-wrap gap-2 mb-4 items-center" id="signals-filter-bar">
         <span class="text-xs text-slate-500 mr-1">Filter:</span>
@@ -366,6 +366,17 @@
       <p class="text-xs text-slate-500 mb-4">Same event priced differently across platforms. Buy the cheaper side, profit regardless of outcome.</p>
       <div id="arb-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
       <p id="arb-empty" class="hidden text-slate-500 text-sm mt-2">No cross-platform gaps detected right now. Gaps appear when platforms disagree on the same event.</p>
+    </section>
+
+    <!-- ── Live Positions ── -->
+    <section class="mb-10 hidden" id="live-positions-section">
+      <h2 class="text-lg font-semibold mb-1 flex items-center gap-2">
+        <span style="color:#22d3ee;">📂</span> Live Positions
+        <span class="text-xs font-normal text-slate-500 ml-1">— open Kalshi account positions</span>
+      </h2>
+      <p class="text-xs text-slate-500 mb-3">Current open positions from your Kalshi account. P&amp;L is estimated from live market prices.</p>
+      <div id="live-positions-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+      <p id="live-positions-empty" class="hidden text-slate-500 text-sm mt-2">No open positions.</p>
     </section>
 
     <!-- ── Demo Portfolio ── -->
@@ -607,6 +618,7 @@ function render(data) {
   renderFred(data.fred || {});
   renderCrossArb(data.cross_arb || []);
   renderDemoPortfolio(data.demo_portfolio || null);
+  renderLivePositions(data.positions || []);
   allMarkets = data.markets || [];
   renderTable();
   renderCharts(allMarkets);
@@ -1016,6 +1028,48 @@ function renderCrossArb(arb) {
           </a>
         </div>
       </div>`;
+  }).join('');
+}
+
+// ── Live Positions ────────────────────────────────────────────────────────────
+function renderLivePositions(positions) {
+  const section = document.getElementById('live-positions-section');
+  const grid    = document.getElementById('live-positions-grid');
+  const empty   = document.getElementById('live-positions-empty');
+  if (!section || !grid || !empty) return;
+  if (!positions || positions.length === 0) {
+    section.classList.add('hidden');
+    return;
+  }
+  section.classList.remove('hidden');
+  empty.classList.add('hidden');
+
+  let totalEstPnl = 0;
+  positions.forEach(p => {
+    totalEstPnl += (p.estimated_pnl_cents || p.unrealized_pnl || 0);
+  });
+
+  grid.innerHTML = positions.map(p => {
+    const isYes    = p.side === 'YES';
+    const pnl      = p.estimated_pnl_cents !== undefined ? p.estimated_pnl_cents : p.unrealized_pnl;
+    const pnlDollar = pnl !== null && pnl !== undefined ? (pnl / 100).toFixed(2) : null;
+    const pnlColor = pnl === null || pnl === undefined ? '#94a3b8' : (pnl >= 0 ? '#4ade80' : '#f87171');
+    const pnlStr  = pnlDollar !== null ? `<span style="color:${pnlColor};">${pnl >= 0 ? '+' : ''}$${Math.abs(pnlDollar)}</span>` : '';
+    const exp     = p.market_exposure ? `$${(p.market_exposure/100).toFixed(2)}` : '—';
+    const curr    = p.current_price !== undefined ? `${p.current_price}¢` : '—';
+    const kalshiUrl = `https://kalshi.com/markets/${(p.ticker||'').split('-')[0]}`;
+    return `<div class="rounded-lg p-3 card border border-slate-700 text-xs flex flex-col gap-1">
+      <div class="flex justify-between items-center">
+        <a href="${kalshiUrl}" target="_blank" rel="noopener" class="font-mono text-cyan-400 hover:underline text-xs truncate" title="${escHtml(p.ticker||'')}">${escHtml(p.ticker||'')}</a>
+        <span class="px-1.5 py-0.5 rounded text-xs font-bold ml-2 ${isYes ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300'}">${p.side}</span>
+      </div>
+      <div class="flex justify-between text-slate-400">
+        <span>Qty: <span class="text-slate-200">${p.qty}</span></span>
+        <span>Exp: <span class="text-slate-200">${exp}</span></span>
+        <span>Now: <span class="text-slate-200">${curr}</span></span>
+        ${pnlStr ? `<span>PnL: ${pnlStr}</span>` : ''}
+      </div>
+    </div>`;
   }).join('');
 }
 
