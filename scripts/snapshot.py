@@ -3192,14 +3192,14 @@ def analyze_near_close_edge(markets):
         # Slight bias toward favorites (markets are usually fair, but if
         # an event is nearly resolved, often price should be higher/lower)
         if 20 <= yp <= 40:
-            # Possible underpricing of YES — flag for review
+            # Possible underpricing of YES — review needed before trading
             signals.append({
                 "type":              "near_close_mispricing",
-                "direction":         "BUY YES (review)",
+                "direction":         "BUY YES",
                 "ticker":            ticker,
                 "title":             title,
                 "price":             yp,
-                "rationale":         f"Near close ({days_left:.1f}d) liquid market at {yp}¢. Check for new information. Spread={spread}¢. Urgency={urgency}.",
+                "rationale":         f"Near close ({days_left:.1f}d) liquid underdog at {yp}¢ — verify no adverse news. Spread={spread}¢. Urgency={urgency}.",
                 "confidence":        "low",
                 "kelly_frac":        0.005,  # very small position until edge confirmed
                 "fee_cents":         kalshi_fee(yp),
@@ -3210,14 +3210,14 @@ def analyze_near_close_edge(markets):
                 "stop_loss_pct":     0.4,
             })
         elif 60 <= yp <= 80:
-            # Possible underpricing of YES favorite
+            # Possible underpricing of YES favorite — check if outcome determined
             signals.append({
                 "type":              "near_close_mispricing",
-                "direction":         "BUY YES (review)",
+                "direction":         "BUY YES",
                 "ticker":            ticker,
                 "title":             title,
                 "price":             yp,
-                "rationale":         f"Near close ({days_left:.1f}d) favorite at {yp}¢. Check if outcome already determined. Spread={spread}¢. Urgency={urgency}.",
+                "rationale":         f"Near close ({days_left:.1f}d) favorite at {yp}¢ — check if outcome already determined. Spread={spread}¢. Urgency={urgency}.",
                 "confidence":        "low",
                 "kelly_frac":        0.005,
                 "fee_cents":         kalshi_fee(yp),
@@ -3742,11 +3742,23 @@ try:
     positions = (pos or {}).get("market_positions", []) or []
     lines.append("\n## Open positions: " + ("none" if not positions else ""))
     for p in positions:
-        qty = p.get("position", 0)
-        lines.append(f"  {p.get('ticker','')}  {'YES' if qty>0 else 'NO'}  qty={abs(qty)}")
-        positions_list.append({"ticker": p.get("ticker", ""),
-                                "side": "YES" if qty > 0 else "NO",
-                                "qty": abs(qty)})
+        qty      = p.get("position", 0)
+        side     = "YES" if qty > 0 else "NO"
+        exposure = p.get("market_exposure", 0) or 0
+        unreal   = p.get("unrealized_pnl")
+        fees     = p.get("fees_paid", 0) or 0
+        realized = p.get("realized_pnl", 0) or 0
+        pnl_str  = f"  uPnL=${unreal/100:+.2f}" if unreal is not None else ""
+        lines.append(f"  {p.get('ticker',''):42}  {side}  qty={abs(qty):>4}  exp=${exposure/100:.2f}{pnl_str}")
+        positions_list.append({
+            "ticker":          p.get("ticker", ""),
+            "side":            side,
+            "qty":             abs(qty),
+            "market_exposure": exposure,
+            "unrealized_pnl":  unreal,
+            "realized_pnl":    realized,
+            "fees_paid":       fees,
+        })
 except Exception:
     lines.append("\n## Positions: error")
 
@@ -3992,7 +4004,7 @@ else:
 
     except Exception as e:
         lines.append(f"  ERROR: {e}")
-    traceback.print_exc(file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
 
 # NOTE: snapshot text is assembled AFTER strategy engine runs (see below)
 # so that strategy signals are included in data/snapshot.txt
@@ -4233,6 +4245,39 @@ try:
                             "reason": reason, "edge_score": score})
 except Exception as e:
     log(f"Best picks re-score error: {e}")
+
+# ── Enrich positions with current market price for P&L estimation ─────────────
+try:
+    mkt_price_idx = {m["ticker"]: m for m in markets_list}
+    total_unreal_cents = 0
+    for p in positions_list:
+        tk = p.get("ticker", "")
+        mkt = mkt_price_idx.get(tk)
+        if not mkt:
+            continue
+        curr_price = mkt.get("_yes_price")
+        if curr_price is None:
+            continue
+        p["current_price"] = curr_price
+        # Estimate unrealized P&L if API didn't return it
+        if p.get("unrealized_pnl") is None and p.get("market_exposure") is not None:
+            qty  = p["qty"]
+            side = p["side"]
+            # Approximate: exposure ≈ entry_cost; current value ≈ qty × curr_price
+            # for YES: profit = qty × (curr_price - entry_avg); entry_avg ≈ exposure/qty
+            exp = p.get("market_exposure", 0)
+            if exp and qty:
+                entry_avg = exp / qty
+                if side == "YES":
+                    estimated_pnl = round((curr_price - entry_avg) * qty)
+                else:
+                    estimated_pnl = round(((100 - curr_price) - entry_avg) * qty)
+                p["estimated_pnl_cents"] = estimated_pnl
+                total_unreal_cents += estimated_pnl
+    if positions_list:
+        log(f"Position P&L: est. unrealized ${total_unreal_cents/100:+.2f}")
+except Exception as e:
+    log(f"Position P&L enrichment error: {e}")
 
 # ── Write JSON for dashboard ──────────────────────────────────────────────────
 
