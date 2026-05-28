@@ -1468,7 +1468,10 @@ def analyze_longshot_bias(markets):
                     "stop_loss_pct":     0.3,
                 })
 
-    return signals
+    # Sort by kelly_frac desc and cap to avoid flooding the signal list
+    signals.sort(key=lambda x: -x.get("kelly_frac", 0))
+    log(f"Longshot bias: {len(signals)} signals (capped to 6)")
+    return signals[:6]
 
 def _is_exhaustive_series(series, suffixes):
     """
@@ -3437,8 +3440,12 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         else:
             s["quality_score"] = 0.5  # unknown liquidity
 
-    # Sort by priority (1=highest), then by kelly_frac * quality_score descending
-    live_signals.sort(key=lambda x: (x.get("priority", 9), -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))))
+    # Sort by: priority (1=highest), then consensus count (more=better), then kelly×quality
+    live_signals.sort(key=lambda x: (
+        x.get("priority", 9),
+        -x.get("consensus_count", 0),
+        -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))
+    ))
 
     # Enrich each signal with kelly_pct and close_time from market lookup
     for i, s in enumerate(live_signals):
