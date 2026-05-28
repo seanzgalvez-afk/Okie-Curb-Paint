@@ -316,15 +316,23 @@ def check_settlements(state):
             # Stop-loss check: if market moved badly, cancel and close
             sl_pct = order.get("stop_loss_pct")
             if sl_pct and order.get("last_known_price") and order.get("price_cents"):
-                entry = order["price_cents"]
-                current = order["last_known_price"]
-                loss_pct = (entry - current) / entry if order.get("side") == "yes" else (current - (100 - entry)) / (100 - entry)
+                entry   = order["price_cents"]   # YES price for YES orders, NO price for NO orders
+                yes_mid = order["last_known_price"]  # always YES mid from get_market_info
+                if order.get("side") == "yes":
+                    # YES position: loss when YES price falls below entry
+                    loss_pct = (entry - yes_mid) / entry if entry > 0 else 0
+                    pnl_cents = int((yes_mid - entry) * order.get("quantity", 1))
+                else:
+                    # NO position: entry is NO price, current NO = 100 - yes_mid
+                    no_current = 100 - yes_mid
+                    loss_pct = (entry - no_current) / entry if entry > 0 else 0
+                    pnl_cents = int((no_current - entry) * order.get("quantity", 1))
                 if loss_pct > sl_pct:
-                    log(f"  Stop-loss triggered: {order['ticker']} loss={loss_pct:.0%} > {sl_pct:.0%} limit")
+                    log(f"  Stop-loss triggered: {order['ticker']} {order.get('side','yes').upper()} loss={loss_pct:.0%} > {sl_pct:.0%} limit")
                     cancel_order(oid)
                     order["status"] = "stop_loss_triggered"
                     order["closed_at"] = datetime.now(timezone.utc).isoformat()
-                    order["pnl_cents"] = int((current - entry) * order.get("quantity", 1))
+                    order["pnl_cents"] = pnl_cents
                     state["closed"].append(order)
                     continue
 
