@@ -75,34 +75,61 @@ except Exception as e:
     sys.exit(0)
 
 alerts = []
+sent_tickers = set()  # avoid duplicate alerts for same ticker
+
+# 0) Consensus signals (multiple strategies agree — highest priority)
+sigs = data.get("strategy_signals", [])
+consensus = [s for s in sigs if (s.get("consensus_count") or 0) >= 2]
+for s in consensus[:2]:
+    ticker = s.get("ticker", "")
+    if ticker in sent_tickers: continue
+    sent_tickers.add(ticker)
+    n = s.get("consensus_count", 2)
+    types_str = "/".join((s.get("consensus_types") or [])[:3])
+    kelly_pct = s.get("kelly_pct") or round((s.get("kelly_frac") or 0) * 100, 1)
+    days = s.get("days_until_close")
+    days_str = f" | {days:.0f}d left" if days is not None else ""
+    lb = s.get("live_bid")
+    la = s.get("live_ask")
+    live_str = f" | Live {lb}↔{la}c" if lb and la else ""
+    alerts.append({
+        "title": f"🤝 Consensus Signal ({n} strategies)",
+        "priority": "urgent",
+        "tags": "white_check_mark",
+        "body": f"{s.get('direction','?')} {ticker[:22]} @ {s.get('price',0)}c | Kelly {kelly_pct:.1f}% | [{types_str}]{days_str}{live_str} | {s.get('rationale','')[:60]}",
+    })
 
 # 1) Vegas edges ≥10c
 edges = data.get("edges", [])
 big_edges = [e for e in edges if abs(e.get("gap", 0)) >= 10]
 if big_edges:
     e = big_edges[0]
-    alerts.append({
-        "title": "🚨 Vegas Edge Alert",
-        "priority": "high",
-        "tags": "chart_increasing",
-        "body": f"{e['direction']} {e['ticker'][:20]} | Kalshi {e['kalshi_price']}c vs Vegas {e['vegas_prob']}c | Gap: {e['gap']:+.0f}c",
-    })
+    if e.get("ticker","") not in sent_tickers:
+        sent_tickers.add(e.get("ticker",""))
+        alerts.append({
+            "title": "🚨 Vegas Edge Alert",
+            "priority": "high",
+            "tags": "chart_increasing",
+            "body": f"{e['direction']} {e['ticker'][:20]} | Kalshi {e['kalshi_price']}c vs Vegas {e['vegas_prob']}c | Gap: {e['gap']:+.0f}c",
+        })
 
-# 2) High-confidence strategy signals
-sigs = data.get("strategy_signals", [])
-high = [s for s in sigs if s.get("confidence") == "high"]
+# 2) High-confidence strategy signals (not already in consensus)
+high = [s for s in sigs if s.get("confidence") == "high" and s.get("ticker","") not in sent_tickers]
 if high:
     s = high[0]
+    sent_tickers.add(s.get("ticker",""))
     sig_type = s.get("type") or s.get("signal_type") or "?"
     kelly_pct = s.get("kelly_pct") or round((s.get("kelly_frac") or 0) * 100, 1)
     entry = s.get("entry_limit_cents")
     tp = s.get("take_profit_cents")
     entry_str = f" | Entry {entry}c→TP {tp}c" if entry and tp else ""
+    days = s.get("days_until_close")
+    days_str = f" | {days:.0f}d" if days is not None else ""
     alerts.append({
         "title": "⚡ Strategy Signal",
         "priority": "high",
         "tags": "zap",
-        "body": f"{s.get('direction','?')} {s.get('ticker','')[:20]} | {sig_type} | Kelly {kelly_pct:.1f}%{entry_str} | {s.get('rationale','')[:60]}",
+        "body": f"{s.get('direction','?')} {s.get('ticker','')[:20]} | {sig_type} | Kelly {kelly_pct:.1f}%{entry_str}{days_str} | {s.get('rationale','')[:50]}",
     })
 
 # 3) Sharp line movements ≥5 pts
@@ -115,6 +142,20 @@ if big_moves:
         "priority": "default",
         "tags": "eyes",
         "body": f"{m['team']} ({m.get('sport','')}) {m['direction']} {m['prob_move']:+.1f}pts | {m['away']} @ {m['home']}",
+    })
+
+# 4) Urgent near-close signals (closing within 24h)
+near_close = [s for s in sigs if s.get("type") == "near_close_mispricing"
+              and (s.get("days_until_close") or 99) <= 1
+              and s.get("ticker","") not in sent_tickers]
+if near_close:
+    s = near_close[0]
+    sent_tickers.add(s.get("ticker",""))
+    alerts.append({
+        "title": "⏰ Expiring Market Opportunity",
+        "priority": "default",
+        "tags": "alarm_clock",
+        "body": f"{s.get('direction','?')} {s.get('ticker','')[:22]} @ {s.get('price',0)}c | Closes in <24h | {s.get('rationale','')[:70]}",
     })
 
 if not alerts:

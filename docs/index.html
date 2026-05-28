@@ -1356,12 +1356,24 @@ function renderSignals(signals) {
 
   const highConf = signals.filter(s => s.confidence === 'high').length;
   const topKelly = signals.reduce((max, s) => Math.max(max, s.kelly_frac||0), 0);
+  const totalKelly = signals.reduce((sum, s) => sum + (s.kelly_frac||0), 0);
+  const consensusSigs = signals.filter(s => (s.consensus_count||0) >= 2);
+  // Total portfolio risk if ALL signals taken simultaneously
+  const totalKellyPct = (totalKelly * 100).toFixed(1);
+  const riskColor = totalKelly > 0.5 ? '#f87171' : totalKelly > 0.2 ? '#fbbf24' : '#4ade80';
+  const urgentSigs = signals.filter(s => s.days_until_close != null && s.days_until_close <= 2);
 
   const summaryHtml = `<div class="mb-4 flex flex-wrap gap-2 items-center">
     <span class="text-slate-400 text-sm">${signals.length} signals</span>
     ${highConf > 0 ? `<span class="px-2 py-1 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/40">✓ ${highConf} HIGH CONF</span>` : ''}
+    ${consensusSigs.length > 0 ? `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:#fbbf2422;color:#fbbf24;border:1px solid #fbbf2444;">🤝 ${consensusSigs.length} consensus</span>` : ''}
+    ${urgentSigs.length > 0 ? `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:#f8717122;color:#f87171;border:1px solid #f8717144;">⏰ ${urgentSigs.length} closing ≤2d</span>` : ''}
     ${summaryBar}
-    ${topKelly > 0.02 ? `<span class="ml-auto text-xs text-slate-400">Top Kelly: ${(topKelly*100).toFixed(1)}%</span>` : ''}
+    <div class="ml-auto flex items-center gap-2 text-xs">
+      <span class="text-slate-500">Total Kelly:</span>
+      <span style="color:${riskColor};font-weight:bold;">${totalKellyPct}%</span>
+      ${topKelly > 0.02 ? `<span class="text-slate-500">· Top: ${(topKelly*100).toFixed(1)}%</span>` : ''}
+    </div>
   </div>`;
 
   const typeColors = {
