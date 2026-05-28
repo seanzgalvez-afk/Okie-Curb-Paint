@@ -162,14 +162,14 @@
 
     <!-- ── Quick Nav ── -->
     <nav class="mb-6 flex flex-wrap gap-2 text-xs font-semibold">
-      <a href="#signals-section"         class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition">⚡ Signals <span id="nav-sig-count"></span></a>
-      <a href="#price-movements-section" class="px-3 py-1 rounded-full bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition">💸 Price Moves</a>
-      <a href="#line-movements-section"  class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">📈 Vegas Lines</a>
-      <a href="#arb-section"             class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">🔄 Cross-Arb</a>
-      <a href="#econ-section"            class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">📊 Economics</a>
-      <a href="#demo-section"            class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">🤖 Demo Bot</a>
-      <a href="#signals-section" onclick="document.getElementById('market-search').value='WORLDCUP'; filterMarkets('WORLDCUP');"
-         class="px-3 py-1 rounded-full bg-green-500/15 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition">⚽ World Cup</a>
+      <a href="#top-plays-section"          class="px-3 py-1 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition">🎯 Top 10 Plays</a>
+      <a href="#soccer-section"             class="px-3 py-1 rounded-full bg-green-500/15 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition">⚽ Soccer <span id="nav-soccer-count"></span></a>
+      <a href="#signals-section"            class="px-3 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 hover:bg-amber-500/30 transition">⚡ Signals <span id="nav-sig-count"></span></a>
+      <a href="#price-movements-section"    class="px-3 py-1 rounded-full bg-yellow-500/15 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition">💸 Price Moves</a>
+      <a href="#line-movements-section"     class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">📈 Vegas Lines</a>
+      <a href="#arb-section"                class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">🔄 Cross-Arb</a>
+      <a href="#econ-section"               class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">📊 Economics</a>
+      <a href="#demo-section"               class="px-3 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600 hover:bg-slate-600 transition">🤖 Demo Bot</a>
     </nav>
 
     <!-- ── World Cup 2026 Countdown Banner ── -->
@@ -781,8 +781,13 @@ function renderTopPlays(plays, signals) {
   const empty = document.getElementById('top-plays-empty');
   if (!grid) return;
   if (!plays.length) {
-    grid.innerHTML = '';
-    if (empty) { empty.classList.remove('hidden'); empty.textContent = 'No data yet — check back after the next refresh.'; }
+    grid.innerHTML = `
+      <div class="col-span-full rounded-xl border border-slate-700 p-6 text-center" style="background:#1e293b;">
+        <p class="text-2xl mb-2">🎯</p>
+        <p class="text-slate-300 font-semibold mb-1">Top plays loading…</p>
+        <p class="text-slate-500 text-xs">GitHub Actions fetches live Kalshi data every 5 minutes. Check back shortly.</p>
+      </div>`;
+    if (empty) empty.classList.add('hidden');
     return;
   }
   if (empty) empty.classList.add('hidden');
@@ -828,10 +833,17 @@ function renderSoccerMarkets(soccerMkts, signals) {
   if (!grid) return;
 
   if (countEl) countEl.textContent = soccerMkts.length || '–';
+  const navCount = document.getElementById('nav-soccer-count');
+  if (navCount && soccerMkts.length) navCount.textContent = `(${soccerMkts.length})`;
 
   if (!soccerMkts.length) {
-    grid.innerHTML = '';
-    if (empty) empty.classList.remove('hidden');
+    grid.innerHTML = `
+      <div class="col-span-full rounded-xl border border-slate-700 p-6 text-center" style="background:#1e293b;">
+        <p class="text-2xl mb-2">⚽</p>
+        <p class="text-slate-300 font-semibold mb-1">Soccer markets loading…</p>
+        <p class="text-slate-500 text-xs">World Cup 2026, MLS, Champions League &amp; more — populates after next GitHub Actions run.</p>
+      </div>`;
+    if (empty) empty.classList.add('hidden');
     return;
   }
   if (empty) empty.classList.add('hidden');
