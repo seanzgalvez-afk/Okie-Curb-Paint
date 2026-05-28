@@ -1096,6 +1096,7 @@ FRED_BASE    = "https://api.stlouisfed.org/fred"
 
 FRED_SERIES = {
     "cpi":          ("CPIAUCSL", "CPI Inflation",        "%"),
+    "pce":          ("PCEPI",    "PCE Inflation",        "%"),   # Fed's preferred measure
     "unemployment": ("UNRATE",   "Unemployment Rate",    "%"),
     "fed_rate":     ("FEDFUNDS", "Fed Funds Rate",       "%"),
     "treasury_10y": ("DGS10",    "10-Year Treasury",     "%"),
@@ -1103,6 +1104,7 @@ FRED_SERIES = {
     "payrolls":     ("PAYEMS",   "Nonfarm Payrolls",     "K"),
     "gdp":          ("GDPC1",    "Real GDP",             "B"),
     "sentiment":    ("UMCSENT",  "Consumer Sentiment",   ""),
+    "vix":          ("VIXCLS",   "VIX Volatility",       ""),   # equity market fear gauge
 }
 
 def fetch_fred_data():
@@ -2265,10 +2267,12 @@ def analyze_fred_edge(markets, fred_data):
 
     fed_rate    = get_val("fed_rate")      # FEDFUNDS: e.g. 4.33% in Jan 2025
     cpi         = get_val("cpi")           # CPIAUCSL: level e.g. 319.1 in Dec 2024
+    pce         = get_val("pce")           # PCEPI: Fed's preferred inflation measure, level
     unrate      = get_val("unemployment")  # UNRATE: e.g. 4.1%
     t10y        = get_val("treasury_10y")  # DGS10: e.g. 4.60%
     t2y         = get_val("treasury_2y")   # DGS2: e.g. 4.25%
     payrolls    = get_val("payrolls")      # PAYEMS in thousands, e.g. 159,400
+    vix         = get_val("vix")           # VIX: equity vol index, e.g. 18.5
 
     import re as _re
 
@@ -2415,7 +2419,54 @@ def analyze_fred_edge(markets, fred_data):
                         "stop_loss_pct":     0.35,
                     })
 
-    log(f"FRED edge: {len(signals)} signals (fed={fed_rate}, cpi={cpi}, unrate={unrate}, 10y={t10y})")
+        # ── PCE inflation markets ─────────────────────────────────────────────
+        # PCEPI level ~100 for 2012 base; Dec 2024 ≈119. Annual PCE = compare to ~year ago.
+        is_pce_mkt = any(x in title for x in ("PCE", "PERSONAL CONSUMPTION", "CORE INFLATION"))
+
+        if is_pce_mkt and pce is not None:
+            # PCE > 111 = well above 2% annual since 2012 base ≈100+2%/yr for 12yr ≈126
+            # Simpler: if PCE exists and market asks about above-target inflation
+            if any(x in title for x in ("ABOVE", "EXCEED", "OVER")) and yp < 45 and pce > 108:
+                signals.append({
+                    "type":              "fred_edge",
+                    "direction":         "BUY YES",
+                    "ticker":            m.get("ticker", ""),
+                    "title":             m.get("title", ""),
+                    "price":             yp,
+                    "rationale":         f"FRED: PCE = {pce:.1f} (above pre-2021 trend). Above-target inflation market at {yp}¢ looks underpriced. PCE is Fed's preferred measure.",
+                    "confidence":        "low",
+                    "kelly_frac":        0.01,
+                    "fee_cents":         kalshi_fee(yp),
+                    "priority":          3,
+                    "entry_limit_cents": max(1, yp - 2),
+                    "take_profit_cents": min(99, yp + 6),
+                    "stop_loss_pct":     0.4,
+                })
+
+        # ── VIX / equity volatility markets ──────────────────────────────────
+        is_vix_mkt = "VIX" in ticker or "VOLATILITY" in title or "S&P" in title
+        if is_vix_mkt and vix is not None:
+            vix_thresh_match = _re.search(r"(?:ABOVE|OVER|EXCEED)\s+([\d.]+)", title)
+            if vix_thresh_match:
+                thresh = float(vix_thresh_match.group(1))
+                if vix > thresh + 2 and yp < 55:
+                    signals.append({
+                        "type":              "fred_edge",
+                        "direction":         "BUY YES",
+                        "ticker":            m.get("ticker", ""),
+                        "title":             m.get("title", ""),
+                        "price":             yp,
+                        "rationale":         f"FRED: VIX = {vix:.1f}, above threshold {thresh}. Volatility market at {yp}¢ looks underpriced.",
+                        "confidence":        "medium" if vix > thresh + 5 else "low",
+                        "kelly_frac":        0.015,
+                        "fee_cents":         kalshi_fee(yp),
+                        "priority":          2,
+                        "entry_limit_cents": max(1, yp - 2),
+                        "take_profit_cents": min(99, yp + 8),
+                        "stop_loss_pct":     0.35,
+                    })
+
+    log(f"FRED edge: {len(signals)} signals (fed={fed_rate}, cpi={cpi}, pce={pce}, vix={vix}, unrate={unrate}, 10y={t10y})")
     return signals[:5]
 
 
@@ -3723,10 +3774,11 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         else:
             s["quality_score"] = 0.5  # unknown liquidity
 
-    # Sort by: priority (1=highest), then consensus count (more=better), then kelly×quality
+    # Sort by: priority (1=highest), then consensus, persistence, then kelly×quality
     live_signals.sort(key=lambda x: (
         x.get("priority", 9),
         -x.get("consensus_count", 0),
+        -x.get("persistence_count", 0),
         -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))
     ))
 

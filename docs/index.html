@@ -301,6 +301,9 @@
         <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
           data-filter="consensus" style="background:#818cf822;color:#818cf8;border-color:#818cf844;"
           onclick="filterSignals('consensus')">🤝 Consensus</button>
+        <button class="sig-filter-btn text-xs px-3 py-1 rounded-full border transition font-semibold"
+          data-filter="persistent" style="background:#7c3aed22;color:#a78bfa;border-color:#7c3aed44;"
+          onclick="filterSignals('persistent')">🔁 Persistent</button>
         <span id="sig-ev-display" class="ml-auto text-xs text-slate-500"></span>
       </div>
       <div id="signals-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
@@ -1714,6 +1717,8 @@ function filterSignals(filter) {
     filtered = signals.filter(s => s.confidence === 'high' || s.confidence === 'medium');
   } else if (filter === 'consensus') {
     filtered = signals.filter(s => s.consensus_count >= 2);
+  } else if (filter === 'persistent') {
+    filtered = signals.filter(s => (s.persistence_count || 0) >= 3);
   }
 
   if (filtered.length === 0) {
