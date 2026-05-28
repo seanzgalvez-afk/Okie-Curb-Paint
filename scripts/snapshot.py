@@ -3496,8 +3496,6 @@ def fetch_supplemental_markets():
         {"event_ticker": "KXCPI",       "limit": 10},
         {"event_ticker": "KXJOBS",      "limit": 10},
         {"event_ticker": "KXGDP",       "limit": 5},
-        # ── World Cup 2026 ──
-        {"event_ticker": "KXMENWORLDCUP", "limit": 20},
         # ── Crypto ──
         {"event_ticker": "KXBTCD",      "limit": 5},  # daily BTC
         {"event_ticker": "KXETHD",      "limit": 5},  # daily ETH

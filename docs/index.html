@@ -1304,11 +1304,13 @@ function renderSignals(signals) {
   const summaryTypeColors = {bundle_arb:'#22c55e',vegas_divergence:'#06b6d4',weather_edge:'#a855f7',
     cross_platform_arb:'#f59e0b',longshot_bias:'#ef4444',volume_spike:'#f97316',
     espn_odds_edge:'#3b82f6',fear_greed_edge:'#e879f9',fred_edge:'#84cc16',momentum_edge:'#f43f5e',
-    metaculus_edge:'#818cf8',home_advantage:'#34d399',series_momentum:'#f59e0b',price_trend:'#facc15'};
+    metaculus_edge:'#818cf8',home_advantage:'#34d399',series_momentum:'#f59e0b',price_trend:'#facc15',
+    near_close_mispricing:'#fb7185'};
   const summaryTypeLabels = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',weather_edge:'Weather',
     cross_platform_arb:'Cross-Plat',longshot_bias:'Longshot',volume_spike:'Volume',
     espn_odds_edge:'ESPN',fear_greed_edge:'Fear/Greed',fred_edge:'FRED',momentum_edge:'Momentum',
-    metaculus_edge:'Metaculus',home_advantage:'Home Adv',series_momentum:'Series',price_trend:'Sharp $'};
+    metaculus_edge:'Metaculus',home_advantage:'Home Adv',series_momentum:'Series',price_trend:'Sharp $',
+    near_close_mispricing:'Near Close'};
 
   const summaryBar = Object.entries(typeCounts).map(([type, count]) =>
     `<span class="px-2 py-1 rounded-full text-xs font-bold" style="background:${summaryTypeColors[type]||'#94a3b8'}22;color:${summaryTypeColors[type]||'#94a3b8'};border:1px solid ${summaryTypeColors[type]||'#94a3b8'}44">${summaryTypeLabels[type]||type} ×${count}</span>`
@@ -1340,6 +1342,7 @@ function renderSignals(signals) {
     series_momentum:   '#fb923c',  // orange
     price_trend:       '#facc15',  // yellow (sharp money = gold)
     worldcup_edge:     '#4ade80',  // bright green (soccer pitch)
+    near_close_mispricing: '#fb7185',  // rose-red (urgency)
   };
   const typeLabels = {
     bundle_arb:        '🔒 Bundle Arb',
@@ -1357,6 +1360,7 @@ function renderSignals(signals) {
     series_momentum:   '🏆 Series',
     price_trend:       '💸 Sharp $',
     worldcup_edge:     '⚽ World Cup',
+    near_close_mispricing: '⏰ Near Close',
   };
   const confBadge = {
     high:   'bg-green-900 text-green-300',
@@ -1425,6 +1429,21 @@ function renderSignals(signals) {
       if (s.volume > 0) {
         extraRows += `<div class="mt-1 text-xs text-slate-500">📦 Volume: <strong class="text-slate-300">${s.volume.toLocaleString()}</strong> contracts</div>`;
       }
+    }
+    if (s.live_bid != null || s.live_ask != null) {
+      const liveBid = s.live_bid != null ? `${s.live_bid}¢` : '—';
+      const liveAsk = s.live_ask != null ? `${s.live_ask}¢` : '—';
+      const liveNoBid = s.live_no_bid != null ? `${s.live_no_bid}¢` : null;
+      const spreadC = (s.live_bid != null && s.live_ask != null) ? s.live_ask - s.live_bid : null;
+      const spreadStr = spreadC != null ? ` spread ${spreadC}¢` : '';
+      const noStr = liveNoBid ? ` · NO bid ${liveNoBid}` : '';
+      extraRows += `<div class="mt-1 text-xs text-slate-400">📈 Live: YES <strong class="text-cyan-300">${liveBid}↔${liveAsk}</strong>${noStr}<span class="text-slate-600">${spreadStr}</span></div>`;
+    }
+    if (s.days_until_close != null) {
+      const d = s.days_until_close;
+      const urgCol = d <= 1 ? '#f87171' : d <= 3 ? '#fbbf24' : d <= 7 ? '#fb923c' : '#64748b';
+      const urgLabel = d <= 1 ? '🔴 CLOSING TOMORROW' : d <= 3 ? '🟠 closing soon' : `${d.toFixed(0)}d remaining`;
+      extraRows += `<div class="mt-1 text-xs" style="color:${urgCol};">⏱ ${urgLabel}</div>`;
     }
     if (s.price_move != null) {
       // price_trend signals — show the raw move
