@@ -2958,14 +2958,16 @@ def analyze_series_momentum_v2(markets, playoff_series):
 
             # Leader is underpriced: buy YES on leader market
             if gap > 0:
-                direction = "BUY YES"
+                direction  = "BUY YES"
                 side_price = yp
+                side_prob  = hist_prob          # YES win probability
             else:
                 # Leader is overpriced: buy NO on leader (= buy YES on trailer)
                 direction  = "BUY NO"
                 side_price = 100 - yp
+                side_prob  = 100 - hist_prob   # NO win probability (trailer wins)
 
-            kelly = kelly_size(hist_prob, side_price, maker=True, fraction=0.25)
+            kelly = kelly_size(side_prob, side_price, maker=True, fraction=0.25)
             if kelly <= 0.001:
                 continue
 
