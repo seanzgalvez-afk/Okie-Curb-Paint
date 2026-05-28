@@ -1081,18 +1081,19 @@ def fetch_fred_data():
             prev   = obs[1] if len(obs) > 1 else {}
             val_str  = latest.get("value", ".")
             prev_str = prev.get("value", ".")
+            val, prev_val, change = None, None, None
             try:
-                val  = float(val_str)
-                prev_val = float(prev_str) if prev_str != "." else None
+                val      = float(val_str)
+                prev_val = float(prev_str) if prev_str not in (".", "") else None
                 change   = round(val - prev_val, 3) if prev_val is not None else None
             except (ValueError, TypeError):
-                val, change = None, None
+                pass
             result[key] = {
                 "label":  label,
                 "value":  val,
                 "unit":   unit,
                 "date":   latest.get("date", ""),
-                "prev":   prev_val if "prev_val" in dir() else None,
+                "prev":   prev_val,
                 "change": change,
             }
             log(f"FRED {series_id}: {val} ({latest.get('date','')})")
