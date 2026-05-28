@@ -1606,6 +1606,11 @@ function renderSignals(signals) {
     const consensusBadge = s.consensus_count >= 2
       ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#fbbf2433;color:#fbbf24;border:1px solid #fbbf2466;">🤝 ${s.consensus_count} strategies agree</span>`
       : '';
+    // Persistence badge (signal appeared in multiple consecutive snapshots)
+    const pc = s.persistence_count || 0;
+    const persistBadge = pc >= 3
+      ? `<span class="px-2 py-0.5 rounded text-xs font-bold" style="background:#7c3aed33;color:#a78bfa;border:1px solid #7c3aed66;">🔁 ${pc}× persistent</span>`
+      : '';
 
     return `
     <div class="rounded-xl border overflow-hidden" style="background:#1e293b;border-color:${s.consensus_count >= 2 ? '#fbbf24' : color}55;">
@@ -1614,6 +1619,7 @@ function renderSignals(signals) {
         <span class="text-xs font-bold" style="color:${color};">${label}</span>
         <div class="flex items-center gap-2">
           ${consensusBadge}
+          ${persistBadge}
           <span class="text-xs px-2 py-0.5 rounded font-semibold ${conf}">${s.confidence || 'low'} confidence</span>
           <span class="text-xs text-slate-500">#${s.rank || '?'}</span>
         </div>

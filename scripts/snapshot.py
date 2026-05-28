@@ -1655,13 +1655,16 @@ def analyze_cross_platform_arb(cross_arb):
         net_profit = gap - kalshi_fee_val - other_fee
         if net_profit < 1.0: continue  # not profitable after fees
 
+        direction_str    = a.get("direction", "")
+        is_buy_no        = "BUY NO" in direction_str
+        side_price       = (100 - kalshi_p) if is_buy_no else kalshi_p
         platform_display = a.get("platform", platform.title() if platform else "Other")
         signals.append({
             "type":              "cross_platform_arb",
-            "direction":         a.get("direction", ""),
+            "direction":         direction_str,
             "ticker":            a.get("kalshi_ticker", ""),
             "title":             a.get("kalshi_title", "")[:60],
-            "price":             kalshi_p,
+            "price":             kalshi_p,  # YES price for display convention
             "rationale":         f"{platform_display}: {other_p:.1f}¢ vs Kalshi {kalshi_p:.1f}¢. Net after fees: +{net_profit:.1f}¢. ⚠️ Verify settlement rules match.",
             "confidence":        "medium",
             "kelly_frac":        0.03,  # small fixed size — settlement risk
@@ -1669,8 +1672,8 @@ def analyze_cross_platform_arb(cross_arb):
             "net_profit":        round(net_profit, 2),
             "priority":          1 if net_profit >= 5 else 2,
             "warning":           "Verify settlement language matches before entering both legs.",
-            "entry_limit_cents": max(1, kalshi_p - 2),
-            "take_profit_cents": min(99, int(other_p)),
+            "entry_limit_cents": max(1, side_price - 2),
+            "take_profit_cents": min(99, (100 - int(other_p)) if is_buy_no else int(other_p)),
             "stop_loss_pct":     0.4,
         })
     return signals
@@ -2907,7 +2910,7 @@ def analyze_series_momentum_v2(markets, playoff_series):
                 "direction":         direction,
                 "ticker":            ticker,
                 "title":             m.get("title", ""),
-                "price":             side_price,
+                "price":             yp,  # YES price for display convention
                 "rationale":         f"{leader} leads {leader_wins}-{trailer_wins}. Historical win rate {hist_prob}% vs Kalshi {yp}¢. Gap={gap:+.0f}¢.",
                 "confidence":        conf,
                 "kelly_frac":        kelly,
@@ -2915,7 +2918,7 @@ def analyze_series_momentum_v2(markets, playoff_series):
                 "priority":          1 if abs(gap) >= 10 else 2,
                 "gap":               round(gap, 1),
                 "entry_limit_cents": max(1, side_price - 2),
-                "take_profit_cents": min(99, int(hist_prob) - 2),
+                "take_profit_cents": min(99, int(hist_prob) - 2) if direction == "BUY YES" else min(99, int(100 - hist_prob) + 2),
                 "stop_loss_pct":     0.35,
                 "series_score":      f"{leader_wins}-{trailer_wins}",
                 "hist_win_pct":      hist_prob,
@@ -4379,6 +4382,21 @@ except Exception as e:
     log(f"Odds comparison error: {e}")
     traceback.print_exc(file=sys.stderr)
 
+# ── Load recent signal history for persistence detection ──────────────────────
+_sig_hist_path = Path(__file__).parent.parent / "data" / "signal_history.json"
+_persist_counter: dict = {}
+try:
+    if _sig_hist_path.exists():
+        _recent = json.loads(_sig_hist_path.read_text())[-12:]  # last ~1 hour of 5-min runs
+        for _entry in _recent:
+            for _td in _entry.get("tickers", []):
+                if isinstance(_td, (list, tuple)) and len(_td) >= 2:
+                    _k = (_td[0], _td[1])
+                    _persist_counter[_k] = _persist_counter.get(_k, 0) + 1
+        log(f"Persistence: {len(_persist_counter)} ticker/direction combos in recent history")
+except Exception as _e:
+    log(f"Persistence load error: {_e}")
+
 # ── Strategy engine ───────────────────────────────────────────────────────────
 strategy_signals = []
 try:
@@ -4393,6 +4411,24 @@ try:
 except Exception as e:
     log(f"Strategy engine error: {e}")
     traceback.print_exc(file=sys.stderr)
+
+# ── Enrich signals with persistence count ─────────────────────────────────────
+# Persistent signals (appearing in 3+ consecutive snapshots) get priority boost
+for _s in strategy_signals:
+    _key = (_s.get("ticker", ""), _s.get("direction", ""))
+    _pc = _persist_counter.get(_key, 0)
+    if _pc > 0:
+        _s["persistence_count"] = _pc
+        if _pc >= 6:  # ~30 min persistent — structural edge, upgrade confidence
+            if _s.get("confidence") == "low":
+                _s["confidence"] = "medium"
+            elif _s.get("confidence") == "medium":
+                _s["confidence"] = "high"
+            _s["priority"] = max(1, _s.get("priority", 3) - 1)
+        elif _pc >= 3:  # ~15 min — boost priority one level
+            _s["priority"] = max(1, _s.get("priority", 3) - 1)
+        if _pc >= 2:
+            log(f"Persistent signal: {_s.get('ticker','')} {_s.get('direction','')} ({_pc}x in last hour)")
 
 # ── Re-score best picks incorporating strategy signals ────────────────────────
 # Replace initial best_picks (computed early, before strategy signals) with a
@@ -4574,6 +4610,7 @@ try:
         ],
         "markets_count":     len(markets_list),
         "supplemental_count": len([m for m in markets_list if m.get("_supplemental")]),
+        "tickers": [[s.get("ticker", ""), s.get("direction", "")] for s in strategy_signals if s.get("ticker")],
     })
     # Keep last 200 entries
     sig_hist = sig_hist[-200:]
