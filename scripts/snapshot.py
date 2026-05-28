@@ -1588,29 +1588,40 @@ def analyze_vegas_divergence(edges):
     """
     signals = []
     for e in edges:
-        gap = e.get("gap", 0)
-        kp  = e.get("kalshi_price", 50)
-        vp  = e.get("vegas_prob", 50)
+        gap       = e.get("gap", 0)
+        kp        = e.get("kalshi_price", 50)
+        vp        = e.get("vegas_prob", 50)
+        direction = e.get("direction", "")
         if abs(gap) < 5: continue
 
-        # Use Vegas as the "true" probability estimate
-        kelly = kelly_size(vp, kp, maker=True, fraction=0.25)
+        is_buy_no = "NO" in direction.upper() and "YES" not in direction.upper()
+        if is_buy_no:
+            # BUY NO: Kalshi overprices YES (kp > vp). We buy NO.
+            side_price = 100 - kp          # NO fair price
+            side_prob  = 100 - vp          # NO win probability per Vegas
+            tp_cents   = min(99, int(100 - vp) + 3)  # sell NO when YES falls to vp
+        else:
+            side_price = kp
+            side_prob  = vp
+            tp_cents   = min(99, int(vp))
+
+        kelly = kelly_size(side_prob, side_price, maker=True, fraction=0.25)
 
         signals.append({
             "type":              "vegas_divergence",
-            "direction":         e.get("direction", ""),
+            "direction":         direction,
             "ticker":            e.get("ticker", ""),
             "title":             e.get("title", "")[:60],
             "price":             kp,
             "rationale":         f"Vegas implies {vp:.1f}¢, Kalshi at {kp}¢. Gap: {gap:+.1f}¢. Use LIMIT order.",
             "confidence":        "high" if abs(gap) >= 10 else "medium",
             "kelly_frac":        kelly,
-            "fee_cents":         kalshi_fee(kp, maker=True),
+            "fee_cents":         kalshi_fee(side_price, maker=True),
             "priority":          1 if abs(gap) >= 10 else 2,
             "game":              e.get("game", ""),
             "books":             e.get("books", []),
-            "entry_limit_cents": max(1, kp - 3),
-            "take_profit_cents": min(99, int(vp)),
+            "entry_limit_cents": max(1, side_price - 3),
+            "take_profit_cents": tp_cents,
             "stop_loss_pct":     0.4,
         })
     return signals
@@ -1737,10 +1748,14 @@ def analyze_weather_edge(markets, weather_data):
         diff = model_high - mid_temp
 
         if abs(diff) >= 3:
-            direction = "BUY YES" if diff >= 0 else "BUY NO"
-            city_name = weather_data[matched_city].get("name", matched_city)
-            kalshi_prob = yes_p
-            model_prob  = int(round(kalshi_prob + diff * 3))  # rough model-implied probability
+            direction   = "BUY YES" if diff >= 0 else "BUY NO"
+            city_name   = weather_data[matched_city].get("name", matched_city)
+            is_no       = direction == "BUY NO"
+            side_price  = (100 - yes_p) if is_no else yes_p
+            model_prob  = int(round(yes_p + diff * 3))  # rough model-implied YES prob
+            prob_for_kelly = (85 if abs(diff) >= 5 else 70)
+            if is_no:
+                prob_for_kelly = 100 - prob_for_kelly  # flip to NO probability
             signals.append({
                 "type":              "weather_edge",
                 "direction":         direction,
@@ -1749,12 +1764,12 @@ def analyze_weather_edge(markets, weather_data):
                 "price":             yes_p,
                 "rationale":         f"Model forecasts {model_high}°F high for {city_name}. Market bucket: {low_temp:.0f}-{high_temp:.0f}°F. Diff: {diff:+.1f}°. Use LIMIT order.",
                 "confidence":        "high" if abs(diff) >= 5 else "medium",
-                "kelly_frac":        kelly_size(85 if abs(diff) >= 5 else 70, yes_p, maker=True, fraction=0.25),
-                "fee_cents":         kalshi_fee(yes_p, maker=True),
+                "kelly_frac":        kelly_size(prob_for_kelly, side_price, maker=True, fraction=0.25),
+                "fee_cents":         kalshi_fee(side_price, maker=True),
                 "priority":          1 if abs(diff) >= 5 else 2,
                 "model_high":        model_high,
-                "entry_limit_cents": max(1, int(kalshi_prob - 5)),
-                "take_profit_cents": max(1, min(99, model_prob)),
+                "entry_limit_cents": max(1, side_price - 5),
+                "take_profit_cents": min(99, side_price + 10) if is_no else min(99, model_prob),
                 "stop_loss_pct":     0.4,
             })
     return signals
@@ -1805,7 +1820,7 @@ def analyze_volume_spikes(markets):
             # Neutral market with high volume = someone knows something
             # Direction: buy YES if price is above 50, NO if below
             direction = "BUY YES" if price >= 50 else "BUY NO"
-            side_price = price if "YES" in direction else (100 - price)
+            side_price = price if direction == "BUY YES" else (100 - price)
             kelly = kelly_size(price, side_price, maker=True)
             signals.append({
                 "type":              "volume_spike",
@@ -1816,12 +1831,12 @@ def analyze_volume_spikes(markets):
                 "rationale":         f"Volume spike {vol_ratio:.1f}x median ({vol:,} trades). Neutral price {price}¢ — informed traders positioning.",
                 "confidence":        "medium",
                 "kelly_frac":        kelly * 0.5,  # half-Kelly for momentum
-                "fee_cents":         kalshi_fee(price),
+                "fee_cents":         kalshi_fee(side_price),
                 "priority":          2,
                 "volume":            vol,
                 "vol_ratio":         round(vol_ratio, 1),
-                "entry_limit_cents": max(1, price - 2),
-                "take_profit_cents": min(99, price + 5),
+                "entry_limit_cents": max(1, side_price - 2),
+                "take_profit_cents": min(99, side_price + 5),
                 "stop_loss_pct":     0.35,
             })
         elif price > 85:
@@ -1845,8 +1860,9 @@ def analyze_volume_spikes(markets):
                 "stop_loss_pct":     0.35,
             })
         elif price < 15:
-            # High volume longshot — but longshot bias says fades, so BUY NO
-            kelly = kelly_size(100 - price, 100 - price, maker=True)
+            # High volume longshot — longshot bias says fade, so BUY NO
+            no_price = 100 - price
+            kelly = kelly_size(no_price, no_price, maker=True)
             signals.append({
                 "type":              "volume_spike",
                 "direction":         "BUY NO",
@@ -1856,12 +1872,12 @@ def analyze_volume_spikes(markets):
                 "rationale":         f"Volume spike {vol_ratio:.1f}x ({vol:,} trades) on {price}¢ longshot. Bias + confirmation = fade.",
                 "confidence":        "medium",
                 "kelly_frac":        kelly * 0.3,
-                "fee_cents":         kalshi_fee(100 - price),
+                "fee_cents":         kalshi_fee(no_price),
                 "priority":          2,
                 "volume":            vol,
                 "vol_ratio":         round(vol_ratio, 1),
-                "entry_limit_cents": max(1, price - 2),
-                "take_profit_cents": min(99, price + 5),
+                "entry_limit_cents": max(1, no_price - 2),
+                "take_profit_cents": min(99, no_price + 3),
                 "stop_loss_pct":     0.35,
             })
 
@@ -2022,15 +2038,19 @@ def analyze_espn_odds_edge(espn_games, markets):
             # ESPN says team is cheaper → buy YES (Kalshi is overpriced on opposing team)
             # ESPN says team is more expensive → buy NO
             if gap > 5:  # Kalshi overprices → buy NO (fade)
-                direction = "BUY NO"
-                price = kalshi_price
-                prob  = 100 - espn_prob
+                direction  = "BUY NO"
+                no_price   = 100 - kalshi_price
+                side_price = no_price
+                prob       = 100 - espn_prob
+                # TP: sell NO when YES falls to ESPN consensus (NO rises to 100 - espn_prob)
+                tp = min(99, int(100 - espn_prob) + 3)
             else:  # Kalshi underprices → buy YES
-                direction = "BUY YES"
-                price = kalshi_price
-                prob  = espn_prob
+                direction  = "BUY YES"
+                side_price = kalshi_price
+                prob       = espn_prob
+                tp = min(99, int(espn_prob))
 
-            kelly = kelly_size(prob, price, maker=True)
+            kelly = kelly_size(prob, side_price, maker=True)
             if kelly <= 0:
                 continue
 
@@ -2043,12 +2063,12 @@ def analyze_espn_odds_edge(espn_games, markets):
                 "rationale":         f"ESPN/DK: {team_name} {ml:+d} ({espn_prob:.0f}%) vs Kalshi {kalshi_price:.0f}¢. Gap: {gap:+.1f}¢ — {game.get('short_name','')}",
                 "confidence":        "high" if abs(gap) >= 10 else "medium",
                 "kelly_frac":        kelly * 0.5,
-                "fee_cents":         kalshi_fee(price),
+                "fee_cents":         kalshi_fee(side_price),
                 "priority":          1 if abs(gap) >= 10 else 2,
                 "espn_prob":         round(espn_prob, 1),
                 "gap":               round(gap, 1),
-                "entry_limit_cents": max(1, kalshi_price - 3),
-                "take_profit_cents": min(99, int(espn_prob)),
+                "entry_limit_cents": max(1, side_price - 3),
+                "take_profit_cents": tp,
                 "stop_loss_pct":     0.35,
             })
 
@@ -2111,16 +2131,18 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
 
         if is_fear:
             # Extreme fear → price action likely to recover → buy YES on up markets
-            direction = "BUY YES"
-            prob = min(75, price + 15)  # sentiment edge: ~15% adjustment
-            kelly = kelly_size(prob, price, maker=True)
-            rationale = f"Fear & Greed = {fg} ({fg_label}). Extreme fear → sentiment reversal edge. Crypto markets priced too bearish."
+            direction  = "BUY YES"
+            side_price = price
+            prob       = min(75, price + 15)  # sentiment edge: ~15% adjustment
+            kelly      = kelly_size(prob, price, maker=True)
+            rationale  = f"Fear & Greed = {fg} ({fg_label}). Extreme fear → sentiment reversal edge. Crypto markets priced too bearish."
         else:
             # Extreme greed → likely to cool → fade the move
-            direction = "BUY NO"
-            prob = min(75, (100 - price) + 15)
-            kelly = kelly_size(prob, 100 - price, maker=True)
-            rationale = f"Fear & Greed = {fg} ({fg_label}). Extreme greed → distribution phase. Crypto markets priced too bullish."
+            direction  = "BUY NO"
+            side_price = 100 - price  # NO price
+            prob       = min(75, side_price + 15)
+            kelly      = kelly_size(prob, side_price, maker=True)
+            rationale  = f"Fear & Greed = {fg} ({fg_label}). Extreme greed → distribution phase. Crypto markets priced too bullish."
 
         if kelly <= 0:
             continue
@@ -2134,11 +2156,11 @@ def analyze_fear_greed_edge(markets, fear_greed_data):
             "rationale":         rationale,
             "confidence":        "high" if (fg <= 15 or fg >= 85) else "medium",
             "kelly_frac":        kelly * 0.4,
-            "fee_cents":         kalshi_fee(price),
+            "fee_cents":         kalshi_fee(side_price),
             "priority":          2,
             "fear_greed":        fg,
-            "entry_limit_cents": max(1, price - 2),
-            "take_profit_cents": min(99, price + 5),
+            "entry_limit_cents": max(1, side_price - 2),
+            "take_profit_cents": min(99, side_price + 5),
             "stop_loss_pct":     0.4,
         })
 
@@ -2490,15 +2512,18 @@ def analyze_metaculus_edge(markets, metaculus_qs):
 
         # Direction
         if gap > 10:   # Metaculus says YES is underpriced on Kalshi
-            direction = "BUY YES"
-            prob = mprob
-            price = kalshi_price
+            direction  = "BUY YES"
+            side_price = kalshi_price
+            prob       = mprob
+            tp         = min(99, int(mprob))
         else:          # Metaculus says NO is better value
-            direction = "BUY NO"
-            prob = 100 - mprob
-            price = kalshi_price
+            direction  = "BUY NO"
+            side_price = 100 - kalshi_price  # NO price
+            prob       = 100 - mprob
+            # TP: sell NO when YES falls to mprob (NO rises to 100 - mprob)
+            tp = min(99, int(100 - mprob) + 3)
 
-        kelly = kelly_size(prob, price, maker=True, fraction=0.25)
+        kelly = kelly_size(prob, side_price, maker=True, fraction=0.25)
         if kelly <= 0:
             continue
 
@@ -2511,12 +2536,12 @@ def analyze_metaculus_edge(markets, metaculus_qs):
             "rationale":         f"Metaculus consensus: {mprob:.0f}% vs Kalshi {kalshi_price:.0f}¢ (gap {gap:+.0f}¢). Expert forecasters from: {q.get('title','')[:60]}",
             "confidence":        "high" if abs(gap) >= 15 else "medium",
             "kelly_frac":        kelly,
-            "fee_cents":         kalshi_fee(price),
+            "fee_cents":         kalshi_fee(side_price),
             "priority":          1 if abs(gap) >= 15 else 2,
             "gap":               round(gap, 1),
             "espn_prob":         mprob,   # reuse field for display
-            "entry_limit_cents": max(1, price - 3),
-            "take_profit_cents": min(99, int(mprob)),
+            "entry_limit_cents": max(1, side_price - 3),
+            "take_profit_cents": tp,
             "stop_loss_pct":     0.3,
         })
 
@@ -2944,26 +2969,31 @@ def analyze_price_trend(markets, price_moves):
             continue
 
         # Determine direction and probability estimate
+        abs_move = abs(move_size)
         if move_size > 0:
             # Price went up — smart money bought YES
-            # They moved the price from prev to curr; true prob is near or above curr
-            direction = "BUY YES"
-            true_prob = min(95, curr_price + abs(move_size) * 0.5)  # momentum extension
-            price     = curr_price
+            direction  = "BUY YES"
+            side_price = curr_price
+            true_prob  = min(95, curr_price + abs_move * 0.5)  # momentum extension
         else:
             # Price went down — smart money bought NO
-            direction = "BUY NO"
-            true_prob = max(5, curr_price - abs(move_size) * 0.5)
-            true_prob = 100 - true_prob  # flip to NO side probability
-            price     = curr_price
+            direction  = "BUY NO"
+            side_price = 100 - curr_price  # NO price
+            no_true_p  = max(5, curr_price - abs_move * 0.5)
+            true_prob  = 100 - no_true_p  # flip to NO side probability
 
-        kelly = kelly_size(true_prob, price if direction == "BUY YES" else (100 - price),
-                           maker=True, fraction=0.25)
+        kelly = kelly_size(true_prob, side_price, maker=True, fraction=0.25)
         if kelly <= 0:
             continue
 
-        abs_move = abs(move_size)
         confidence = "high" if abs_move >= 10 else ("medium" if abs_move >= 6 else "low")
+
+        if direction == "BUY YES":
+            entry_lmt = max(1, int(curr_price - 2))   # buy YES 2¢ below YES ask
+            tp_cents  = min(99, int(curr_price + abs_move * 0.8))
+        else:
+            entry_lmt = max(1, int(side_price - 2))   # buy NO 2¢ below NO ask
+            tp_cents  = min(99, int(side_price + abs_move * 0.8))
 
         signals.append({
             "type":              "price_trend",
@@ -2976,10 +3006,10 @@ def analyze_price_trend(markets, price_moves):
             "rationale":         f"Sharp move {move_size:+.0f}¢ ({prev_price:.0f}→{curr_price:.0f}¢) — follow smart money. Vol={vol}.",
             "confidence":        confidence,
             "kelly_frac":        kelly,
-            "fee_cents":         kalshi_fee(price),
+            "fee_cents":         kalshi_fee(side_price),
             "priority":          1 if abs_move >= 8 else 2,
-            "entry_limit_cents": max(1, int(curr_price + (2 if direction == "BUY YES" else -2))),
-            "take_profit_cents": min(99, int(curr_price + abs_move * 0.8)) if direction == "BUY YES" else max(1, int(curr_price - abs_move * 0.8)),
+            "entry_limit_cents": entry_lmt,
+            "take_profit_cents": tp_cents,
             "stop_loss_pct":     0.3,
         })
 
