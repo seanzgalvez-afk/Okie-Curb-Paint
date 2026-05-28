@@ -1275,9 +1275,47 @@ function renderSignalHistory(history) {
 
   const persEl = document.getElementById('sig-hist-persistent');
   if (persEl) {
-    persEl.innerHTML = persistent.length > 0
-      ? '🔁 Persistent: ' + persistent.join(' · ')
-      : 'No persistent signals in last 5 runs';
+    let html = '';
+    if (persistent.length > 0) {
+      html += '<div class="text-xs text-amber-400 mb-2">🔁 Persistent: ' + persistent.join(' · ') + '</div>';
+    } else {
+      html += '<div class="text-xs text-slate-500 mb-2">No persistent signals in last 5 runs</div>';
+    }
+    // Strategy type performance table from last 10 entries
+    const perfEntries = history.slice(-10).filter(h => h.type_perf);
+    if (perfEntries.length > 0) {
+      const aggregated = {};
+      perfEntries.forEach(h => {
+        Object.entries(h.type_perf || {}).forEach(([t, p]) => {
+          if (!aggregated[t]) aggregated[t] = {kelly: [], conf: [], count: 0};
+          aggregated[t].kelly.push(p.avg_kelly || 0);
+          aggregated[t].conf.push(p.high_conf_rate || 0);
+          aggregated[t].count += p.count || 0;
+        });
+      });
+      const rows = Object.entries(aggregated)
+        .map(([t, v]) => ({
+          type: t,
+          avgKelly: v.kelly.reduce((a,b)=>a+b,0)/v.kelly.length,
+          confRate: v.conf.reduce((a,b)=>a+b,0)/v.conf.length,
+          count: v.count
+        }))
+        .sort((a, b) => b.avgKelly - a.avgKelly);
+      if (rows.length > 0) {
+        const typeLabelsPerf = {bundle_arb:'Bundle Arb',vegas_divergence:'Vegas',longshot_bias:'Longshot',
+          momentum_edge:'Momentum',home_advantage:'Home Edge',series_momentum:'Series',
+          volume_spike:'Vol Spike',espn_odds_edge:'ESPN',fear_greed_edge:'F&G',
+          near_close_mispricing:'Near Close',price_trend:'Sharp $',worldcup_edge:'World Cup'};
+        html += '<div class="mt-2"><div class="text-xs text-slate-500 mb-1">Strategy performance (last 10 runs):</div><div class="flex flex-wrap gap-1">';
+        rows.slice(0, 8).forEach(r => {
+          const kColor = r.avgKelly > 1 ? '#4ade80' : r.avgKelly > 0.3 ? '#fbbf24' : '#94a3b8';
+          html += `<span class="text-xs px-1.5 py-0.5 rounded" style="background:#1e293b;border:1px solid ${kColor}44;color:${kColor};">
+            ${typeLabelsPerf[r.type]||r.type} <span style="color:${kColor};">${r.avgKelly.toFixed(2)}%K</span></span>`;
+        });
+        html += '</div></div>';
+      }
+    }
+    persEl.innerHTML = html;
   }
 }
 

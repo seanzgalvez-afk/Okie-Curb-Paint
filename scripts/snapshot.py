@@ -3222,7 +3222,7 @@ def analyze_near_close_edge(markets):
 
 def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None,
                         metaculus_qs=None, price_moves=None, vegas_games=None,
-                        playoff_series=None):
+                        playoff_series=None, fear_greed=None, fred_data=None):
     """
     Run all strategy modules and return unified ranked signal list.
     """
@@ -4158,7 +4158,8 @@ try:
                                             espn_games=espn_games, metaculus_qs=metaculus_qs,
                                             price_moves=kalshi_price_moves,
                                             vegas_games=(vegas_games if ODDS_API_KEY else []),
-                                            playoff_series=espn_playoff_series)
+                                            playoff_series=espn_playoff_series,
+                                            fear_greed=fear_greed, fred_data=fred_data)
     log(f"Strategy signals: {len(strategy_signals)}")
 except Exception as e:
     log(f"Strategy engine error: {e}")
@@ -4246,11 +4247,19 @@ clean_markets = [{k: v for k, v in m.items() if not k.startswith("_")}
 # Build signal summary for dashboard overview
 from collections import Counter
 sig_counts = Counter(s.get("type", "unknown") for s in strategy_signals)
+conf_counts = Counter(s.get("confidence", "low") for s in strategy_signals)
+consensus_signals = [s for s in strategy_signals if s.get("consensus_count", 0) >= 2]
 signal_summary = {
-    "total":     len(strategy_signals),
-    "by_type":   dict(sig_counts),
-    "high_conf": len([s for s in strategy_signals if s.get("confidence") == "high"]),
-    "top_kelly": round(max((s.get("kelly_frac", 0) for s in strategy_signals), default=0) * 100, 1),
+    "total":       len(strategy_signals),
+    "by_type":     dict(sig_counts),
+    "by_conf":     dict(conf_counts),
+    "high_conf":   conf_counts.get("high", 0),
+    "medium_conf": conf_counts.get("medium", 0),
+    "top_kelly":   round(max((s.get("kelly_frac", 0) for s in strategy_signals), default=0) * 100, 1),
+    "consensus":   len(consensus_signals),
+    "top_consensus": [{"ticker": s.get("ticker"), "direction": s.get("direction"),
+                       "n_agree": s.get("consensus_count", 0), "types": s.get("consensus_types", [])}
+                      for s in sorted(consensus_signals, key=lambda x: x.get("consensus_count",0), reverse=True)[:3]],
 }
 
 # ── Signal history tracking ───────────────────────────────────────────────────
@@ -4267,12 +4276,29 @@ try:
             sig_hist = []
 
     # Append snapshot of this run's signals
+    # Compute per-type average kelly for performance tracking
+    type_kelly = {}
+    type_conf = {}
+    for s in strategy_signals:
+        t = s.get("type", "unknown")
+        if t not in type_kelly:
+            type_kelly[t] = []
+            type_conf[t] = []
+        type_kelly[t].append(s.get("kelly_frac", 0))
+        type_conf[t].append(1 if s.get("confidence") == "high" else 0)
+    type_perf = {t: {"avg_kelly": round(sum(v)/len(v)*100, 2),
+                     "high_conf_rate": round(sum(type_conf[t])/len(type_conf[t])*100, 1),
+                     "count": len(v)}
+                 for t, v in type_kelly.items()}
+
     sig_hist.append({
         "ts":         ts_str,
         "total":      len(strategy_signals),
         "high_conf":  signal_summary["high_conf"],
         "top_kelly":  signal_summary["top_kelly"],
         "by_type":    signal_summary["by_type"],
+        "type_perf":  type_perf,
+        "consensus":  signal_summary["consensus"],
         "top_signals": [
             {
                 "type":       s.get("type"),
@@ -4334,7 +4360,7 @@ if strategy_signals:
     lines.append("\n" + "="*70)
     lines.append("## STRATEGY SIGNALS — TOP PICKS")
     lines.append("="*70)
-    lines.append(f"  {len(strategy_signals)} signals from 15 research modules "
+    lines.append(f"  {len(strategy_signals)} signals from 16 research modules "
                  f"({signal_summary['high_conf']} high-conf, top Kelly {signal_summary['top_kelly']}%)")
     lines.append(f"  {'Rank':<4} {'Type':<22} {'Dir':<8} {'Ticker':<36} {'P':>3} {'Kelly':>6}  Conf   Rationale")
     lines.append("  " + "-"*110)
