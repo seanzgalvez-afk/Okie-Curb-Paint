@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-28 20:54 UTC",
+  "generated": "2026-05-28 21:09 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [],
@@ -63,10 +63,23 @@
       "markets_count": 0,
       "supplemental_count": 0,
       "tickers": []
+    },
+    {
+      "ts": "2026-05-28 21:09 UTC",
+      "total": 0,
+      "high_conf": 0,
+      "top_kelly": 0,
+      "by_type": {},
+      "type_perf": {},
+      "consensus": 0,
+      "top_signals": [],
+      "markets_count": 0,
+      "supplemental_count": 0,
+      "tickers": []
     }
   ],
   "health": {
-    "run_minute": 54,
+    "run_minute": 9,
     "kalshi": "error",
     "odds_api": "no_key",
     "coingecko": "no_key",

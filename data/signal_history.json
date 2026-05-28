@@ -24,5 +24,18 @@
     "markets_count": 0,
     "supplemental_count": 0,
     "tickers": []
+  },
+  {
+    "ts": "2026-05-28 21:09 UTC",
+    "total": 0,
+    "high_conf": 0,
+    "top_kelly": 0,
+    "by_type": {},
+    "type_perf": {},
+    "consensus": 0,
+    "top_signals": [],
+    "markets_count": 0,
+    "supplemental_count": 0,
+    "tickers": []
   }
 ]
