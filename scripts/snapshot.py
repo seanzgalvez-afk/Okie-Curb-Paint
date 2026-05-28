@@ -4394,6 +4394,34 @@ if best_picks:
         conf_tag = f"[{p.get('confidence','').upper()[:3]}]" if p.get("confidence") else ""
         lines.append(f"  {p.get('side','?'):3} {p.get('price',0):>3}¢  {conf_tag:5}  {p.get('ticker','')[:36]:<36}  {p.get('title','')[:45]}")
 
+# ── Action Digest — plain-English top 3 ──────────────────────────────────────
+# Surfaces the 3 most actionable opportunities in clear language
+try:
+    digest_sigs = [s for s in strategy_signals if s.get("confidence") in ("high", "medium")][:3]
+    if digest_sigs or edges[:1]:
+        lines.append("\n" + "="*70)
+        lines.append("## ⚡ TOP ACTIONS NOW")
+        lines.append("="*70)
+        for i, s in enumerate(digest_sigs, 1):
+            direction = s.get("direction", "?")
+            ticker = s.get("ticker", "?")
+            price = s.get("price", 0)
+            entry = s.get("entry_limit_cents", price)
+            tp = s.get("take_profit_cents")
+            sl = s.get("stop_loss_pct", 0)
+            days = s.get("days_until_close")
+            kelly_pct = s.get("kelly_frac", 0) * 100
+            cons = f" [{s.get('consensus_count',0)} strategies agree]" if s.get("consensus_count",0) >= 2 else ""
+            days_str = f"  (closes {days:.0f}d)" if days else ""
+            tp_str = f"  → TP {tp}¢" if tp else ""
+            lines.append(f"  {i}. {direction} {ticker} @ {entry}¢{tp_str}  [Kelly {kelly_pct:.1f}%]{cons}{days_str}")
+            lines.append(f"     Reason: {s.get('rationale','')[:100]}")
+        if edges and len(digest_sigs) < 3:
+            e = edges[0]
+            lines.append(f"  {len(digest_sigs)+1}. {e.get('direction','?')} {e.get('ticker','')} — Vegas gap {e.get('gap',0):+.1f}¢ (Kalshi {e.get('kalshi_price')}¢ vs Vegas {e.get('vegas_prob')}¢)")
+except Exception as ex:
+    log(f"Action digest error: {ex}")
+
 if edges:
     lines.append("\n## VEGAS EDGE ALERTS")
     for e in edges[:5]:
