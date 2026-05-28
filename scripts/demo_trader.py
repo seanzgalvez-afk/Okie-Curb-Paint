@@ -209,6 +209,11 @@ def should_trade_signal(signal, state):
     if not ticker:
         return False, None, 0, 0
 
+    # Skip conflicted signals — genuine uncertainty, don't trade
+    if signal.get("conflict_detected"):
+        log(f"  Skip {ticker}: conflict detected ({signal.get('warning','')})")
+        return False, None, 0, 0
+
     # Skip if already have open trade on this ticker
     open_tickers = {t["ticker"] for t in state["open"]}
     order_tickers = {o["ticker"] for o in state["orders"]}
@@ -220,7 +225,6 @@ def should_trade_signal(signal, state):
     kelly_frac = signal.get("kelly_frac", 0)
     confidence = signal.get("confidence", "low")
     direction  = signal.get("direction", "")
-    price      = signal.get("price", 50)
 
     # Allow priority ≤2 always, OR priority 3 with high confidence
     if priority > 3:
@@ -240,15 +244,21 @@ def should_trade_signal(signal, state):
         return False, None, 0, 0
 
     side = "yes" if "YES" in direction.upper() else "no"
-    # Place limit 1¢ better than current price (maker order)
-    if side == "yes":
-        limit_price = max(1, price - 1)
-    else:
-        limit_price = min(99, price + 1)
 
-    # Calculate quantity from risk budget
-    cost_per_contract = limit_price  # cost in cents per YES contract
-    quantity = max(1, risk_cents // cost_per_contract)
+    # Use entry_limit_cents from signal (already in the correct side's price convention)
+    # entry_limit_cents = YES price for BUY YES, NO price for BUY NO
+    entry = signal.get("entry_limit_cents")
+    if entry and 1 <= entry <= 99:
+        limit_price = entry
+    elif side == "yes":
+        limit_price = max(1, (signal.get("price", 50) or 50) - 1)
+    else:
+        # Fallback: derive NO price from YES price
+        yes_price = signal.get("price", 50) or 50
+        limit_price = min(99, (100 - yes_price) - 1)
+
+    # Calculate quantity from risk budget (cost_per_contract = limit_price for both sides)
+    quantity = max(1, risk_cents // limit_price)
 
     return True, side, limit_price, quantity
 
@@ -575,10 +585,6 @@ def main():
         should, side, price, qty = should_trade_signal(signal, state)
         if not should:
             continue
-
-        # Override price with entry_limit_cents from signal when available
-        if signal.get("entry_limit_cents"):
-            price = max(1, min(99, signal["entry_limit_cents"]))
 
         # Get live market price to verify signal still valid
         book = get_market_info(ticker)

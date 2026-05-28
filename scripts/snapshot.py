@@ -3809,12 +3809,18 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
         -(x.get("kelly_frac", 0) * x.get("quality_score", 0.5))
     ))
 
-    # Enrich each signal with kelly_pct and close_time from market lookup
+    # Enrich each signal with kelly_pct, kelly_dollars, and close_time from market lookup
+    # Reference bankroll: $1,000 (users can scale; demo trader uses real demo balance)
+    _REF_BANKROLL_CENTS = 100_000
     for i, s in enumerate(live_signals):
         s["rank"] = i + 1
         # Add kelly_pct for easy display (percentage form)
         if "kelly_frac" in s and "kelly_pct" not in s:
             s["kelly_pct"] = round(s["kelly_frac"] * 100, 1)
+        # Add kelly_dollars: recommended bet size on a $1,000 bankroll
+        kf = s.get("kelly_frac", 0) or 0
+        if kf > 0:
+            s["kelly_dollars"] = round(kf * _REF_BANKROLL_CENTS / 100, 2)  # dollars
         # Add close_time from markets list
         if "close_time" not in s or not s.get("close_time"):
             ticker = s.get("ticker", "")
