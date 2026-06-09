@@ -3391,6 +3391,261 @@ def analyze_worldcup_edge(markets, vegas_games):
     return signals[:5]
 
 
+def _american_odds_to_implied(odds_str):
+    """Convert American odds string like '+450' to implied probability (0-100)."""
+    try:
+        n = int(odds_str.replace("+", "").replace(" ", ""))
+        if n > 0:
+            return 100.0 / (n + 100) * 100
+        else:
+            return abs(n) / (abs(n) + 100) * 100
+    except Exception:
+        return None
+
+
+def analyze_wc26_static_edge(markets):
+    """
+    FIFA World Cup 2026 — Static simulation edge.
+
+    Uses embedded Opta 25k-sim / Silver Bulletin PELE probabilities (data/wc26_probs.json)
+    to generate three signal types:
+      1. Title winner: model win_pct vs Kalshi WC winner market price
+      2. Match outcome: model home/draw/away_win vs Kalshi match market
+      3. FanDuel vs Kalshi: when Vegas implied diverges from Kalshi price by ≥5¢
+
+    No external API needed — this runs every snapshot regardless of The Odds API key.
+    """
+    import os as _os, json as _json
+
+    data_path = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                              "..", "data", "wc26_probs.json")
+    try:
+        with open(data_path) as _f:
+            wc26 = _json.load(_f)
+    except Exception as e:
+        log(f"WC26 static edge: could not load wc26_probs.json: {e}")
+        return []
+
+    TEAM_ABBREV = {
+        "spain": "ESP",        "france": "FRA",       "england": "ENG",
+        "argentina": "ARG",    "germany": "GER",       "brazil": "BRA",
+        "portugal": "POR",     "netherlands": "NED",   "belgium": "BEL",
+        "uruguay": "URU",      "morocco": "MAR",       "japan": "JPN",
+        "mexico": "MEX",       "usa": "USA",           "united states": "USA",
+        "canada": "CAN",       "australia": "AUS",     "south korea": "KOR",
+        "korea republic": "KOR", "colombia": "COL",    "ecuador": "ECU",
+        "switzerland": "SUI",  "croatia": "CRO",       "denmark": "DEN",
+        "poland": "POL",       "austria": "AUT",       "norway": "NOR",
+        "sweden": "SWE",       "italy": "ITA",         "nigeria": "NGA",
+        "senegal": "SEN",      "ghana": "GHA",         "cameroon": "CMR",
+        "ivory coast": "CIV",  "chile": "CHI",         "peru": "PER",
+        "paraguay": "PAR",     "venezuela": "VEN",     "bolivia": "BOL",
+        "iran": "IRN",         "saudi arabia": "KSA",  "qatar": "QAT",
+        "iraq": "IRQ",         "ukraine": "UKR",       "serbia": "SRB",
+        "turkey": "TUR",       "haiti": "HAI",         "scotland": "SCO",
+        "czechia": "CZE",      "czech republic": "CZE","south africa": "RSA",
+        "new zealand": "NZL",  "indonesia": "IDN",     "slovakia": "SVK",
+        "slovenia": "SVN",     "costa rica": "CRC",    "panama": "PAN",
+        "honduras": "HON",     "el salvador": "SLV",   "guatemala": "GUA",
+        "bosnia": "BIH",       "senegal": "SEN",
+    }
+
+    title_probs = {tp["team"].lower(): tp for tp in wc26.get("title_probabilities", [])}
+    match_preds = wc26.get("match_predictions", [])
+    signals = []
+
+    # Split WC markets into winner vs match markets
+    wc_markets = [m for m in markets if (
+        "WORLDCUP" in m.get("ticker", "").upper() or
+        "WORLD CUP" in (m.get("title") or "").upper()
+    )]
+    wc_winner_markets = [m for m in wc_markets if
+                         "WINNER" in m.get("ticker", "").upper() or
+                         "champion" in (m.get("title") or "").lower()]
+    wc_match_markets  = [m for m in wc_markets if m not in wc_winner_markets]
+
+    log(f"WC26 static edge: {len(wc_winner_markets)} winner markets, "
+        f"{len(wc_match_markets)} match markets loaded")
+
+    # ── Sub-strategy 1: Title winner ────────────────────────────────────────
+    for mkt in wc_winner_markets:
+        ticker = mkt.get("ticker", "").upper()
+        title_l = (mkt.get("title") or "").lower()
+        kp = mkt.get("_yes_price") or mkt.get("yes_bid") or mkt.get("last_price")
+        if kp is None:
+            continue
+
+        matched_tp = None
+        for team_name, tp in title_probs.items():
+            abbrev = TEAM_ABBREV.get(team_name, "")
+            if (abbrev and abbrev in ticker) or team_name in title_l:
+                matched_tp = (team_name, tp)
+                break
+        if not matched_tp:
+            continue
+
+        team_name, tp = matched_tp
+        model_pct = tp["win_pct"]
+        gap = model_pct - kp
+        if abs(gap) < 4:
+            continue
+
+        direction  = "BUY YES" if gap > 0 else "BUY NO"
+        side_price = kp if gap > 0 else (100 - kp)
+        model_side = model_pct if gap > 0 else (100 - model_pct)
+        kelly = kelly_size(model_side, side_price, maker=True)
+        if kelly <= 0:
+            continue
+
+        fd_note = ""
+        fd_implied = _american_odds_to_implied(tp.get("odds", ""))
+        if fd_implied is not None:
+            fd_gap = fd_implied - kp
+            fd_note = f" | FanDuel={fd_implied:.1f}¢ ({fd_gap:+.1f}¢ vs Kalshi)"
+
+        signals.append({
+            "type":              "wc26_title_edge",
+            "direction":         direction,
+            "ticker":            mkt.get("ticker", ""),
+            "title":             mkt.get("title", ""),
+            "price":             round(kp, 1),
+            "rationale":         (f"WC26 {team_name.title()}: Opta model {model_pct:.1f}¢ "
+                                  f"vs Kalshi {kp:.0f}¢ | gap {gap:+.1f}¢{fd_note}"),
+            "confidence":        "high" if abs(gap) >= 8 else "medium",
+            "kelly_frac":        kelly * 0.5,
+            "fee_cents":         kalshi_fee(side_price),
+            "priority":          1 if abs(gap) >= 8 else 2,
+            "gap":               round(gap, 1),
+            "entry_limit_cents": max(1, side_price - 2),
+            "take_profit_cents": min(99, int(model_side)),
+            "stop_loss_pct":     0.35,
+        })
+
+    # ── Sub-strategy 2: Match outcome markets ───────────────────────────────
+    for mkt in wc_match_markets:
+        ticker = mkt.get("ticker", "").upper()
+        title_l = (mkt.get("title") or "").lower()
+        kp = mkt.get("_yes_price") or mkt.get("yes_bid") or mkt.get("last_price")
+        if kp is None:
+            continue
+
+        for pred in match_preds:
+            home_l    = pred["home"].lower()
+            away_l    = pred["away"].lower()
+            home_abbr = TEAM_ABBREV.get(home_l, "")
+            away_abbr = TEAM_ABBREV.get(away_l, "")
+
+            both_in_ticker = (home_abbr in ticker and away_abbr in ticker)
+            both_in_title  = (home_l in title_l and away_l in title_l)
+            if not (both_in_ticker or both_in_title):
+                continue
+
+            # Figure out which outcome the market represents
+            model_prob    = None
+            outcome_label = ""
+            if home_abbr and home_abbr in ticker or home_l in title_l:
+                model_prob    = pred["home_win"]
+                outcome_label = f"{pred['home']} win"
+            elif away_abbr and away_abbr in ticker or away_l in title_l:
+                model_prob    = pred["away_win"]
+                outcome_label = f"{pred['away']} win"
+
+            if model_prob is None:
+                continue
+
+            gap = model_prob - kp
+            if abs(gap) < 5:
+                break
+
+            direction  = "BUY YES" if gap > 0 else "BUY NO"
+            side_price = kp if gap > 0 else (100 - kp)
+            model_side = model_prob if gap > 0 else (100 - model_prob)
+            kelly = kelly_size(model_side, side_price, maker=True)
+            if kelly <= 0:
+                break
+
+            signals.append({
+                "type":              "wc26_match_edge",
+                "direction":         direction,
+                "ticker":            mkt.get("ticker", ""),
+                "title":             mkt.get("title", ""),
+                "price":             round(kp, 1),
+                "rationale":         (f"WC26 {pred['home']} vs {pred['away']} ({pred['date']}): "
+                                      f"{outcome_label} model {model_prob:.0f}¢ vs "
+                                      f"Kalshi {kp:.0f}¢ | gap {gap:+.1f}¢"),
+                "confidence":        "high" if abs(gap) >= 10 else "medium",
+                "kelly_frac":        kelly * 0.5,
+                "fee_cents":         kalshi_fee(side_price),
+                "priority":          1 if abs(gap) >= 10 else 2,
+                "gap":               round(gap, 1),
+                "entry_limit_cents": max(1, side_price - 2),
+                "take_profit_cents": min(99, int(model_side)),
+                "stop_loss_pct":     0.35,
+            })
+            break  # one signal per market
+
+    # ── Sub-strategy 3: FanDuel vs Kalshi on WC winner markets ─────────────
+    for mkt in wc_winner_markets:
+        ticker = mkt.get("ticker", "").upper()
+        title_l = (mkt.get("title") or "").lower()
+        kp = mkt.get("_yes_price") or mkt.get("yes_bid") or mkt.get("last_price")
+        if kp is None:
+            continue
+
+        matched_tp = None
+        for team_name, tp in title_probs.items():
+            abbrev = TEAM_ABBREV.get(team_name, "")
+            if (abbrev and abbrev in ticker) or team_name in title_l:
+                matched_tp = (team_name, tp)
+                break
+        if not matched_tp:
+            continue
+
+        team_name, tp = matched_tp
+        fd_implied = _american_odds_to_implied(tp.get("odds", ""))
+        if fd_implied is None:
+            continue
+
+        gap = fd_implied - kp
+        if abs(gap) < 5:
+            continue
+
+        # Only add if we didn't already generate a model signal for this ticker
+        already = any(s["ticker"] == mkt.get("ticker", "") and "wc26_title" in s["type"]
+                      for s in signals)
+        if already:
+            continue
+
+        direction  = "BUY YES" if gap > 0 else "BUY NO"
+        side_price = kp if gap > 0 else (100 - kp)
+        fd_side    = fd_implied if gap > 0 else (100 - fd_implied)
+        kelly = kelly_size(fd_side, side_price, maker=True)
+        if kelly <= 0:
+            continue
+
+        signals.append({
+            "type":              "wc26_fd_edge",
+            "direction":         direction,
+            "ticker":            mkt.get("ticker", ""),
+            "title":             mkt.get("title", ""),
+            "price":             round(kp, 1),
+            "rationale":         (f"WC26 {team_name.title()}: FanDuel implies {fd_implied:.1f}¢ "
+                                  f"vs Kalshi {kp:.0f}¢ | gap {gap:+.1f}¢ (Vegas vs market)"),
+            "confidence":        "medium",
+            "kelly_frac":        kelly * 0.4,
+            "fee_cents":         kalshi_fee(side_price),
+            "priority":          2,
+            "gap":               round(gap, 1),
+            "entry_limit_cents": max(1, side_price - 2),
+            "take_profit_cents": min(99, int(fd_side)),
+            "stop_loss_pct":     0.4,
+        })
+
+    signals.sort(key=lambda x: abs(x.get("gap", 0)), reverse=True)
+    log(f"WC26 static edge: {len(signals)} signals generated")
+    return signals[:8]
+
+
 def analyze_crypto_price_target(markets, crypto_prices):
     """
     Crypto Price Target Strategy:
@@ -3778,6 +4033,12 @@ def run_strategy_engine(markets, edges, cross_arb, weather_data, espn_games=None
             all_signals += analyze_worldcup_edge(markets, vegas_games)
     except Exception as e:
         log(f"Strategy world cup error: {e}")
+
+    # 15b. World Cup 2026 static edge (Opta model — no API key needed)
+    try:
+        all_signals += analyze_wc26_static_edge(markets)
+    except Exception as e:
+        log(f"Strategy WC26 static error: {e}")
 
     # 16. Near-close mispricing (liquid markets closing in 1-7 days)
     try:
@@ -4922,6 +5183,16 @@ soccer_markets = [
 ]
 log(f"Soccer markets: {len(soccer_markets)} found")
 
+# ── World Cup 2026 model data (static — always available for dashboard) ─────────
+import json as _json_wc26
+_wc26_path = Path(__file__).parent.parent / "data" / "wc26_probs.json"
+try:
+    with open(_wc26_path) as _wc26_f:
+        wc26_model_data = _json_wc26.load(_wc26_f)
+except Exception as _wc26_e:
+    wc26_model_data = None
+    log(f"WC26 model data load error: {_wc26_e}")
+
 (docs_dir / "data.json").write_text(json.dumps({
     "generated":         ts_str,
     "balance_cents":     balance_cents,
@@ -4930,6 +5201,7 @@ log(f"Soccer markets: {len(soccer_markets)} found")
     "best_picks":        best_picks,
     "top_opportunities": top_opportunities,
     "soccer_markets":    soccer_markets,
+    "wc26_model":        wc26_model_data,
     "edges":             edges,
     "espn_games":        espn_games,
     "espn_injuries":     espn_injuries,

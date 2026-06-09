@@ -297,7 +297,21 @@
         <span class="text-xs bg-green-500/20 text-green-400 border border-green-500/40 rounded-full px-2 py-0.5 font-mono" id="soccer-count">–</span>
         <span class="text-xs font-normal text-slate-500 ml-1">— World Cup, Champions League, MLS &amp; more</span>
       </h2>
-      <p class="text-xs text-slate-500 mb-3">All soccer prediction markets on Kalshi. Click to trade. Green border = has a strategy signal.</p>
+      <p class="text-xs text-slate-500 mb-3">All soccer prediction markets on Kalshi. Click to trade. Gold border = has a strategy signal.</p>
+
+      <!-- WC26 Model Probabilities -->
+      <div id="wc26-model-section" class="mb-4 hidden">
+        <h3 class="text-sm font-semibold text-slate-300 mb-2 flex items-center gap-2">
+          🏆 World Cup 2026 — Model Win Probabilities
+          <span class="text-xs text-slate-500 font-normal">(Opta 25k sims · Source: FanDuel odds Jun 8 2026)</span>
+        </h3>
+        <div id="wc26-title-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-2 mb-3"></div>
+        <details class="text-xs text-slate-500">
+          <summary class="cursor-pointer hover:text-slate-300 transition">Show upcoming matches &amp; predictions ▼</summary>
+          <div id="wc26-matches-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 mt-2"></div>
+        </details>
+      </div>
+
       <div id="soccer-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3"></div>
       <p id="soccer-empty" class="hidden text-slate-500 text-sm mt-2">No soccer markets found — check back after the next data refresh.</p>
     </section>
@@ -640,6 +654,7 @@ function render(data) {
   renderSignalHistory(data.signal_history || []);
   renderSignals(data.strategy_signals || []);
   renderTopPlays(data.top_opportunities || [], data.strategy_signals || []);
+  renderWC26Model(data.wc26_model || null);
   renderSoccerMarkets(data.soccer_markets || [], data.strategy_signals || []);
   renderLineMovements(data.line_movements || []);
   renderPriceMovements(data.price_movements || []);
@@ -823,6 +838,64 @@ function renderTopPlays(plays, signals) {
       <p class="text-xs text-slate-500 mt-1 line-clamp-1">${escHtml(p.rationale || '')}</p>
     </a>`;
   }).join('');
+}
+
+// ── WC26 Model Probabilities ─────────────────────────────────────────────────
+function renderWC26Model(wc26) {
+  const section = document.getElementById('wc26-model-section');
+  const titleGrid = document.getElementById('wc26-title-grid');
+  const matchGrid = document.getElementById('wc26-matches-grid');
+  if (!section || !wc26) return;
+
+  section.classList.remove('hidden');
+
+  // Title winner probabilities
+  const titleProbs = wc26.title_probabilities || [];
+  if (titleGrid && titleProbs.length) {
+    // FanDuel implied prob helper
+    const fdImplied = odds => {
+      const n = parseInt(odds.replace('+',''));
+      return n > 0 ? (100 / (n + 100) * 100) : (Math.abs(n) / (Math.abs(n) + 100) * 100);
+    };
+    titleGrid.innerHTML = titleProbs.map(tp => {
+      const fd = fdImplied(tp.odds);
+      const diff = tp.win_pct - fd;
+      const diffColor = diff > 0 ? '#4ade80' : diff < -0.5 ? '#f87171' : '#94a3b8';
+      const diffLabel = diff > 0 ? `▲ model +${diff.toFixed(1)}` : diff < -0.5 ? `▼ model ${diff.toFixed(1)}` : '≈ fair';
+      return `
+      <div class="rounded-lg border border-slate-700 p-2 text-center" style="background:#1e293b;">
+        <div class="text-lg leading-tight">${tp.flag}</div>
+        <div class="text-xs font-bold text-white mt-0.5">${tp.team}</div>
+        <div class="text-sm font-black mt-0.5" style="color:#38bdf8;">${tp.win_pct}%</div>
+        <div class="text-xs text-slate-400">FD ${tp.odds}</div>
+        <div class="text-xs mt-0.5 font-semibold" style="color:${diffColor};">${diffLabel}</div>
+        <div class="text-xs text-slate-500 mt-0.5">QF ${tp.qf_pct}% · F ${tp.final_pct}%</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Match predictions
+  const matches = wc26.match_predictions || [];
+  if (matchGrid && matches.length) {
+    // Group by date/group, show first 36 (can be expanded)
+    matchGrid.innerHTML = matches.slice(0, 36).map(mp => {
+      const favColor = mp.home_win > mp.away_win ? '#4ade80' : mp.away_win > mp.home_win ? '#f87171' : '#94a3b8';
+      const favLabel = mp.home_win > mp.away_win ? mp.home : mp.away_win > mp.home_win ? mp.away : 'Even';
+      return `
+      <div class="rounded-lg border border-slate-700 p-2" style="background:#1e293b;">
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-1">
+          <span>Group ${mp.group}</span><span>${mp.date}</span>
+        </div>
+        <div class="text-xs font-semibold text-white mb-1">${escHtml(mp.home)} vs ${escHtml(mp.away)}</div>
+        <div class="flex gap-1 text-xs">
+          <span class="px-1.5 py-0.5 rounded font-bold" style="background:#4ade8022;color:#4ade80;border:1px solid #4ade8044;">${mp.home_win}%</span>
+          <span class="px-1.5 py-0.5 rounded font-bold" style="background:#94a3b822;color:#94a3b8;border:1px solid #94a3b844;">D ${mp.draw}%</span>
+          <span class="px-1.5 py-0.5 rounded font-bold" style="background:#f8717122;color:#f87171;border:1px solid #f8717144;">${mp.away_win}%</span>
+        </div>
+        <div class="text-xs mt-1" style="color:${favColor};">↑ ${escHtml(favLabel)} favored</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 // ── Soccer Markets ──────────────────────────────────────────────────────────
