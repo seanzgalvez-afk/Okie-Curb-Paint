@@ -1,5 +1,5 @@
 {
-  "generated": "2026-05-28 22:44 UTC",
+  "generated": "2026-06-09 00:18 UTC",
   "balance_cents": 0,
   "positions": [],
   "markets": [],
@@ -122,5 +122,1182 @@
     "vegas_games": 0,
     "espn": "empty",
     "weather": "skipped_interval"
+  },
+  "wc26_model": {
+    "meta": {
+      "source": "Aggregated \u2014 Opta (25k sims), Silver Bulletin PELE (100k sims), KU Leuven ML model",
+      "generated": "2026-06-08",
+      "notes": "Win% from Opta. Odds from FanDuel as of Jun 8 2026."
+    },
+    "title_probabilities": [
+      {
+        "team": "Spain",
+        "flag": "\ud83c\uddea\ud83c\uddf8",
+        "win_pct": 16.1,
+        "qf_pct": 52,
+        "sf_pct": 39,
+        "final_pct": 26,
+        "odds": "+450",
+        "fifa_rank": 1
+      },
+      {
+        "team": "France",
+        "flag": "\ud83c\uddeb\ud83c\uddf7",
+        "win_pct": 13.0,
+        "qf_pct": 48,
+        "sf_pct": 35,
+        "final_pct": 21,
+        "odds": "+475",
+        "fifa_rank": 2
+      },
+      {
+        "team": "England",
+        "flag": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f",
+        "win_pct": 11.2,
+        "qf_pct": 45,
+        "sf_pct": 32,
+        "final_pct": 18,
+        "odds": "+650",
+        "fifa_rank": 4
+      },
+      {
+        "team": "Argentina",
+        "flag": "\ud83c\udde6\ud83c\uddf7",
+        "win_pct": 10.4,
+        "qf_pct": 43,
+        "sf_pct": 30,
+        "final_pct": 17,
+        "odds": "+900",
+        "fifa_rank": 3
+      },
+      {
+        "team": "Germany",
+        "flag": "\ud83c\udde9\ud83c\uddea",
+        "win_pct": 8.0,
+        "qf_pct": 40,
+        "sf_pct": 26,
+        "final_pct": 14,
+        "odds": "+1400",
+        "fifa_rank": 12
+      },
+      {
+        "team": "Brazil",
+        "flag": "\ud83c\udde7\ud83c\uddf7",
+        "win_pct": 7.5,
+        "qf_pct": 38,
+        "sf_pct": 24,
+        "final_pct": 12,
+        "odds": "+900",
+        "fifa_rank": 5
+      },
+      {
+        "team": "Portugal",
+        "flag": "\ud83c\uddf5\ud83c\uddf9",
+        "win_pct": 5.5,
+        "qf_pct": 36,
+        "sf_pct": 21,
+        "final_pct": 10,
+        "odds": "+850",
+        "fifa_rank": 6
+      },
+      {
+        "team": "Netherlands",
+        "flag": "\ud83c\uddf3\ud83c\uddf1",
+        "win_pct": 4.0,
+        "qf_pct": 32,
+        "sf_pct": 18,
+        "final_pct": 8,
+        "odds": "+2000",
+        "fifa_rank": 8
+      },
+      {
+        "team": "Belgium",
+        "flag": "\ud83c\udde7\ud83c\uddea",
+        "win_pct": 2.8,
+        "qf_pct": 28,
+        "sf_pct": 15,
+        "final_pct": 6,
+        "odds": "+2800",
+        "fifa_rank": 9
+      },
+      {
+        "team": "Uruguay",
+        "flag": "\ud83c\uddfa\ud83c\uddfe",
+        "win_pct": 1.8,
+        "qf_pct": 24,
+        "sf_pct": 11,
+        "final_pct": 4,
+        "odds": "+4000",
+        "fifa_rank": 11
+      },
+      {
+        "team": "Morocco",
+        "flag": "\ud83c\uddf2\ud83c\udde6",
+        "win_pct": 1.3,
+        "qf_pct": 21,
+        "sf_pct": 9,
+        "final_pct": 3,
+        "odds": "+5000",
+        "fifa_rank": 13
+      },
+      {
+        "team": "Japan",
+        "flag": "\ud83c\uddef\ud83c\uddf5",
+        "win_pct": 0.9,
+        "qf_pct": 18,
+        "sf_pct": 7,
+        "final_pct": 2,
+        "odds": "+6000",
+        "fifa_rank": 18
+      }
+    ],
+    "groups": [
+      {
+        "group": "A",
+        "teams": [
+          {
+            "team": "Mexico",
+            "flag": "\ud83c\uddf2\ud83c\uddfd",
+            "advance_pct": 91,
+            "fifa_rank": 14,
+            "likely": "advance"
+          },
+          {
+            "team": "South Korea",
+            "flag": "\ud83c\uddf0\ud83c\uddf7",
+            "advance_pct": 72,
+            "fifa_rank": 20,
+            "likely": "advance"
+          },
+          {
+            "team": "Czechia",
+            "flag": "\ud83c\udde8\ud83c\uddff",
+            "advance_pct": 55,
+            "fifa_rank": 31,
+            "likely": "bubble"
+          },
+          {
+            "team": "South Africa",
+            "flag": "\ud83c\uddff\ud83c\udde6",
+            "advance_pct": 28,
+            "fifa_rank": 45,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "B",
+        "teams": [
+          {
+            "team": "Canada",
+            "flag": "\ud83c\udde8\ud83c\udde6",
+            "advance_pct": 84,
+            "fifa_rank": 27,
+            "likely": "advance"
+          },
+          {
+            "team": "Switzerland",
+            "flag": "\ud83c\udde8\ud83c\udded",
+            "advance_pct": 79,
+            "fifa_rank": 17,
+            "likely": "advance"
+          },
+          {
+            "team": "Bosnia",
+            "flag": "\ud83c\udde7\ud83c\udde6",
+            "advance_pct": 44,
+            "fifa_rank": 71,
+            "likely": "bubble"
+          },
+          {
+            "team": "Qatar",
+            "flag": "\ud83c\uddf6\ud83c\udde6",
+            "advance_pct": 31,
+            "fifa_rank": 51,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "C",
+        "teams": [
+          {
+            "team": "Brazil",
+            "flag": "\ud83c\udde7\ud83c\uddf7",
+            "advance_pct": 93,
+            "fifa_rank": 5,
+            "likely": "advance"
+          },
+          {
+            "team": "Morocco",
+            "flag": "\ud83c\uddf2\ud83c\udde6",
+            "advance_pct": 74,
+            "fifa_rank": 13,
+            "likely": "advance"
+          },
+          {
+            "team": "Scotland",
+            "flag": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc73\udb40\udc63\udb40\udc74\udb40\udc7f",
+            "advance_pct": 48,
+            "fifa_rank": 39,
+            "likely": "bubble"
+          },
+          {
+            "team": "Haiti",
+            "flag": "\ud83c\udded\ud83c\uddf9",
+            "advance_pct": 9,
+            "fifa_rank": 90,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "D",
+        "teams": [
+          {
+            "team": "United States",
+            "flag": "\ud83c\uddfa\ud83c\uddf8",
+            "advance_pct": 82,
+            "fifa_rank": 16,
+            "likely": "advance"
+          },
+          {
+            "team": "Australia",
+            "flag": "\ud83c\udde6\ud83c\uddfa",
+            "advance_pct": 62,
+            "fifa_rank": 24,
+            "likely": "advance"
+          },
+          {
+            "team": "Turkiye",
+            "flag": "\ud83c\uddf9\ud83c\uddf7",
+            "advance_pct": 58,
+            "fifa_rank": 26,
+            "likely": "bubble"
+          },
+          {
+            "team": "Paraguay",
+            "flag": "\ud83c\uddf5\ud83c\uddfe",
+            "advance_pct": 38,
+            "fifa_rank": 41,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "E",
+        "teams": [
+          {
+            "team": "Germany",
+            "flag": "\ud83c\udde9\ud83c\uddea",
+            "advance_pct": 95,
+            "fifa_rank": 12,
+            "likely": "advance"
+          },
+          {
+            "team": "Ivory Coast",
+            "flag": "\ud83c\udde8\ud83c\uddee",
+            "advance_pct": 68,
+            "fifa_rank": 22,
+            "likely": "advance"
+          },
+          {
+            "team": "Ecuador",
+            "flag": "\ud83c\uddea\ud83c\udde8",
+            "advance_pct": 55,
+            "fifa_rank": 30,
+            "likely": "bubble"
+          },
+          {
+            "team": "Curacao",
+            "flag": "\ud83c\udde8\ud83c\uddfc",
+            "advance_pct": 12,
+            "fifa_rank": 82,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "F",
+        "teams": [
+          {
+            "team": "Netherlands",
+            "flag": "\ud83c\uddf3\ud83c\uddf1",
+            "advance_pct": 90,
+            "fifa_rank": 8,
+            "likely": "advance"
+          },
+          {
+            "team": "Japan",
+            "flag": "\ud83c\uddef\ud83c\uddf5",
+            "advance_pct": 77,
+            "fifa_rank": 18,
+            "likely": "advance"
+          },
+          {
+            "team": "Sweden",
+            "flag": "\ud83c\uddf8\ud83c\uddea",
+            "advance_pct": 50,
+            "fifa_rank": 28,
+            "likely": "bubble"
+          },
+          {
+            "team": "Tunisia",
+            "flag": "\ud83c\uddf9\ud83c\uddf3",
+            "advance_pct": 30,
+            "fifa_rank": 36,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "G",
+        "teams": [
+          {
+            "team": "Belgium",
+            "flag": "\ud83c\udde7\ud83c\uddea",
+            "advance_pct": 88,
+            "fifa_rank": 9,
+            "likely": "advance"
+          },
+          {
+            "team": "Iran",
+            "flag": "\ud83c\uddee\ud83c\uddf7",
+            "advance_pct": 60,
+            "fifa_rank": 23,
+            "likely": "advance"
+          },
+          {
+            "team": "Egypt",
+            "flag": "\ud83c\uddea\ud83c\uddec",
+            "advance_pct": 52,
+            "fifa_rank": 33,
+            "likely": "bubble"
+          },
+          {
+            "team": "New Zealand",
+            "flag": "\ud83c\uddf3\ud83c\uddff",
+            "advance_pct": 22,
+            "fifa_rank": 95,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "H",
+        "teams": [
+          {
+            "team": "Spain",
+            "flag": "\ud83c\uddea\ud83c\uddf8",
+            "advance_pct": 95,
+            "fifa_rank": 1,
+            "likely": "advance"
+          },
+          {
+            "team": "Uruguay",
+            "flag": "\ud83c\uddfa\ud83c\uddfe",
+            "advance_pct": 72,
+            "fifa_rank": 11,
+            "likely": "advance"
+          },
+          {
+            "team": "Saudi Arabia",
+            "flag": "\ud83c\uddf8\ud83c\udde6",
+            "advance_pct": 33,
+            "fifa_rank": 57,
+            "likely": "bubble"
+          },
+          {
+            "team": "Cape Verde",
+            "flag": "\ud83c\udde8\ud83c\uddfb",
+            "advance_pct": 18,
+            "fifa_rank": 81,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "I",
+        "teams": [
+          {
+            "team": "France",
+            "flag": "\ud83c\uddeb\ud83c\uddf7",
+            "advance_pct": 92,
+            "fifa_rank": 2,
+            "likely": "advance"
+          },
+          {
+            "team": "Senegal",
+            "flag": "\ud83c\uddf8\ud83c\uddf3",
+            "advance_pct": 65,
+            "fifa_rank": 19,
+            "likely": "advance"
+          },
+          {
+            "team": "Norway",
+            "flag": "\ud83c\uddf3\ud83c\uddf4",
+            "advance_pct": 52,
+            "fifa_rank": 32,
+            "likely": "bubble"
+          },
+          {
+            "team": "Iraq",
+            "flag": "\ud83c\uddee\ud83c\uddf6",
+            "advance_pct": 20,
+            "fifa_rank": 73,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "J",
+        "teams": [
+          {
+            "team": "Argentina",
+            "flag": "\ud83c\udde6\ud83c\uddf7",
+            "advance_pct": 95,
+            "fifa_rank": 3,
+            "likely": "advance"
+          },
+          {
+            "team": "Austria",
+            "flag": "\ud83c\udde6\ud83c\uddf9",
+            "advance_pct": 62,
+            "fifa_rank": 25,
+            "likely": "advance"
+          },
+          {
+            "team": "Algeria",
+            "flag": "\ud83c\udde9\ud83c\uddff",
+            "advance_pct": 44,
+            "fifa_rank": 37,
+            "likely": "bubble"
+          },
+          {
+            "team": "Jordan",
+            "flag": "\ud83c\uddef\ud83c\uddf4",
+            "advance_pct": 18,
+            "fifa_rank": 76,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "K",
+        "teams": [
+          {
+            "team": "Portugal",
+            "flag": "\ud83c\uddf5\ud83c\uddf9",
+            "advance_pct": 91,
+            "fifa_rank": 6,
+            "likely": "advance"
+          },
+          {
+            "team": "Colombia",
+            "flag": "\ud83c\udde8\ud83c\uddf4",
+            "advance_pct": 74,
+            "fifa_rank": 14,
+            "likely": "advance"
+          },
+          {
+            "team": "DR Congo",
+            "flag": "\ud83c\udde8\ud83c\udde9",
+            "advance_pct": 38,
+            "fifa_rank": 48,
+            "likely": "bubble"
+          },
+          {
+            "team": "Uzbekistan",
+            "flag": "\ud83c\uddfa\ud83c\uddff",
+            "advance_pct": 25,
+            "fifa_rank": 67,
+            "likely": "out"
+          }
+        ]
+      },
+      {
+        "group": "L",
+        "teams": [
+          {
+            "team": "England",
+            "flag": "\ud83c\udff4\udb40\udc67\udb40\udc62\udb40\udc65\udb40\udc6e\udb40\udc67\udb40\udc7f",
+            "advance_pct": 92,
+            "fifa_rank": 4,
+            "likely": "advance"
+          },
+          {
+            "team": "Croatia",
+            "flag": "\ud83c\udded\ud83c\uddf7",
+            "advance_pct": 67,
+            "fifa_rank": 15,
+            "likely": "advance"
+          },
+          {
+            "team": "Ghana",
+            "flag": "\ud83c\uddec\ud83c\udded",
+            "advance_pct": 45,
+            "fifa_rank": 43,
+            "likely": "bubble"
+          },
+          {
+            "team": "Panama",
+            "flag": "\ud83c\uddf5\ud83c\udde6",
+            "advance_pct": 22,
+            "fifa_rank": 62,
+            "likely": "out"
+          }
+        ]
+      }
+    ],
+    "match_predictions": [
+      {
+        "group": "A",
+        "date": "Jun 11",
+        "home": "Mexico",
+        "away": "South Africa",
+        "home_win": 72,
+        "draw": 18,
+        "away_win": 10
+      },
+      {
+        "group": "A",
+        "date": "Jun 11",
+        "home": "South Korea",
+        "away": "Czechia",
+        "home_win": 52,
+        "draw": 23,
+        "away_win": 25
+      },
+      {
+        "group": "A",
+        "date": "Jun 18",
+        "home": "Mexico",
+        "away": "South Korea",
+        "home_win": 55,
+        "draw": 22,
+        "away_win": 23
+      },
+      {
+        "group": "A",
+        "date": "Jun 18",
+        "home": "Czechia",
+        "away": "South Africa",
+        "home_win": 58,
+        "draw": 22,
+        "away_win": 20
+      },
+      {
+        "group": "A",
+        "date": "Jun 24",
+        "home": "Czechia",
+        "away": "Mexico",
+        "home_win": 28,
+        "draw": 22,
+        "away_win": 50
+      },
+      {
+        "group": "A",
+        "date": "Jun 24",
+        "home": "South Africa",
+        "away": "South Korea",
+        "home_win": 26,
+        "draw": 24,
+        "away_win": 50
+      },
+      {
+        "group": "B",
+        "date": "Jun 12",
+        "home": "Canada",
+        "away": "Bosnia",
+        "home_win": 62,
+        "draw": 21,
+        "away_win": 17
+      },
+      {
+        "group": "B",
+        "date": "Jun 13",
+        "home": "Qatar",
+        "away": "Switzerland",
+        "home_win": 19,
+        "draw": 24,
+        "away_win": 57
+      },
+      {
+        "group": "B",
+        "date": "Jun 18",
+        "home": "Switzerland",
+        "away": "Bosnia",
+        "home_win": 55,
+        "draw": 23,
+        "away_win": 22
+      },
+      {
+        "group": "B",
+        "date": "Jun 18",
+        "home": "Canada",
+        "away": "Qatar",
+        "home_win": 70,
+        "draw": 18,
+        "away_win": 12
+      },
+      {
+        "group": "B",
+        "date": "Jun 24",
+        "home": "Switzerland",
+        "away": "Canada",
+        "home_win": 42,
+        "draw": 24,
+        "away_win": 34
+      },
+      {
+        "group": "B",
+        "date": "Jun 24",
+        "home": "Bosnia",
+        "away": "Qatar",
+        "home_win": 54,
+        "draw": 23,
+        "away_win": 23
+      },
+      {
+        "group": "C",
+        "date": "Jun 13",
+        "home": "Brazil",
+        "away": "Morocco",
+        "home_win": 58,
+        "draw": 24,
+        "away_win": 18
+      },
+      {
+        "group": "C",
+        "date": "Jun 13",
+        "home": "Haiti",
+        "away": "Scotland",
+        "home_win": 18,
+        "draw": 22,
+        "away_win": 60
+      },
+      {
+        "group": "C",
+        "date": "Jun 19",
+        "home": "Scotland",
+        "away": "Morocco",
+        "home_win": 28,
+        "draw": 24,
+        "away_win": 48
+      },
+      {
+        "group": "C",
+        "date": "Jun 19",
+        "home": "Brazil",
+        "away": "Haiti",
+        "home_win": 90,
+        "draw": 8,
+        "away_win": 2
+      },
+      {
+        "group": "C",
+        "date": "Jun 24",
+        "home": "Scotland",
+        "away": "Brazil",
+        "home_win": 12,
+        "draw": 18,
+        "away_win": 70
+      },
+      {
+        "group": "C",
+        "date": "Jun 24",
+        "home": "Morocco",
+        "away": "Haiti",
+        "home_win": 82,
+        "draw": 12,
+        "away_win": 6
+      },
+      {
+        "group": "D",
+        "date": "Jun 12",
+        "home": "USA",
+        "away": "Paraguay",
+        "home_win": 62,
+        "draw": 21,
+        "away_win": 17
+      },
+      {
+        "group": "D",
+        "date": "Jun 13",
+        "home": "Australia",
+        "away": "Turkiye",
+        "home_win": 44,
+        "draw": 24,
+        "away_win": 32
+      },
+      {
+        "group": "D",
+        "date": "Jun 19",
+        "home": "USA",
+        "away": "Australia",
+        "home_win": 52,
+        "draw": 23,
+        "away_win": 25
+      },
+      {
+        "group": "D",
+        "date": "Jun 19",
+        "home": "Turkiye",
+        "away": "Paraguay",
+        "home_win": 52,
+        "draw": 23,
+        "away_win": 25
+      },
+      {
+        "group": "D",
+        "date": "Jun 24",
+        "home": "Paraguay",
+        "away": "Australia",
+        "home_win": 38,
+        "draw": 24,
+        "away_win": 38
+      },
+      {
+        "group": "D",
+        "date": "Jun 24",
+        "home": "Turkiye",
+        "away": "USA",
+        "home_win": 35,
+        "draw": 24,
+        "away_win": 41
+      },
+      {
+        "group": "E",
+        "date": "Jun 14",
+        "home": "Germany",
+        "away": "Ivory Coast",
+        "home_win": 62,
+        "draw": 22,
+        "away_win": 16
+      },
+      {
+        "group": "E",
+        "date": "Jun 14",
+        "home": "Ecuador",
+        "away": "Curacao",
+        "home_win": 72,
+        "draw": 18,
+        "away_win": 10
+      },
+      {
+        "group": "E",
+        "date": "Jun 21",
+        "home": "Germany",
+        "away": "Ecuador",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "E",
+        "date": "Jun 21",
+        "home": "Ivory Coast",
+        "away": "Curacao",
+        "home_win": 78,
+        "draw": 14,
+        "away_win": 8
+      },
+      {
+        "group": "E",
+        "date": "Jun 25",
+        "home": "Ecuador",
+        "away": "Germany",
+        "home_win": 18,
+        "draw": 20,
+        "away_win": 62
+      },
+      {
+        "group": "E",
+        "date": "Jun 25",
+        "home": "Curacao",
+        "away": "Ivory Coast",
+        "home_win": 12,
+        "draw": 16,
+        "away_win": 72
+      },
+      {
+        "group": "F",
+        "date": "Jun 15",
+        "home": "Netherlands",
+        "away": "Sweden",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "F",
+        "date": "Jun 15",
+        "home": "Tunisia",
+        "away": "Japan",
+        "home_win": 30,
+        "draw": 25,
+        "away_win": 45
+      },
+      {
+        "group": "F",
+        "date": "Jun 21",
+        "home": "Netherlands",
+        "away": "Japan",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "F",
+        "date": "Jun 21",
+        "home": "Sweden",
+        "away": "Tunisia",
+        "home_win": 55,
+        "draw": 23,
+        "away_win": 22
+      },
+      {
+        "group": "F",
+        "date": "Jun 25",
+        "home": "Japan",
+        "away": "Sweden",
+        "home_win": 48,
+        "draw": 24,
+        "away_win": 28
+      },
+      {
+        "group": "F",
+        "date": "Jun 25",
+        "home": "Tunisia",
+        "away": "Netherlands",
+        "home_win": 12,
+        "draw": 18,
+        "away_win": 70
+      },
+      {
+        "group": "G",
+        "date": "Jun 15",
+        "home": "Belgium",
+        "away": "Egypt",
+        "home_win": 62,
+        "draw": 22,
+        "away_win": 16
+      },
+      {
+        "group": "G",
+        "date": "Jun 15",
+        "home": "Iran",
+        "away": "New Zealand",
+        "home_win": 70,
+        "draw": 18,
+        "away_win": 12
+      },
+      {
+        "group": "G",
+        "date": "Jun 21",
+        "home": "Belgium",
+        "away": "Iran",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "G",
+        "date": "Jun 21",
+        "home": "Egypt",
+        "away": "New Zealand",
+        "home_win": 72,
+        "draw": 16,
+        "away_win": 12
+      },
+      {
+        "group": "G",
+        "date": "Jun 25",
+        "home": "Iran",
+        "away": "Belgium",
+        "home_win": 22,
+        "draw": 20,
+        "away_win": 58
+      },
+      {
+        "group": "G",
+        "date": "Jun 25",
+        "home": "New Zealand",
+        "away": "Egypt",
+        "home_win": 22,
+        "draw": 20,
+        "away_win": 58
+      },
+      {
+        "group": "H",
+        "date": "Jun 16",
+        "home": "Spain",
+        "away": "Cape Verde",
+        "home_win": 88,
+        "draw": 9,
+        "away_win": 3
+      },
+      {
+        "group": "H",
+        "date": "Jun 16",
+        "home": "Uruguay",
+        "away": "Saudi Arabia",
+        "home_win": 58,
+        "draw": 22,
+        "away_win": 20
+      },
+      {
+        "group": "H",
+        "date": "Jun 22",
+        "home": "Spain",
+        "away": "Uruguay",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "H",
+        "date": "Jun 22",
+        "home": "Saudi Arabia",
+        "away": "Cape Verde",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "H",
+        "date": "Jun 26",
+        "home": "Cape Verde",
+        "away": "Uruguay",
+        "home_win": 14,
+        "draw": 18,
+        "away_win": 68
+      },
+      {
+        "group": "H",
+        "date": "Jun 26",
+        "home": "Saudi Arabia",
+        "away": "Spain",
+        "home_win": 8,
+        "draw": 12,
+        "away_win": 80
+      },
+      {
+        "group": "I",
+        "date": "Jun 16",
+        "home": "France",
+        "away": "Senegal",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "I",
+        "date": "Jun 16",
+        "home": "Norway",
+        "away": "Iraq",
+        "home_win": 70,
+        "draw": 18,
+        "away_win": 12
+      },
+      {
+        "group": "I",
+        "date": "Jun 22",
+        "home": "France",
+        "away": "Norway",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "I",
+        "date": "Jun 22",
+        "home": "Senegal",
+        "away": "Iraq",
+        "home_win": 72,
+        "draw": 16,
+        "away_win": 12
+      },
+      {
+        "group": "I",
+        "date": "Jun 26",
+        "home": "Norway",
+        "away": "France",
+        "home_win": 22,
+        "draw": 22,
+        "away_win": 56
+      },
+      {
+        "group": "I",
+        "date": "Jun 26",
+        "home": "Iraq",
+        "away": "Senegal",
+        "home_win": 24,
+        "draw": 20,
+        "away_win": 56
+      },
+      {
+        "group": "J",
+        "date": "Jun 17",
+        "home": "Argentina",
+        "away": "Algeria",
+        "home_win": 72,
+        "draw": 18,
+        "away_win": 10
+      },
+      {
+        "group": "J",
+        "date": "Jun 17",
+        "home": "Austria",
+        "away": "Jordan",
+        "home_win": 70,
+        "draw": 18,
+        "away_win": 12
+      },
+      {
+        "group": "J",
+        "date": "Jun 22",
+        "home": "Argentina",
+        "away": "Austria",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "J",
+        "date": "Jun 22",
+        "home": "Algeria",
+        "away": "Jordan",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "J",
+        "date": "Jun 26",
+        "home": "Algeria",
+        "away": "Austria",
+        "home_win": 30,
+        "draw": 24,
+        "away_win": 46
+      },
+      {
+        "group": "J",
+        "date": "Jun 26",
+        "home": "Jordan",
+        "away": "Argentina",
+        "home_win": 8,
+        "draw": 12,
+        "away_win": 80
+      },
+      {
+        "group": "K",
+        "date": "Jun 17",
+        "home": "Portugal",
+        "away": "Uzbekistan",
+        "home_win": 85,
+        "draw": 10,
+        "away_win": 5
+      },
+      {
+        "group": "K",
+        "date": "Jun 17",
+        "home": "Colombia",
+        "away": "DR Congo",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "K",
+        "date": "Jun 23",
+        "home": "Portugal",
+        "away": "Colombia",
+        "home_win": 52,
+        "draw": 23,
+        "away_win": 25
+      },
+      {
+        "group": "K",
+        "date": "Jun 23",
+        "home": "Uzbekistan",
+        "away": "DR Congo",
+        "home_win": 42,
+        "draw": 25,
+        "away_win": 33
+      },
+      {
+        "group": "K",
+        "date": "Jun 27",
+        "home": "DR Congo",
+        "away": "Portugal",
+        "home_win": 10,
+        "draw": 14,
+        "away_win": 76
+      },
+      {
+        "group": "K",
+        "date": "Jun 27",
+        "home": "Colombia",
+        "away": "Uzbekistan",
+        "home_win": 72,
+        "draw": 16,
+        "away_win": 12
+      },
+      {
+        "group": "L",
+        "date": "Jun 18",
+        "home": "England",
+        "away": "Croatia",
+        "home_win": 60,
+        "draw": 22,
+        "away_win": 18
+      },
+      {
+        "group": "L",
+        "date": "Jun 18",
+        "home": "Ghana",
+        "away": "Panama",
+        "home_win": 55,
+        "draw": 23,
+        "away_win": 22
+      },
+      {
+        "group": "L",
+        "date": "Jun 24",
+        "home": "England",
+        "away": "Ghana",
+        "home_win": 70,
+        "draw": 18,
+        "away_win": 12
+      },
+      {
+        "group": "L",
+        "date": "Jun 24",
+        "home": "Croatia",
+        "away": "Panama",
+        "home_win": 65,
+        "draw": 20,
+        "away_win": 15
+      },
+      {
+        "group": "L",
+        "date": "Jun 27",
+        "home": "Ghana",
+        "away": "England",
+        "home_win": 14,
+        "draw": 18,
+        "away_win": 68
+      },
+      {
+        "group": "L",
+        "date": "Jun 27",
+        "home": "Panama",
+        "away": "Croatia",
+        "home_win": 18,
+        "draw": 22,
+        "away_win": 60
+      }
+    ]
   }
 }

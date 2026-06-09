@@ -11,19 +11,30 @@ BASE_URL   = "https://api.elections.kalshi.com/trade-api/v2"
 API_PREFIX = "/trade-api/v2"
 
 KEY_ID = os.environ.get("KALSHI_API_KEY_ID", "")
-if not KEY_ID:
-    sys.exit("ERROR: KALSHI_API_KEY_ID not set")
+_KALSHI_AUTH_AVAILABLE = bool(KEY_ID)
 
-key_path = os.environ.get("KALSHI_PRIVATE_KEY_PATH", "")
-if key_path:
-    pem = Path(key_path).read_bytes()
+PRIV_KEY = None
+if _KALSHI_AUTH_AVAILABLE:
+    key_path = os.environ.get("KALSHI_PRIVATE_KEY_PATH", "")
+    try:
+        if key_path and Path(key_path).exists():
+            pem = Path(key_path).read_bytes()
+        else:
+            raw = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
+            if not raw:
+                raise ValueError("No private key found")
+            pem = base64.b64decode("".join(raw.split()))
+        PRIV_KEY = serialization.load_pem_private_key(pem, password=None)
+    except Exception as _key_err:
+        print(f"WARNING: Could not load private key: {_key_err} — running without Kalshi auth",
+              file=sys.stderr)
+        _KALSHI_AUTH_AVAILABLE = False
 else:
-    raw = os.environ.get("KALSHI_PRIVATE_KEY", "").strip()
-    pem = base64.b64decode("".join(raw.split()))
-
-PRIV_KEY = serialization.load_pem_private_key(pem, password=None)
+    print("WARNING: KALSHI_API_KEY_ID not set — running without Kalshi auth", file=sys.stderr)
 
 def auth_headers(method, path):
+    if not _KALSHI_AUTH_AVAILABLE or PRIV_KEY is None:
+        return {}
     ts  = str(int(time.time() * 1000))
     msg = (ts + method.upper() + API_PREFIX + path).encode()
     sig = base64.b64encode(
@@ -37,6 +48,8 @@ def auth_headers(method, path):
             "KALSHI-ACCESS-SIGNATURE": sig}
 
 def get(path, params=None):
+    if not _KALSHI_AUTH_AVAILABLE:
+        return None
     try:
         r = httpx.get(f"{BASE_URL}{path}", headers=auth_headers("GET", path),
                       params=params, timeout=15)
